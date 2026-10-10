@@ -308,36 +308,45 @@ public class TicketHubApplication {
                 log.info("40 screens seeded for existing theatres.");
             }
 
-            // ── 4. Shows — next 5 days for each movie ──────
-            if (showRepo.count() < 50) {
-                List<Movie>  movies  = movieRepo.findAll();
-                List<Screen> screens = screenRepo.findAll();
-                if (!screens.isEmpty() && !movies.isEmpty()) {
-                    LocalTime[]  times   = {
-                        LocalTime.of(10, 0), LocalTime.of(14, 0),
-                        LocalTime.of(18, 0), LocalTime.of(21, 0)
-                    };
+            // ── 4. Shows — Seed shows across multiple theatres & screens for each movie ──────
+            List<Movie>  movies  = movieRepo.findAll();
+            List<Screen> screens = screenRepo.findAll();
+            if (!screens.isEmpty() && !movies.isEmpty() && showRepo.count() < 400) {
+                LocalTime[] times = {
+                    LocalTime.of(10, 0), LocalTime.of(14, 0),
+                    LocalTime.of(18, 0), LocalTime.of(21, 30)
+                };
 
-                    int screenIdx = 0;
-                    for (Movie m : movies) {
-                        Screen sc = screens.get(screenIdx % screens.size());
+                for (Movie m : movies) {
+                    // Pick 5 different screens across different theatres for every movie
+                    for (int s = 0; s < Math.min(5, screens.size()); s++) {
+                        int screenIndex = (int) ((m.getId() * 3 + s * 4) % screens.size());
+                        Screen sc = screens.get(screenIndex);
+
                         for (int d = 0; d < 5; d++) {
                             LocalDate date = LocalDate.now().plusDays(d);
-                            for (LocalTime t : times) {
-                                showRepo.save(Show.builder()
-                                    .movie(m)
-                                    .screen(sc)
-                                    .showDate(date)
-                                    .showTime(t)
-                                    .priceStd(BigDecimal.valueOf(220))
-                                    .pricePrem(BigDecimal.valueOf(380))
-                                    .build());
+                            // Schedule 2-3 showtimes per screen
+                            for (int tIdx = 0; tIdx < 3; tIdx++) {
+                                LocalTime time = times[(s + tIdx) % times.length];
+                                // Avoid duplicate show if exists
+                                boolean exists = showRepo.findByMovieFiltered(m.getId(), date, sc.getTheatre().getId())
+                                    .stream()
+                                    .anyMatch(existingShow -> existingShow.getShowTime().equals(time) && existingShow.getScreen().getId().equals(sc.getId()));
+                                if (!exists) {
+                                    showRepo.save(Show.builder()
+                                        .movie(m)
+                                        .screen(sc)
+                                        .showDate(date)
+                                        .showTime(time)
+                                        .priceStd(BigDecimal.valueOf(220))
+                                        .pricePrem(BigDecimal.valueOf(380))
+                                        .build());
+                                }
                             }
                         }
-                        screenIdx++;
                     }
-                    log.info("Shows seeded for all movies.");
                 }
+                log.info("Comprehensive multi-theatre shows seeded across Kerala.");
             }
         };
     }

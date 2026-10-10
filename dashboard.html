@@ -804,35 +804,68 @@ function adminText(value) {
   })[character]);
 }
 
-// ── Ticket viewer ─────────────────────────────
 async function viewTicket(ref) {
   try {
     const b = await BookingsAPI.getOne(ref);
-    const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
+    const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18,20,12,16,22,14];
+    const poster = b.poster_url || b.posterUrl || b.posterPath || '/assets/tickethub_logo.png';
+    const firstSeat = (b.seats && b.seats[0]) ? b.seats[0] : 'A1';
+    const rowLabel = firstSeat.charAt(0);
+    const personCount = b.seats ? b.seats.length : 1;
+
     document.getElementById('ticketViewOut').innerHTML = `
-      <div class="ticket-header-brand">
-        <div class="ticket-brand-badge">
-          <img src="/assets/tickethub_logo.png" alt="TicketHub Logo"/>
+      <div class="ticket">
+        <div class="ticket-header-brand">
+          <div class="ticket-brand-badge">
+            <img src="/assets/tickethub_logo.png" alt="TicketHub"/>
+          </div>
+          <div class="ticket-admit-badge">Ticket for ${personCount} person${personCount>1?'s':''}</div>
         </div>
-        <div class="ticket-admit-badge">★ ADMIT ONE ★</div>
-      </div>
-      <div class="ticket-top">
-        <div class="ticket-movie">${genEmoji(b.genre||'')} ${b.movie}</div>
-        <div class="ticket-genre">${b.language} · ${(b.genre||'').split(',')[0].trim()}</div>
-      </div>
-      <div class="ticket-divider"></div>
-      <div class="ticket-body">
-        <div class="ticket-field"><label>Date</label><span>${b.show_date}</span></div>
-        <div class="ticket-field"><label>Time</label><span>${b.show_time.slice(0,5)}</span></div>
-        <div class="ticket-field"><label>Theatre</label><span>${b.theatre_name}</span></div>
-        <div class="ticket-field"><label>Screen</label><span>${b.screen_name}</span></div>
-        <div class="ticket-field"><label>Seats</label><span style="color:var(--accent-gold);">${b.seats.join(', ')}</span></div>
-        <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${b.total_amount}</span></div>
-      </div>
-      <div class="ticket-barcode">
-        <div class="barcode-lines">${bars.map(h=>`<div class="b" style="height:${h}px;"></div>`).join('')}</div>
-        <div class="ticket-id">${b.booking_ref}</div>
+
+        <div class="ticket-poster-container">
+          <div class="ticket-poster-card">
+            <img src="${poster}" alt="${b.movie}" onerror="this.src='/assets/tickethub_logo.png'"/>
+          </div>
+        </div>
+
+        <div class="ticket-movie-title">${b.movie}</div>
+        <div class="ticket-subline">${b.language} · ${(b.genre||'').split(',')[0].trim()} · ${b.screen_name}</div>
+
+        <div class="ticket-info-strip">
+          <div class="ticket-strip-col">
+            <div class="ticket-strip-label">SALON</div>
+            <div class="ticket-strip-val">0${b.screen_id || 1}</div>
+          </div>
+          <div class="ticket-strip-col">
+            <div class="ticket-strip-label">ROW</div>
+            <div class="ticket-strip-val">${rowLabel}</div>
+          </div>
+          <div class="ticket-strip-col">
+            <div class="ticket-strip-label">SEATS</div>
+            <div class="ticket-strip-val" style="font-size:${b.seats && b.seats.length > 2 ? '0.85rem' : '1.15rem'};">${b.seats ? b.seats.join(',') : '—'}</div>
+          </div>
+        </div>
+
+        <div class="ticket-extra-details">
+          <div>📅 <strong>${b.show_date}</strong> &nbsp;·&nbsp; ⏰ <strong>${b.show_time.slice(0,5)}</strong></div>
+          <div>💰 <strong>₹${b.total_amount}</strong></div>
+        </div>
+        <div style="text-align:center;font-size:0.75rem;color:rgba(255,255,255,0.75);margin-bottom:0.8rem;">
+          📍 ${b.theatre_name} (${b.city || ''})
+        </div>
+
+        <div class="ticket-stub-divider">
+          <div class="ticket-stub-line"></div>
+        </div>
+
+        <div class="ticket-barcode-section">
+          <div class="barcode-svg-lines">
+            ${bars.map(h => `<div class="b" style="height:${h}px;"></div>`).join('')}
+          </div>
+          <div class="ticket-booking-ref-text">REF: ${b.booking_ref}</div>
+        </div>
       </div>`;
+
     document.getElementById('ticketViewModal').classList.add('show');
   } catch(e) { showToast(e.message, 'error'); }
 }

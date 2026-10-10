@@ -393,7 +393,23 @@ function updateSeatSummary() {
   const btn = document.getElementById('proceedBtn');
   btn.disabled   = bk.seats.length === 0;
   btn.style.opacity = bk.seats.length ? '1' : '.5';
-  btn.textContent   = bk.seats.length ? `Continue with ${bk.seats.length} seat${bk.seats.length>1?'s':''} →` : 'Select seats to continue';
+  if (bk.seats.length) {
+    btn.innerHTML = `<span style="float:left;font-weight:800;">Buy ${bk.seats.length} ticket${bk.seats.length > 1 ? 's' : ''}</span><span style="float:right;font-weight:900;">₹${total}</span><span style="clear:both;display:block;"></span>`;
+    btn.style.background = 'linear-gradient(135deg, #e50914 0%, #b80610 100%)';
+    btn.style.color = '#fff';
+    btn.style.border = 'none';
+    btn.style.padding = '1rem 1.6rem';
+    btn.style.borderRadius = '18px';
+    btn.style.width = '100%';
+    btn.style.maxWidth = '380px';
+    btn.style.fontSize = '1.05rem';
+    btn.style.boxShadow = '0 10px 25px rgba(229, 9, 20, 0.5)';
+  } else {
+    btn.textContent = 'Select seats to continue';
+    btn.style.width = 'auto';
+    btn.style.padding = '0.75rem 1.5rem';
+    btn.style.borderRadius = '100px';
+  }
 }
 
 // ── Step 4: confirm ───────────────────────────
@@ -457,31 +473,66 @@ async function confirmBooking() {
 
 function showTicketModal(ref, total) {
   const time = bk.show.show_time.slice(0,5);
-  const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
+  const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18,20,12,16,22,14];
+  const poster = bk.movie.poster_url || bk.movie.posterUrl || bk.movie.posterPath || '/assets/tickethub_logo.png';
+  const firstSeat = bk.seats[0] || 'A1';
+  const rowLabel = firstSeat.charAt(0);
+  const seatNum = firstSeat.slice(1);
+  const personCount = bk.seats.length;
+
   document.getElementById('ticketOut').innerHTML = `
-    <div class="ticket-header-brand">
-      <div class="ticket-brand-badge">
-        <img src="/assets/tickethub_logo.png" alt="TicketHub Logo"/>
+    <div class="ticket">
+      <div class="ticket-header-brand">
+        <div class="ticket-brand-badge">
+          <img src="/assets/tickethub_logo.png" alt="TicketHub"/>
+        </div>
+        <div class="ticket-admit-badge">Ticket for ${personCount} person${personCount>1?'s':''}</div>
       </div>
-      <div class="ticket-admit-badge">★ ADMIT ONE ★</div>
-    </div>
-    <div class="ticket-top">
-      <div class="ticket-movie">${genEmoji(bk.movie.genre)} ${bk.movie.title}</div>
-      <div class="ticket-genre">${bk.movie.language} · ${bk.movie.genre.split(',')[0].trim()}</div>
-    </div>
-    <div class="ticket-divider"></div>
-    <div class="ticket-body">
-      <div class="ticket-field"><label>Date</label><span>${bk.date}</span></div>
-      <div class="ticket-field"><label>Show Time</label><span>${time}</span></div>
-      <div class="ticket-field"><label>Theatre</label><span>${bk.show.theatre_name}</span></div>
-      <div class="ticket-field"><label>Screen</label><span>${bk.show.screen_name}</span></div>
-      <div class="ticket-field"><label>Seats</label><span style="color:var(--accent-gold);">${bk.seats.join(', ')}</span></div>
-      <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${total}</span></div>
-    </div>
-    <div class="ticket-barcode">
-      <div class="barcode-lines">${bars.map(h=>`<div class="b" style="height:${h}px;"></div>`).join('')}</div>
-      <div class="ticket-id">${ref}</div>
+
+      <div class="ticket-poster-container">
+        <div class="ticket-poster-card">
+          <img src="${poster}" alt="${bk.movie.title}" onerror="this.src='/assets/tickethub_logo.png'"/>
+        </div>
+      </div>
+
+      <div class="ticket-movie-title">${bk.movie.title}</div>
+      <div class="ticket-subline">${bk.movie.language} · ${bk.movie.genre.split(',')[0].trim()} · ${bk.show.screen_name}</div>
+
+      <div class="ticket-info-strip">
+        <div class="ticket-strip-col">
+          <div class="ticket-strip-label">SALON</div>
+          <div class="ticket-strip-val">0${bk.show.screen_id || 1}</div>
+        </div>
+        <div class="ticket-strip-col">
+          <div class="ticket-strip-label">ROW</div>
+          <div class="ticket-strip-val">${rowLabel}</div>
+        </div>
+        <div class="ticket-strip-col">
+          <div class="ticket-strip-label">SEATS</div>
+          <div class="ticket-strip-val" style="font-size:${bk.seats.length > 2 ? '0.85rem' : '1.15rem'};">${bk.seats.join(',')}</div>
+        </div>
+      </div>
+
+      <div class="ticket-extra-details">
+        <div>📅 <strong>${bk.date}</strong> &nbsp;·&nbsp; ⏰ <strong>${time}</strong></div>
+        <div>💰 <strong>₹${total}</strong></div>
+      </div>
+      <div style="text-align:center;font-size:0.75rem;color:rgba(255,255,255,0.75);margin-bottom:0.8rem;">
+        📍 ${bk.show.theatre_name} (${bk.show.city})
+      </div>
+
+      <div class="ticket-stub-divider">
+        <div class="ticket-stub-line"></div>
+      </div>
+
+      <div class="ticket-barcode-section">
+        <div class="barcode-svg-lines">
+          ${bars.map(h => `<div class="b" style="height:${h}px;"></div>`).join('')}
+        </div>
+        <div class="ticket-booking-ref-text">REF: ${ref}</div>
+      </div>
     </div>`;
+
   document.getElementById('ticketModal').classList.add('show');
   showToast('🎉 Booking confirmed! Enjoy the movie!', 'success');
 }

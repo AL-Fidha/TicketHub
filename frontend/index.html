@@ -185,22 +185,49 @@ function renderHomeGrid(movies) {
     grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">No movies available in this category.</p>';
     return;
   }
-  grid.innerHTML = movies.map(m => `
+  grid.innerHTML = movies.map(m => {
+    const descExcerpt = m.description ? (m.description.slice(0, 110) + '…') : 'Experience the cinematic spectacle on the grand screen with premium Dolby Atmos sound.';
+    return `
     <div class="movie-card" onclick="window.location.href='/booking.html?movie=${m.id}'">
-      <div class="movie-poster">
-        ${posterImg(m)}
-        <div class="movie-rating">⭐ ${m.rating}</div>
-        <div class="movie-overlay"><button class="overlay-btn">Book Tickets</button></div>
-      </div>
       <div class="movie-info">
-        <div class="movie-title">${m.title}</div>
-        <div class="movie-genre">${m.genre.split(',')[0].trim()} · ${fmtDuration(m.duration_min || m.durationMin)}</div>
-        <div class="movie-meta">
-          <span class="movie-lang">${m.language}</span>
-          <span style="font-size:0.78rem;font-weight:700;color:var(--accent-gold);">⭐ ${m.rating}</span>
+        <div>
+          <div class="movie-card-header">
+            <span class="movie-brand-mark">WC</span>
+            <span class="movie-tagline">${m.genre.split(',')[0].trim()} PREMIERE</span>
+            ${m.status === 'New' ? '<span class="movie-badge">NEW</span>' : ''}
+          </div>
+          <div class="movie-title">${m.title}</div>
+          <div class="movie-meta">
+            <span class="movie-lang">${m.language}</span>
+            <span class="movie-duration">⏱ ${fmtDuration(m.duration_min || m.durationMin)}</span>
+            <span class="movie-genre">${m.genre}</span>
+            <span class="movie-rating">⭐ ${m.rating}</span>
+          </div>
+          <p style="font-size:0.86rem;color:#a0a6b8;line-height:1.55;max-width:540px;margin-bottom:1.2rem;">${descExcerpt}</p>
+        </div>
+        <div class="movie-actions">
+          <button class="btn-wc-play" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">▶ BOOK TICKETS</button>
+          <button class="btn-wc-download" onclick="event.stopPropagation();window.location.href='/movies.html'">EXPLORE</button>
         </div>
       </div>
-    </div>`).join('');
+      <div class="movie-poster">
+        ${posterImg(m)}
+        <div class="movie-poster-overlay">
+          <div class="poster-top-bar">
+            <span class="poster-top-title">${m.title}</span>
+            <span class="movie-rating">⭐ ${m.rating}</span>
+          </div>
+          <div class="poster-bottom-bar">
+            <button class="btn-watch-trailer" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">▶ BOOK NOW</button>
+            <div class="poster-actions-icons">
+              <div class="poster-icon-btn" title="Save" onclick="event.stopPropagation();showToast('Saved to watchlist!','success')">🔖</div>
+              <div class="poster-icon-btn" title="Share" onclick="event.stopPropagation();navigator.clipboard?.writeText(window.location.href);showToast('Link copied!','success')">🔗</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function filterHomeByLang(lang, btn) {
