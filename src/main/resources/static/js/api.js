@@ -4,7 +4,12 @@
 //  Every page imports this via <script src="/js/api.js">
 // ─────────────────────────────────────────────────────────────
 
-const API_BASE = '/api';
+let API_BASE = '/api';
+if (typeof window !== 'undefined') {
+  if (window.location.protocol === 'file:' || ['5500', '3000', '5000', '8000'].includes(window.location.port)) {
+    API_BASE = window.__API_BASE__ || 'http://localhost:8081/api';
+  }
+}
 
 // ── token helpers ─────────────────────────────
 const Auth = {
@@ -23,7 +28,24 @@ async function apiFetch(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  } catch (err) {
+    if (API_BASE.includes('8081')) {
+      try {
+        const altBase = 'http://localhost:8080/api';
+        res = await fetch(`${altBase}${path}`, { ...options, headers });
+        API_BASE = altBase;
+        window.__API_BASE__ = altBase;
+      } catch (err2) {
+        throw new Error('Could not connect to backend server. Make sure TicketHub is running on port 8080 or 8081.');
+      }
+    } else {
+      throw new Error('Could not connect to backend server. Make sure TicketHub is running.');
+    }
+  }
+
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -32,8 +54,16 @@ async function apiFetch(path, options = {}) {
 
 // ── AUTH ──────────────────────────────────────
 const AuthAPI = {
-  login:    (email, password)       => apiFetch('/auth/login',    { method: 'POST', body: JSON.stringify({ email, password }) }),
-  register: (name, email, phone, password) => apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, phone, password }) }),
+  login: async (email, password) => {
+    const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    const user = data.user || { id: data.id, name: data.name, email: data.email, role: data.role };
+    return { token: data.token, user };
+  },
+  register: async (name, email, phone, password) => {
+    const data = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, phone, password }) });
+    const user = data.user || { id: data.id, name: data.name, email: data.email, role: data.role };
+    return { token: data.token, user };
+  },
   me:       ()                      => apiFetch('/auth/me'),
   updateProfile: (name, phone)      => apiFetch('/auth/profile',  { method: 'PUT',  body: JSON.stringify({ name, phone }) }),
   changePassword: (currentPassword, newPassword) => apiFetch('/auth/password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) }),
@@ -63,7 +93,7 @@ const SeatsAPI = {
 
 // ── BOOKINGS ──────────────────────────────────
 const BookingsAPI = {
-  create:  (show_id, seats)  => apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ show_id, seats }) }),
+  create:  (show_id, seats)  => apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ show_id, showId: show_id, seats }) }),
   mine:    ()                => apiFetch('/bookings/mine'),
   getOne:  (ref)             => apiFetch(`/bookings/${ref}`),
   cancel:  (ref)             => apiFetch(`/bookings/${ref}/cancel`, { method: 'PUT' }),
@@ -149,7 +179,8 @@ function genEmoji(genre) {
 
 // ── Duration formatter ────────────────────────
 function fmtDuration(mins) {
-  return `${Math.floor(mins/60)}h ${mins%60}m`;
+  const m = Number(mins) || 0;
+  return `${Math.floor(m / 60)}h ${m % 60}m`;
 }
 
 // ── Date chips helper ─────────────────────────

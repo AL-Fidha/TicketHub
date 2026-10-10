@@ -52,7 +52,8 @@ public class TicketHubApplication {
             if (adminEmail != null && !adminEmail.isBlank()
                     && adminPassword != null && !adminPassword.isBlank()) {
                 String normalizedAdminEmail = adminEmail.trim().toLowerCase(java.util.Locale.ROOT);
-                if (!userRepo.existsByEmail(normalizedAdminEmail)) {
+                User adminUser = userRepo.findByEmail(normalizedAdminEmail).orElse(null);
+                if (adminUser == null) {
                     userRepo.save(User.builder()
                         .name("Administrator")
                         .email(normalizedAdminEmail)
@@ -60,6 +61,11 @@ public class TicketHubApplication {
                         .role(User.Role.admin)
                         .build());
                     log.info("Administrator account created.");
+                } else {
+                    adminUser.setPassword(encoder.encode(adminPassword));
+                    adminUser.setRole(User.Role.admin);
+                    userRepo.save(adminUser);
+                    log.info("Administrator account credentials synchronized.");
                 }
             } else {
                 log.warn("No administrator bootstrapped. Set app.admin.email and app.admin.password to create one.");
@@ -163,10 +169,37 @@ public class TicketHubApplication {
                 );
                 movieRepo.saveAll(movies);
                 log.info("17 blockbuster movies with real posters seeded.");
+            } else {
+                for (Movie m : movieRepo.findAll()) {
+                    if (m.getPosterPath() == null || m.getPosterPath().isBlank()) {
+                        String fallbackPoster = switch (m.getTitle()) {
+                            case "Bethlehem Kudumba Unit (BKU)" -> "https://upload.wikimedia.org/wikipedia/en/c/c5/Premalu_film_poster.jpg";
+                            case "Pradhama Drishtya Kuttakkar" -> "https://upload.wikimedia.org/wikipedia/en/0/09/Bramayugam_poster.jpg";
+                            case "L&O: Law and Order" -> "https://image.tmdb.org/t/p/w500/7cNE2qydew1c8fqnlhWjkE3DHc2.jpg";
+                            case "It's a Medical Miracle" -> "https://image.tmdb.org/t/p/w500/k5RWPaNjgRcNvGoawYaQHQwyctI.jpg";
+                            case "I'm Game" -> "https://image.tmdb.org/t/p/w500/4ux5z0Bl7NrtKpj08YLzJEB4HO3.jpg";
+                            case "Resident Evil (2026)" -> "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg";
+                            case "Spider-Man: Brand New Day" -> "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg";
+                            case "Practical Magic 2" -> "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg";
+                            case "The Uprising" -> "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg";
+                            case "The Odyssey" -> "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg";
+                            case "Mandaadi" -> "https://image.tmdb.org/t/p/w500/9Rj8l6gElLpRL7Kj17iZhrT5Zuw.jpg";
+                            case "Sardar 2" -> "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg";
+                            case "Sandakkari" -> "https://upload.wikimedia.org/wikipedia/en/f/fb/The_Goat_Life_poster.jpg";
+                            case "Hi" -> "https://image.tmdb.org/t/p/w500/4ux5z0Bl7NrtKpj08YLzJEB4HO3.jpg";
+                            case "Vishwanath and Sons" -> "https://upload.wikimedia.org/wikipedia/en/a/a1/Stree_2.jpg";
+                            default -> tmdb.fetchPosterUrl(m.getTitle(), m.getTmdbId());
+                        };
+                        if (fallbackPoster != null) {
+                            m.setPosterPath(fallbackPoster);
+                            movieRepo.save(m);
+                        }
+                    }
+                }
             }
 
             // ── 3. Theatres + Screens ──────────────────────
-            if (theatreRepo.count() == 0) {
+            if (theatreRepo.count() < 10) {
                 List<Object[]> theatreData = List.of(
                     new Object[]{"PVR Cinemas - LuLu Mall",        "LuLu Mall, NH Bypass, Edapally",          "Kochi"},
                     new Object[]{"INOX - Oberon Mall",             "Oberon Mall, NH 66, Edapally",             "Kochi"},
@@ -190,25 +223,29 @@ public class TicketHubApplication {
                     new Object[]{"Miraj Cinemas - Kasaragod",      "City Mall, Kasaragod",                     "Kasaragod"}
                 );
 
+                List<Theatre> existingTheatres = theatreRepo.findAll();
                 for (Object[] td : theatreData) {
-                    Theatre t = theatreRepo.save(Theatre.builder()
-                        .name((String) td[0])
-                        .location((String) td[1])
-                        .city((String) td[2])
-                        .build());
-
-                    // 2 screens per theatre
-                    for (int s = 1; s <= 2; s++) {
-                        screenRepo.save(Screen.builder()
-                            .theatre(t)
-                            .name("Screen " + s)
-                            .totalSeats(80)
-                            .rows(8)
-                            .cols(10)
+                    String name = (String) td[0];
+                    if (existingTheatres.stream().noneMatch(t -> t.getName().equalsIgnoreCase(name))) {
+                        Theatre t = theatreRepo.save(Theatre.builder()
+                            .name(name)
+                            .location((String) td[1])
+                            .city((String) td[2])
                             .build());
+
+                        // 2 screens per theatre
+                        for (int s = 1; s <= 2; s++) {
+                            screenRepo.save(Screen.builder()
+                                .theatre(t)
+                                .name("Screen " + s)
+                                .totalSeats(80)
+                                .rows(8)
+                                .cols(10)
+                                .build());
+                        }
                     }
                 }
-                log.info("20 Kerala theatres + 40 screens seeded.");
+                log.info("Kerala theatres + screens seeded.");
             } else if (screenRepo.count() == 0) {
                 for (Theatre t : theatreRepo.findAll()) {
                     for (int s = 1; s <= 2; s++) {
@@ -225,7 +262,7 @@ public class TicketHubApplication {
             }
 
             // ── 4. Shows — next 5 days for each movie ──────
-            if (showRepo.count() == 0) {
+            if (showRepo.count() < 50) {
                 List<Movie>  movies  = movieRepo.findAll();
                 List<Screen> screens = screenRepo.findAll();
                 if (!screens.isEmpty() && !movies.isEmpty()) {

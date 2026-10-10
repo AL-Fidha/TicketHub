@@ -8,7 +8,18 @@ import java.util.List;
 public class BookingRequest {
 
     @NotNull
+    @com.fasterxml.jackson.annotation.JsonAlias({"show_id", "showId"})
     private Long showId;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("show_id")
+    public Long getShowIdSnake() {
+        return showId;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("show_id")
+    public void setShowIdSnake(Long showId) {
+        this.showId = showId;
+    }
 
     @NotEmpty @Size(max = 8, message = "Maximum 8 seats per booking")
     private List<SeatSelection> seats;

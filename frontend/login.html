@@ -92,9 +92,11 @@
     if (!email || !password) { alertEl.textContent = 'Email and password are required.'; alertEl.classList.add('show'); return; }
     btn.disabled = true; btn.textContent = 'Logging in…';
     try {
-      const { token, user } = await AuthAPI.login(email, password);
+      const res = await AuthAPI.login(email, password);
+      const token = res.token;
+      const user = res.user || { id: res.id, name: res.name, email: res.email, role: res.role };
       Auth.setToken(token); Auth.setUser(user);
-      showToast('Welcome back, ' + user.name + '! 👋', 'success');
+      showToast('Welcome back, ' + (user.name || 'User') + '! 👋', 'success');
       setTimeout(() => window.location.href = '/dashboard.html', 700);
     } catch (e) {
       alertEl.textContent = e.message; alertEl.classList.add('show');
@@ -119,7 +121,9 @@
     if (!agree)                                { alertEl.textContent = 'Please agree to the Terms of Service.'; alertEl.classList.add('show'); return; }
     btn.disabled = true; btn.textContent = 'Creating account…';
     try {
-      const { token, user } = await AuthAPI.register(first + ' ' + last, email, phone, password);
+      const res = await AuthAPI.register(first + ' ' + last, email, phone, password);
+      const token = res.token;
+      const user = res.user || { id: res.id, name: res.name, email: res.email, role: res.role };
       Auth.setToken(token); Auth.setUser(user);
       showToast('Account created! Welcome to Ticket Hub 🎉', 'success');
       setTimeout(() => window.location.href = '/dashboard.html', 700);

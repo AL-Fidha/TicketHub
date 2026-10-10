@@ -8,10 +8,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record AdminShowRequest(
-    @NotNull Long movieId,
-    @NotNull Long screenId,
-    @NotNull LocalDate showDate,
-    @NotNull LocalTime showTime,
-    @NotNull @DecimalMin("0.01") BigDecimal priceStd,
-    @NotNull @DecimalMin("0.01") BigDecimal pricePrem
+    @NotNull @com.fasterxml.jackson.annotation.JsonAlias({"movieId", "movie_id"}) Long movieId,
+    @NotNull @com.fasterxml.jackson.annotation.JsonAlias({"screenId", "screen_id"}) Long screenId,
+    @NotNull @com.fasterxml.jackson.annotation.JsonAlias({"showDate", "show_date"}) LocalDate showDate,
+    @NotNull @com.fasterxml.jackson.annotation.JsonAlias({"showTime", "show_time"}) LocalTime showTime,
+    @NotNull @DecimalMin("0.01") @com.fasterxml.jackson.annotation.JsonAlias({"priceStd", "price_std"}) BigDecimal priceStd,
+    @NotNull @DecimalMin("0.01") @com.fasterxml.jackson.annotation.JsonAlias({"pricePrem", "price_prem"}) BigDecimal pricePrem
 ) {}

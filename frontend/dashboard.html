@@ -37,6 +37,8 @@
           <div class="sidebar-divider"></div>
           <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.5rem 1rem .25rem;">Admin Panel</div>
           <div class="sidebar-link" onclick="showSection('manageMovies')"  id="navManageMovies"><span class="link-icon">🎬</span>Manage Movies</div>
+                    <div class="sidebar-link" onclick="showSection('manageShows')"   id="navManageShows"><span class="link-icon">🕒</span>Manage Shows</div>
+                    <div class="sidebar-link" onclick="showSection('manageTheatres')" id="navManageTheatres"><span class="link-icon">🏙️</span>Manage Theatres</div>
           <div class="sidebar-link" onclick="showSection('allBookings')"   id="navAllBookings"><span class="link-icon">📋</span>All Bookings</div>
           <div class="sidebar-link" onclick="showSection('allUsers')"      id="navAllUsers"><span class="link-icon">👥</span>All Users</div>
         </div>
@@ -61,7 +63,7 @@
           <div id="recentBookings"><div class="spinner"></div></div>
         </div>
         <div style="background:linear-gradient(135deg,rgba(229,9,20,0.12),rgba(74,144,217,0.06));border:1px solid rgba(229,9,20,0.2);border-radius:var(--radius);padding:1.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
-          <div><h3 style="font-weight:700;margin-bottom:.35rem;">Ready for your next movie?</h3><p style="font-size:.88rem;color:var(--text-muted);">Browse 20 Kerala theatres and book your seats now.</p></div>
+          <div><h3 style="font-weight:700;margin-bottom:.35rem;">Ready for your next movie?</h3><p style="font-size:.88rem;color:var(--text-muted);">Browse available Kerala theatre listings and book your seats.</p></div>
           <a href="/movies.html" class="btn btn-primary">Browse Movies →</a>
         </div>
       </div>
@@ -107,7 +109,52 @@
           <button class="btn btn-primary btn-sm" onclick="openMovieForm()">+ Add Movie</button>
         </div>
         <p class="dash-subtitle">Add, edit or remove movies from the catalog.</p>
+        <div style="max-width:850px;margin-bottom:1.5rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+            <label class="form-label" for="tmdbLanguage" style="margin:0;">Find recent and upcoming releases</label>
+            <select class="form-input" id="tmdbLanguage" style="width:auto;min-width:150px;">
+              <option value="Malayalam">Malayalam</option><option value="Tamil">Tamil</option>
+              <option value="Hindi">Hindi</option><option value="English">English</option>
+              <option value="Telugu">Telugu</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="discoverTmdbMovies()">Search TMDB</button>
+          </div>
+          <div id="tmdbResults" style="margin-top:1rem;"></div>
+        </div>
         <div id="adminMoviesTable"><div class="spinner"></div></div>
+      </div>
+
+      <div class="dash-section" id="sectionManageShows">
+        <h1 class="dash-title">Manage Shows</h1>
+        <p class="dash-subtitle">Schedule a movie on one of your cinema screens.</p>
+        <div style="max-width:760px;margin-bottom:2rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;">
+            <div class="form-group"><label class="form-label" for="showMovie">Movie</label><select class="form-input" id="showMovie"></select></div>
+            <div class="form-group"><label class="form-label" for="showScreen">Screen</label><select class="form-input" id="showScreen"></select></div>
+            <div class="form-group"><label class="form-label" for="showDate">Date</label><input class="form-input" id="showDate" type="date"/></div>
+            <div class="form-group"><label class="form-label" for="showTime">Time</label><input class="form-input" id="showTime" type="time"/></div>
+            <div class="form-group"><label class="form-label" for="showPriceStd">Standard price (INR)</label><input class="form-input" id="showPriceStd" type="number" min="1" step="0.01" value="220"/></div>
+            <div class="form-group"><label class="form-label" for="showPricePrem">Premium price (INR)</label><input class="form-input" id="showPricePrem" type="number" min="1" step="0.01" value="380"/></div>
+          </div>
+          <button class="btn btn-primary" onclick="createAdminShow()">Add show</button>
+        </div>
+        <div id="adminShowsTable"><div class="spinner"></div></div>
+      </div>
+
+      <div class="dash-section" id="sectionManageTheatres">
+        <h1 class="dash-title">Manage Theatres</h1>
+        <p class="dash-subtitle">Add a venue and configure its first screen.</p>
+        <div style="max-width:760px;margin-bottom:2rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;">
+            <div class="form-group"><label class="form-label" for="theatreName">Theatre name</label><input class="form-input" id="theatreName" required/></div>
+            <div class="form-group"><label class="form-label" for="theatreCity">City</label><input class="form-input" id="theatreCity" required/></div>
+            <div class="form-group"><label class="form-label" for="theatreLocation">Address</label><input class="form-input" id="theatreLocation" required/></div>
+            <div class="form-group"><label class="form-label" for="theatreRows">Seat rows</label><input class="form-input" id="theatreRows" type="number" min="1" max="20" value="8"/></div>
+            <div class="form-group"><label class="form-label" for="theatreCols">Seats per row</label><input class="form-input" id="theatreCols" type="number" min="1" max="25" value="10"/></div>
+          </div>
+          <button class="btn btn-primary" onclick="createAdminTheatre()">Add theatre</button>
+        </div>
+        <div id="adminTheatresTable"><div class="spinner"></div></div>
       </div>
 
       <!-- ADMIN: ALL BOOKINGS -->
@@ -173,6 +220,16 @@ let currentUser = null;
 document.addEventListener('DOMContentLoaded', async () => {
   if (!Auth.loggedIn()) { window.location.href = '/login.html'; return; }
   currentUser = Auth.getUser();
+  if (!currentUser || !currentUser.name) {
+    try {
+      currentUser = await AuthAPI.me();
+      Auth.setUser(currentUser);
+    } catch (e) {
+      Auth.clear();
+      window.location.href = '/login.html';
+      return;
+    }
+  }
   updateNav();
   initDash();
 });
@@ -268,6 +325,8 @@ function showSection(name) {
   if (name === 'allBookings')  loadAllBookings();
   if (name === 'allUsers')     loadAllUsers();
   if (name === 'manageMovies') loadAdminMovies();
+  if (name === 'manageShows') loadAdminShows();
+  if (name === 'manageTheatres') loadAdminTheatres();
 }
 
 async function loadMyBookings() {
@@ -358,6 +417,135 @@ async function loadAdminMovies() {
   } catch(e) { document.getElementById('adminMoviesTable').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
 }
 
+async function discoverTmdbMovies() {
+  const container = document.getElementById('tmdbResults');
+  const language = document.getElementById('tmdbLanguage').value;
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const movies = await AdminAPI.discoverTmdbMovies(language);
+    if (!movies.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);">No matching recent or upcoming titles found.</p>';
+      return;
+    }
+    container.innerHTML = `<div class="bookings-table-wrap"><table class="bookings-table">
+      <thead><tr><th>Poster</th><th>Title</th><th>Release</th><th>Rating</th><th></th></tr></thead>
+      <tbody>${movies.map(movie => `<tr>
+        <td>${movie.poster_url ? `<img src="${adminText(movie.poster_url)}" alt="" style="width:42px;height:60px;object-fit:cover;"/>` : '—'}</td>
+        <td>${adminText(movie.title)}</td><td>${adminText(movie.release_date || '—')}</td>
+        <td>${Number(movie.rating).toFixed(1)}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="importTmdbMovie(${Number(movie.tmdb_id)})">Import</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+  } catch(e) { container.innerHTML = `<p style="color:var(--text-muted);">${adminText(e.message)}</p>`; }
+}
+
+async function importTmdbMovie(tmdbId) {
+  const language = document.getElementById('tmdbLanguage').value;
+  try {
+    const movie = await AdminAPI.importTmdbMovie(tmdbId, language);
+    showToast(`${movie.title} added to your catalogue.`, 'success');
+    loadAdminMovies();
+    discoverTmdbMovies();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function loadAdminShows() {
+  const container = document.getElementById('adminShowsTable');
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const [shows, movies, screens] = await Promise.all([AdminAPI.shows(), MoviesAPI.getAll(), AdminAPI.screens()]);
+    document.getElementById('showMovie').innerHTML = movies.map(movie =>
+      `<option value="${movie.id}">${adminText(movie.title)} (${adminText(movie.language)})</option>`).join('');
+    document.getElementById('showScreen').innerHTML = screens.map(screen =>
+      `<option value="${screen.id}">${adminText(screen.theatre_name)} - ${adminText(screen.name)} (${adminText(screen.city)})</option>`).join('');
+    if (!shows.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);padding:1rem 0;">No scheduled shows.</p>';
+      return;
+    }
+    container.innerHTML = `<div class="bookings-table-wrap"><table class="bookings-table">
+      <thead><tr><th>Movie</th><th>Theatre / Screen</th><th>Date</th><th>Time</th><th>Standard</th><th>Premium</th><th></th></tr></thead>
+      <tbody>${shows.map(show => `<tr>
+        <td>${adminText(show.movie)}</td><td>${adminText(show.theatre)} / ${adminText(show.screen)}</td>
+        <td>${adminText(show.show_date)}</td><td>${adminText(show.show_time.slice(0, 5))}</td>
+        <td>₹${show.price_std}</td><td>₹${show.price_prem}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="deleteAdminShow(${show.id})">Remove</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+  } catch(e) { container.innerHTML = `<p style="color:var(--text-muted);">${adminText(e.message)}</p>`; }
+}
+
+async function createAdminShow() {
+  const date = document.getElementById('showDate').value;
+  const time = document.getElementById('showTime').value;
+  const priceStd = Number(document.getElementById('showPriceStd').value);
+  const pricePrem = Number(document.getElementById('showPricePrem').value);
+  if (!date || !time || priceStd <= 0 || pricePrem <= 0) {
+    showToast('Choose a date, time, and positive ticket prices.', 'error');
+    return;
+  }
+  try {
+    await AdminAPI.addShow({
+      movieId: Number(document.getElementById('showMovie').value),
+      screenId: Number(document.getElementById('showScreen').value),
+      showDate: date,
+      showTime: time,
+      priceStd,
+      pricePrem
+    });
+    showToast('Show scheduled.', 'success');
+    loadAdminShows();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function deleteAdminShow(id) {
+  if (!confirm('Remove this show? Shows with booking history cannot be removed.')) return;
+  try {
+    await AdminAPI.deleteShow(id);
+    showToast('Show removed.', 'success');
+    loadAdminShows();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function loadAdminTheatres() {
+  const container = document.getElementById('adminTheatresTable');
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const theatres = await AdminAPI.theatres();
+    if (!theatres.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);padding:1rem 0;">No theatres have been added.</p>';
+      return;
+    }
+    container.innerHTML = `<div class="bookings-table-wrap"><table class="bookings-table">
+      <thead><tr><th>Name</th><th>City</th><th>Address</th></tr></thead>
+      <tbody>${theatres.map(theatre => `<tr><td>${adminText(theatre.name)}</td><td>${adminText(theatre.city)}</td><td>${adminText(theatre.location)}</td></tr>`).join('')}</tbody>
+    </table></div>`;
+  } catch(e) { container.innerHTML = `<p style="color:var(--text-muted);">${adminText(e.message)}</p>`; }
+}
+
+async function createAdminTheatre() {
+  const data = {
+    name: document.getElementById('theatreName').value.trim(),
+    city: document.getElementById('theatreCity').value.trim(),
+    location: document.getElementById('theatreLocation').value.trim(),
+    rows: Number(document.getElementById('theatreRows').value),
+    cols: Number(document.getElementById('theatreCols').value)
+  };
+  if (!data.name || !data.city || !data.location || !data.rows || !data.cols) {
+    showToast('Complete the theatre details and seat layout.', 'error');
+    return;
+  }
+  try {
+    await AdminAPI.addTheatre(data);
+    ['theatreName', 'theatreCity', 'theatreLocation'].forEach(id => { document.getElementById(id).value = ''; });
+    showToast('Theatre and first screen added.', 'success');
+    loadAdminTheatres();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+function adminText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+}
+
 // ── Ticket viewer ─────────────────────────────
 async function viewTicket(ref) {
   try {
@@ -433,7 +621,7 @@ function openMovieForm(movie = null) {
   document.getElementById('mfTitle').value    = movie?.title    || '';
   document.getElementById('mfGenre').value    = movie?.genre    || '';
   document.getElementById('mfLang').value     = movie?.language || 'Malayalam';
-  document.getElementById('mfDuration').value = movie?.duration_min || '';
+  document.getElementById('mfDuration').value = movie?.duration_min || movie?.durationMin || '';
   document.getElementById('mfRating').value   = movie?.rating   || '';
   document.getElementById('mfDesc').value     = movie?.description || '';
   document.getElementById('mfStatus').value   = movie?.status   || 'Now Showing';
@@ -462,8 +650,8 @@ async function saveMovie() {
   al.classList.remove('show');
   if (!title || !genre || !dur) { al.textContent='Title, genre and duration are required.'; al.classList.add('show'); return; }
   try {
-    if (editId) { await MoviesAPI.update(editId, { title, genre, language, duration_min: dur, rating, description: desc, status }); showToast('Movie updated!', 'success'); }
-    else        { await MoviesAPI.add({ title, genre, language, duration_min: dur, rating, description: desc, status }); showToast('Movie added!', 'success'); }
+    if (editId) { await MoviesAPI.update(editId, { title, genre, language, duration_min: dur, durationMin: dur, rating, description: desc, status }); showToast('Movie updated!', 'success'); }
+    else        { await MoviesAPI.add({ title, genre, language, duration_min: dur, durationMin: dur, rating, description: desc, status }); showToast('Movie added!', 'success'); }
     document.getElementById('movieFormModal').classList.remove('show');
     loadAdminMovies();
   } catch(e) { al.textContent = e.message; al.classList.add('show'); }

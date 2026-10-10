@@ -24,10 +24,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .cors(org.springframework.security.config.Customizer.withDefaults())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Static frontend — always public
-                .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**").permitAll()
+                .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest).permitAll()
+                // Static frontend & common endpoints — always public
+                .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**", "/error", "/favicon.ico").permitAll()
                 // Auth endpoints — public
                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                 // Movie & theatre browsing — public
@@ -43,6 +45,18 @@ public class SecurityConfig {
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        var configuration = new org.springframework.web.cors.CorsConfiguration();
+        configuration.setAllowedOriginPatterns(java.util.List.of("*"));
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+        configuration.setAllowedHeaders(java.util.List.of("*"));
+        configuration.setAllowCredentials(true);
+        var source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

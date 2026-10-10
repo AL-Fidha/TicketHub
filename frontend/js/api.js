@@ -4,7 +4,12 @@
 //  Every page imports this via <script src="/js/api.js">
 // ─────────────────────────────────────────────────────────────
 
-const API_BASE = 'http://localhost:5000/api';
+let API_BASE = '/api';
+if (typeof window !== 'undefined') {
+  if (window.location.protocol === 'file:' || ['5500', '3000', '5000', '8000'].includes(window.location.port)) {
+    API_BASE = window.__API_BASE__ || 'http://localhost:8081/api';
+  }
+}
 
 // ── token helpers ─────────────────────────────
 const Auth = {
@@ -23,7 +28,24 @@ async function apiFetch(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  } catch (err) {
+    if (API_BASE.includes('8081')) {
+      try {
+        const altBase = 'http://localhost:8080/api';
+        res = await fetch(`${altBase}${path}`, { ...options, headers });
+        API_BASE = altBase;
+        window.__API_BASE__ = altBase;
+      } catch (err2) {
+        throw new Error('Could not connect to backend server. Make sure TicketHub is running on port 8080 or 8081.');
+      }
+    } else {
+      throw new Error('Could not connect to backend server. Make sure TicketHub is running.');
+    }
+  }
+
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -32,8 +54,16 @@ async function apiFetch(path, options = {}) {
 
 // ── AUTH ──────────────────────────────────────
 const AuthAPI = {
-  login:    (email, password)       => apiFetch('/auth/login',    { method: 'POST', body: JSON.stringify({ email, password }) }),
-  register: (name, email, phone, password) => apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, phone, password }) }),
+  login: async (email, password) => {
+    const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    const user = data.user || { id: data.id, name: data.name, email: data.email, role: data.role };
+    return { token: data.token, user };
+  },
+  register: async (name, email, phone, password) => {
+    const data = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, phone, password }) });
+    const user = data.user || { id: data.id, name: data.name, email: data.email, role: data.role };
+    return { token: data.token, user };
+  },
   me:       ()                      => apiFetch('/auth/me'),
   updateProfile: (name, phone)      => apiFetch('/auth/profile',  { method: 'PUT',  body: JSON.stringify({ name, phone }) }),
   changePassword: (currentPassword, newPassword) => apiFetch('/auth/password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) }),
@@ -63,7 +93,7 @@ const SeatsAPI = {
 
 // ── BOOKINGS ──────────────────────────────────
 const BookingsAPI = {
-  create:  (show_id, seats)  => apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ show_id, seats }) }),
+  create:  (show_id, seats)  => apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ show_id, showId: show_id, seats }) }),
   mine:    ()                => apiFetch('/bookings/mine'),
   getOne:  (ref)             => apiFetch(`/bookings/${ref}`),
   cancel:  (ref)             => apiFetch(`/bookings/${ref}/cancel`, { method: 'PUT' }),
@@ -75,6 +105,14 @@ const BookingsAPI = {
 const AdminAPI = {
   stats: () => apiFetch('/admin/stats'),
   users: () => apiFetch('/admin/users'),
+  theatres: () => apiFetch('/admin/theatres'),
+  screens: () => apiFetch('/admin/screens'),
+  shows: () => apiFetch('/admin/shows'),
+  addTheatre: data => apiFetch('/admin/theatres', { method: 'POST', body: JSON.stringify(data) }),
+  addShow: data => apiFetch('/admin/shows', { method: 'POST', body: JSON.stringify(data) }),
+  deleteShow: id => apiFetch(`/admin/shows/${id}`, { method: 'DELETE' }),
+  discoverTmdbMovies: language => apiFetch(`/admin/tmdb/movies?language=${encodeURIComponent(language)}`),
+  importTmdbMovie: (tmdbId, language) => apiFetch(`/admin/tmdb/movies/${tmdbId}?language=${encodeURIComponent(language)}`, { method: 'POST' }),
 };
 
 // ── TOAST ─────────────────────────────────────
@@ -113,18 +151,20 @@ function updateNav() {
 // ── POSTER helper (Real TMDB / Image URLs) ─────
 function posterImg(movie, cls = '') {
   const url = movie.poster_url || movie.posterUrl || movie.posterPath;
-  if (url) {
-    return `<img src="${url}" alt="${movie.title}" class="poster-img ${cls}" loading="lazy"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-            <div class="poster-fallback" style="display:none;background:linear-gradient(135deg,#141420,#0a0a0f);color:#a0a0b0;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:1rem;text-align:center;width:100%;height:100%;">
-              <span style="font-size:2rem;color:var(--primary);">🎬</span>
-              <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary);">${movie.title}</span>
-            </div>`;
-  }
-  return `<div class="poster-fallback" style="display:flex;background:linear-gradient(135deg,#141420,#0a0a0f);color:#a0a0b0;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:1rem;text-align:center;width:100%;height:100%;">
-            <span style="font-size:2rem;color:var(--primary);">🎬</span>
-            <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary);">${movie.title}</span>
-          </div>`;
+  const title = String(movie.title || 'Untitled');
+  const safeTitle = title.replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+  const monogram = title.trim().split(/\s+/).slice(0, 2).map(word => word[0] || '').join('').toUpperCase();
+  const fallback = `<div class="poster-fallback" style="display:none" role="img" aria-label="Poster unavailable for ${safeTitle}">
+    <span class="poster-monogram">${monogram}</span>
+    <span class="poster-fallback-title">${safeTitle}</span>
+    <span class="poster-fallback-note">Artwork unavailable</span>
+  </div>`;
+  if (!url) return fallback.replace('display:none', 'display:flex');
+  const safeUrl = String(url).replace(/[&"']/g, character => ({ '&': '&amp;', '"': '&quot;', "'": '&#39;' })[character]);
+  return `<img src="${safeUrl}" alt="${safeTitle}" class="poster-img ${cls}" loading="lazy"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />${fallback}`;
 }
 
 function genEmoji(genre) {
@@ -139,7 +179,8 @@ function genEmoji(genre) {
 
 // ── Duration formatter ────────────────────────
 function fmtDuration(mins) {
-  return `${Math.floor(mins/60)}h ${mins%60}m`;
+  const m = Number(mins) || 0;
+  return `${Math.floor(m / 60)}h ${m % 60}m`;
 }
 
 // ── Date chips helper ─────────────────────────
@@ -173,3 +214,18 @@ function selectDateChip(el, containerId) {
   const cb = window[`_dateChipCb_${containerId}`];
   if (cb) cb(el.dataset.date);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const menuButton = document.getElementById('hamburger');
+  const navLinks = document.querySelector('.nav-links');
+  if (!menuButton || !navLinks) return;
+
+  menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.setAttribute('aria-label', 'Open navigation menu');
+  menuButton.addEventListener('click', () => {
+    const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+    menuButton.setAttribute('aria-expanded', String(!isOpen));
+    menuButton.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+    navLinks.classList.toggle('open', !isOpen);
+  });
+});

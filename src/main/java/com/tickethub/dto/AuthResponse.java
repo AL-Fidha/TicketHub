@@ -11,4 +11,8 @@ public class AuthResponse {
     private String name;
     private String email;
     private String role;
+
+    public java.util.Map<String, Object> getUser() {
+        return java.util.Map.of("id", id, "name", name, "email", email, "role", role);
+    }
 }

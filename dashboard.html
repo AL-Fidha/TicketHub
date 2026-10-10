@@ -1,574 +1,675 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard – Ticket Hub</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>" />
+  <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body>
+<nav class="navbar">
+  <a href="/index.html" class="nav-brand"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></a>
+  <ul class="nav-links">
+    <li><a href="/index.html">Home</a></li>
+    <li><a href="/movies.html">Movies</a></li>
+    <li><a href="/booking.html">Book Tickets</a></li>
+    <li><a href="/dashboard.html" class="active">My Bookings</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions"></div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
 
-  <!-- ── NAVBAR ── -->
-  <nav class="navbar">
-    <a href="index.html" class="nav-brand">
-      <div class="logo-icon">🎬</div>
-      Ticket<span>Hub</span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="movies.html">Movies</a></li>
-      <li><a href="booking.html">Book Tickets</a></li>
-      <li><a href="dashboard.html" class="active">My Bookings</a></li>
-    </ul>
-    <div class="nav-actions" id="navActions"></div>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
+<div class="page-wrapper">
+  <div class="dashboard-layout">
 
-  <div class="page-wrapper">
-    <div class="dashboard-layout">
-
-      <!-- ── SIDEBAR ── -->
-      <aside class="sidebar">
-        <div class="sidebar-avatar">
-          <div class="avatar-circle" id="sideAvatar">?</div>
-          <div class="sidebar-name" id="sidebarName">Loading...</div>
-          <div class="sidebar-email" id="sidebarEmail">—</div>
-        </div>
-
-        <nav class="sidebar-nav">
-          <div class="sidebar-link active" onclick="showSection('overview')" id="navOverview">
-            <span class="link-icon">📊</span> Overview
-          </div>
-          <div class="sidebar-link" onclick="showSection('bookings')" id="navBookings">
-            <span class="link-icon">🎟️</span> My Bookings
-          </div>
-          <div class="sidebar-link" onclick="showSection('profile')" id="navProfile">
-            <span class="link-icon">👤</span> Profile
-          </div>
-          <!-- Admin only -->
-          <div id="adminNav" style="display:none;">
-            <div class="sidebar-divider"></div>
-            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:0.5rem 1rem;margin-bottom:0.25rem;">Admin Panel</div>
-            <div class="sidebar-link" onclick="showSection('manageMovies')" id="navManageMovies">
-              <span class="link-icon">🎬</span> Manage Movies
-            </div>
-            <div class="sidebar-link" onclick="showSection('allBookings')" id="navAllBookings">
-              <span class="link-icon">📋</span> All Bookings
-            </div>
-          </div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-avatar">
+        <div class="avatar-circle" id="sideAvatar">?</div>
+        <div class="sidebar-name"  id="sidebarName">—</div>
+        <div class="sidebar-email" id="sidebarEmail">—</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-link active" onclick="showSection('overview')"  id="navOverview"><span class="link-icon">📊</span>Overview</div>
+        <div class="sidebar-link"        onclick="showSection('bookings')"  id="navBookings"><span class="link-icon">🎟️</span>My Bookings</div>
+        <div class="sidebar-link"        onclick="showSection('profile')"   id="navProfile"><span class="link-icon">👤</span>Profile</div>
+        <div id="adminNavItems" style="display:none;">
           <div class="sidebar-divider"></div>
-          <div class="sidebar-link" onclick="handleLogout()" style="color:#ff6b6b;">
-            <span class="link-icon">🚪</span> Log Out
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.5rem 1rem .25rem;">Admin Panel</div>
+          <div class="sidebar-link" onclick="showSection('manageMovies')"  id="navManageMovies"><span class="link-icon">🎬</span>Manage Movies</div>
+                    <div class="sidebar-link" onclick="showSection('manageShows')"   id="navManageShows"><span class="link-icon">🕒</span>Manage Shows</div>
+                    <div class="sidebar-link" onclick="showSection('manageTheatres')" id="navManageTheatres"><span class="link-icon">🏙️</span>Manage Theatres</div>
+          <div class="sidebar-link" onclick="showSection('allBookings')"   id="navAllBookings"><span class="link-icon">📋</span>All Bookings</div>
+          <div class="sidebar-link" onclick="showSection('allUsers')"      id="navAllUsers"><span class="link-icon">👥</span>All Users</div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-link" onclick="doLogout()" style="color:#ff6b6b;"><span class="link-icon">🚪</span>Log Out</div>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dashboard-main">
+
+      <!-- OVERVIEW -->
+      <div class="dash-section active" id="sectionOverview">
+        <h1 class="dash-title" id="welcomeTitle">Welcome back!</h1>
+        <p class="dash-subtitle" id="welcomeSub">Here's your activity on Ticket Hub.</p>
+        <div class="stats-row" id="statsRow"><div class="spinner"></div></div>
+        <div style="margin-bottom:2rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+            <h3 style="font-weight:700;">Recent Bookings</h3>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('bookings')">View All</button>
           </div>
-        </nav>
-      </aside>
+          <div id="recentBookings"><div class="spinner"></div></div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(229,9,20,0.12),rgba(74,144,217,0.06));border:1px solid rgba(229,9,20,0.2);border-radius:var(--radius);padding:1.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+          <div><h3 style="font-weight:700;margin-bottom:.35rem;">Ready for your next movie?</h3><p style="font-size:.88rem;color:var(--text-muted);">Browse available Kerala theatre listings and book your seats.</p></div>
+          <a href="/movies.html" class="btn btn-primary">Browse Movies →</a>
+        </div>
+      </div>
 
-      <!-- ── MAIN CONTENT ── -->
-      <main class="dashboard-main">
+      <!-- MY BOOKINGS -->
+      <div class="dash-section" id="sectionBookings">
+        <h1 class="dash-title">My Bookings</h1>
+        <p class="dash-subtitle">All your ticket purchases.</p>
+        <div id="myBookingsList"></div>
+      </div>
 
-        <!-- OVERVIEW -->
-        <div class="dash-section active" id="sectionOverview">
-          <h1 class="dash-title" id="welcomeTitle">Welcome back!</h1>
-          <p class="dash-subtitle">Here's a summary of your activity on Ticket Hub.</p>
-
-          <div class="stats-row" id="statsRow"></div>
-
-          <div style="margin-bottom:2rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-              <h3 style="font-weight:700;">Recent Bookings</h3>
-              <button class="btn btn-ghost btn-sm" onclick="showSection('bookings')">View All</button>
+      <!-- PROFILE -->
+      <div class="dash-section" id="sectionProfile">
+        <h1 class="dash-title">My Profile</h1>
+        <p class="dash-subtitle">Manage your account information.</p>
+        <div style="max-width:540px;">
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;">
+            <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+              <div class="avatar-circle" id="profileAvatar" style="width:64px;height:64px;font-size:1.4rem;">?</div>
+              <div><div style="font-weight:700;font-size:1.1rem;" id="profileName">—</div><div style="font-size:.85rem;color:var(--text-muted);" id="profileRole">—</div></div>
             </div>
-            <div id="recentBookingsTable"></div>
+            <div id="profileAlert" class="form-alert success"></div>
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text" id="pName"/></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="pEmail" disabled style="opacity:.5;cursor:not-allowed;"/></div>
+            <div class="form-group"><label class="form-label">Mobile Number</label><input class="form-input" type="tel" id="pPhone"/></div>
+            <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
           </div>
-
-          <div style="background:linear-gradient(135deg,rgba(229,9,20,0.12),rgba(74,144,217,0.06));border:1px solid rgba(229,9,20,0.2);border-radius:var(--radius);padding:1.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
-            <div>
-              <h3 style="font-weight:700;margin-bottom:0.35rem;">Ready for your next movie?</h3>
-              <p style="font-size:0.88rem;color:var(--text-muted);">Browse the latest releases and book your seats now.</p>
-            </div>
-            <a href="movies.html" class="btn btn-primary">Browse Movies →</a>
-          </div>
-        </div>
-
-        <!-- MY BOOKINGS -->
-        <div class="dash-section" id="sectionBookings">
-          <h1 class="dash-title">My Bookings</h1>
-          <p class="dash-subtitle">All your ticket purchases and upcoming shows.</p>
-          <div id="allBookingsTable"></div>
-          <div id="noBookingsMsg" style="display:none;text-align:center;padding:4rem 0;color:var(--text-muted);">
-            <div style="font-size:3rem;margin-bottom:1rem;">🎭</div>
-            <h3 style="margin-bottom:0.5rem;">No bookings yet</h3>
-            <p style="font-size:0.9rem;margin-bottom:1.5rem;">You haven't booked any tickets yet.</p>
-            <a href="movies.html" class="btn btn-primary">Book Your First Ticket</a>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;">
+            <h3 style="font-weight:700;margin-bottom:1.25rem;">Change Password</h3>
+            <div id="pwdAlert" class="form-alert error"></div>
+            <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" id="curPwd" placeholder="••••••••"/></div>
+            <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" id="newPwd" placeholder="Min. 6 characters"/></div>
+            <div class="form-group"><label class="form-label">Confirm New</label><input class="form-input" type="password" id="confPwd" placeholder="Repeat new password"/></div>
+            <button class="btn btn-ghost" onclick="changePwd()">Update Password</button>
           </div>
         </div>
+      </div>
 
-        <!-- PROFILE -->
-        <div class="dash-section" id="sectionProfile">
-          <h1 class="dash-title">My Profile</h1>
-          <p class="dash-subtitle">Manage your account information.</p>
-
-          <div style="max-width:540px;">
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;">
-              <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
-                <div class="avatar-circle" id="profileAvatar" style="width:64px;height:64px;font-size:1.4rem;">?</div>
-                <div>
-                  <div style="font-weight:700;font-size:1.1rem;" id="profileName">—</div>
-                  <div style="font-size:0.85rem;color:var(--text-muted);" id="profileRole">—</div>
-                </div>
-              </div>
-
-              <div id="profileAlert" class="form-alert success"></div>
-
-              <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input class="form-input" type="text" id="profileNameInput" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input class="form-input" type="email" id="profileEmailInput" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Mobile Number</label>
-                <input class="form-input" type="tel" id="profilePhoneInput" />
-              </div>
-              <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
-            </div>
-
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;">
-              <h3 style="font-weight:700;margin-bottom:1.25rem;">Change Password</h3>
-              <div id="pwdAlert" class="form-alert error"></div>
-              <div class="form-group">
-                <label class="form-label">Current Password</label>
-                <input class="form-input" type="password" id="currentPwd" placeholder="••••••••" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">New Password</label>
-                <input class="form-input" type="password" id="newPwd" placeholder="Min. 6 characters" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Confirm New Password</label>
-                <input class="form-input" type="password" id="confirmPwd" placeholder="Repeat new password" />
-              </div>
-              <button class="btn btn-ghost" onclick="changePassword()">Update Password</button>
-            </div>
+      <!-- ADMIN: MANAGE MOVIES -->
+      <div class="dash-section" id="sectionManageMovies">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
+          <h1 class="dash-title">Manage Movies</h1>
+          <button class="btn btn-primary btn-sm" onclick="openMovieForm()">+ Add Movie</button>
+        </div>
+        <p class="dash-subtitle">Add, edit or remove movies from the catalog.</p>
+        <div style="max-width:850px;margin-bottom:1.5rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+            <label class="form-label" for="tmdbLanguage" style="margin:0;">Find recent and upcoming releases</label>
+            <select class="form-input" id="tmdbLanguage" style="width:auto;min-width:150px;">
+              <option value="Malayalam">Malayalam</option><option value="Tamil">Tamil</option>
+              <option value="Hindi">Hindi</option><option value="English">English</option>
+              <option value="Telugu">Telugu</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="discoverTmdbMovies()">Search TMDB</button>
           </div>
+          <div id="tmdbResults" style="margin-top:1rem;"></div>
         </div>
+        <div id="adminMoviesTable"><div class="spinner"></div></div>
+      </div>
 
-        <!-- ADMIN: MANAGE MOVIES -->
-        <div class="dash-section" id="sectionManageMovies">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
-            <h1 class="dash-title">Manage Movies</h1>
-            <button class="btn btn-primary btn-sm" onclick="openAddMovieModal()">+ Add Movie</button>
+      <div class="dash-section" id="sectionManageShows">
+        <h1 class="dash-title">Manage Shows</h1>
+        <p class="dash-subtitle">Schedule a movie on one of your cinema screens.</p>
+        <div style="max-width:760px;margin-bottom:2rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;">
+            <div class="form-group"><label class="form-label" for="showMovie">Movie</label><select class="form-input" id="showMovie"></select></div>
+            <div class="form-group"><label class="form-label" for="showScreen">Screen</label><select class="form-input" id="showScreen"></select></div>
+            <div class="form-group"><label class="form-label" for="showDate">Date</label><input class="form-input" id="showDate" type="date"/></div>
+            <div class="form-group"><label class="form-label" for="showTime">Time</label><input class="form-input" id="showTime" type="time"/></div>
+            <div class="form-group"><label class="form-label" for="showPriceStd">Standard price (INR)</label><input class="form-input" id="showPriceStd" type="number" min="1" step="0.01" value="220"/></div>
+            <div class="form-group"><label class="form-label" for="showPricePrem">Premium price (INR)</label><input class="form-input" id="showPricePrem" type="number" min="1" step="0.01" value="380"/></div>
           </div>
-          <p class="dash-subtitle">Add, edit, or remove movies from the catalog.</p>
-          <div id="adminMoviesTable"></div>
+          <button class="btn btn-primary" onclick="createAdminShow()">Add show</button>
         </div>
+        <div id="adminShowsTable"><div class="spinner"></div></div>
+      </div>
 
-        <!-- ADMIN: ALL BOOKINGS -->
-        <div class="dash-section" id="sectionAllBookings">
-          <h1 class="dash-title">All Bookings</h1>
-          <p class="dash-subtitle">Monitor all customer bookings system-wide.</p>
-          <div id="adminAllBookingsTable"></div>
+      <div class="dash-section" id="sectionManageTheatres">
+        <h1 class="dash-title">Manage Theatres</h1>
+        <p class="dash-subtitle">Add a venue and configure its first screen.</p>
+        <div style="max-width:760px;margin-bottom:2rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;">
+            <div class="form-group"><label class="form-label" for="theatreName">Theatre name</label><input class="form-input" id="theatreName" required/></div>
+            <div class="form-group"><label class="form-label" for="theatreCity">City</label><input class="form-input" id="theatreCity" required/></div>
+            <div class="form-group"><label class="form-label" for="theatreLocation">Address</label><input class="form-input" id="theatreLocation" required/></div>
+            <div class="form-group"><label class="form-label" for="theatreRows">Seat rows</label><input class="form-input" id="theatreRows" type="number" min="1" max="20" value="8"/></div>
+            <div class="form-group"><label class="form-label" for="theatreCols">Seats per row</label><input class="form-input" id="theatreCols" type="number" min="1" max="25" value="10"/></div>
+          </div>
+          <button class="btn btn-primary" onclick="createAdminTheatre()">Add theatre</button>
         </div>
+        <div id="adminTheatresTable"><div class="spinner"></div></div>
+      </div>
 
-      </main>
+      <!-- ADMIN: ALL BOOKINGS -->
+      <div class="dash-section" id="sectionAllBookings">
+        <h1 class="dash-title">All Bookings</h1>
+        <p class="dash-subtitle">Every booking across all customers.</p>
+        <div id="adminBookingsTable"><div class="spinner"></div></div>
+      </div>
+
+      <!-- ADMIN: ALL USERS -->
+      <div class="dash-section" id="sectionAllUsers">
+        <h1 class="dash-title">All Users</h1>
+        <p class="dash-subtitle">Registered customer accounts.</p>
+        <div id="adminUsersTable"><div class="spinner"></div></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Ticket view modal -->
+<div class="modal-overlay" id="ticketViewModal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header"><h2 class="modal-title">🎟️ Your Ticket</h2><div class="modal-close" onclick="document.getElementById('ticketViewModal').classList.remove('show')">✕</div></div>
+    <div class="ticket" id="ticketViewOut"></div>
+    <div style="display:flex;gap:.75rem;margin-top:1.5rem;">
+      <button class="btn btn-secondary" style="flex:1;" onclick="window.print()">🖨️ Print</button>
+      <button class="btn btn-ghost"     style="flex:1;" onclick="document.getElementById('ticketViewModal').classList.remove('show')">Close</button>
     </div>
   </div>
+</div>
 
-  <!-- ── TICKET VIEWER MODAL ── -->
-  <div class="modal-overlay" id="ticketViewModal">
-    <div class="modal" style="max-width:500px;">
-      <div class="modal-header">
-        <h2 class="modal-title">🎟️ Your Ticket</h2>
-        <div class="modal-close" id="closeTicketViewModal">✕</div>
-      </div>
-      <div class="ticket" id="ticketViewOutput"></div>
-      <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="window.print()">🖨️ Print Ticket</button>
-        <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('ticketViewModal').classList.remove('show')">Close</button>
+<!-- Movie form modal (admin) -->
+<div class="modal-overlay" id="movieFormModal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header"><h2 class="modal-title" id="movieFormTitle">Add Movie</h2><div class="modal-close" onclick="document.getElementById('movieFormModal').classList.remove('show')">✕</div></div>
+    <div id="mfAlert" class="form-alert error"></div>
+    <div class="form-group"><label class="form-label">Title</label><input class="form-input" type="text" id="mfTitle" placeholder="Movie title"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="form-group"><label class="form-label">Genre</label><input class="form-input" type="text" id="mfGenre" placeholder="Action, Drama…"/></div>
+      <div class="form-group"><label class="form-label">Language</label>
+        <select class="form-input" id="mfLang"><option>Malayalam</option><option>English</option><option>Tamil</option><option>Hindi</option><option>Telugu</option></select>
       </div>
     </div>
-  </div>
-
-  <!-- ── ADD/EDIT MOVIE MODAL (Admin) ── -->
-  <div class="modal-overlay" id="movieFormModal">
-    <div class="modal" style="max-width:500px;">
-      <div class="modal-header">
-        <h2 class="modal-title" id="movieFormTitle">Add Movie</h2>
-        <div class="modal-close" onclick="document.getElementById('movieFormModal').classList.remove('show')">✕</div>
-      </div>
-      <div id="movieFormAlert" class="form-alert error"></div>
-      <div class="form-group">
-        <label class="form-label">Title</label>
-        <input class="form-input" type="text" id="mfTitle" placeholder="Movie title" />
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-        <div class="form-group">
-          <label class="form-label">Genre</label>
-          <select class="form-input" id="mfGenre">
-            <option>Action</option><option>Drama</option><option>Comedy</option>
-            <option>Thriller</option><option>Horror</option><option>Romance</option>
-            <option>Adventure</option><option>Mystery</option><option>Sport</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Language</label>
-          <select class="form-input" id="mfLang">
-            <option>English</option><option>Malayalam</option><option>Tamil</option><option>Hindi</option><option>Telugu</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-        <div class="form-group">
-          <label class="form-label">Duration (minutes)</label>
-          <input class="form-input" type="number" id="mfDuration" placeholder="120" min="60" max="300" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Rating</label>
-          <input class="form-input" type="number" id="mfRating" placeholder="8.5" min="1" max="10" step="0.1" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea class="form-input" id="mfDesc" rows="3" placeholder="Short movie description..." style="resize:vertical;"></textarea>
-      </div>
-      <input type="hidden" id="mfEditId" />
-      <button class="btn btn-primary btn-full" onclick="saveMovie()">Save Movie</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="form-group"><label class="form-label">Duration (min)</label><input class="form-input" type="number" id="mfDuration" placeholder="120" min="60" max="300"/></div>
+      <div class="form-group"><label class="form-label">Rating</label><input class="form-input" type="number" id="mfRating" placeholder="8.5" min="1" max="10" step="0.1"/></div>
     </div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-input" id="mfDesc" rows="3" style="resize:vertical;"></textarea></div>
+    <div class="form-group"><label class="form-label">Status</label>
+      <select class="form-input" id="mfStatus"><option>Now Showing</option><option>New</option><option>Coming Soon</option></select>
+    </div>
+    <input type="hidden" id="mfEditId"/>
+    <button class="btn btn-primary btn-full" onclick="saveMovie()">Save Movie</button>
   </div>
+</div>
 
-  <div class="toast-container" id="toastContainer"></div>
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/api.js"></script>
+<script>
+let currentUser = null;
 
-  <script src="js/app.js"></script>
-  <script>
-    let currentUser = null;
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!Auth.loggedIn()) { window.location.href = '/login.html'; return; }
+  currentUser = Auth.getUser();
+  if (!currentUser || !currentUser.name) {
+    try {
+      currentUser = await AuthAPI.me();
+      Auth.setUser(currentUser);
+    } catch (e) {
+      Auth.clear();
+      window.location.href = '/login.html';
+      return;
+    }
+  }
+  updateNav();
+  initDash();
+});
 
-    document.addEventListener('DOMContentLoaded', () => {
-      currentUser = window.TicketHub.getCurrentUser();
-      if (!currentUser) {
-        window.location.href = 'login.html';
-        return;
-      }
-      window.TicketHub.updateNav();
-      initDashboard();
+function initDash() {
+  const initials = currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('sideAvatar').textContent    = initials;
+  document.getElementById('sidebarName').textContent   = currentUser.name;
+  document.getElementById('sidebarEmail').textContent  = currentUser.email;
+  document.getElementById('welcomeTitle').textContent  = 'Welcome back, ' + currentUser.name.split(' ')[0] + '!';
+  document.getElementById('welcomeSub').textContent    = currentUser.role === 'admin'
+    ? 'Admin dashboard — manage movies, view all bookings.'
+    : 'Here\'s your activity on Ticket Hub.';
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileName').textContent   = currentUser.name;
+  document.getElementById('profileRole').textContent   = currentUser.role === 'admin' ? '🛠️ Administrator' : '👤 Customer';
+  document.getElementById('pName').value               = currentUser.name;
+  document.getElementById('pEmail').value              = currentUser.email;
+  document.getElementById('pPhone').value              = currentUser.phone || '';
 
-      document.getElementById('closeTicketViewModal').addEventListener('click', () => {
-        document.getElementById('ticketViewModal').classList.remove('show');
-      });
+  if (currentUser.role === 'admin') document.getElementById('adminNavItems').style.display = 'block';
+
+  loadOverview();
+}
+
+async function loadOverview() {
+  try {
+    if (currentUser.role === 'admin') {
+      const stats = await AdminAPI.stats();
+      document.getElementById('statsRow').innerHTML = `
+        <div class="stat-card"><div class="stat-card-label">Movies</div><div class="stat-card-val">${stats.total_movies}</div><div class="stat-card-change">In catalog</div></div>
+        <div class="stat-card"><div class="stat-card-label">Theatres</div><div class="stat-card-val">${stats.total_theatres}</div><div class="stat-card-change">Kerala</div></div>
+        <div class="stat-card"><div class="stat-card-label">Customers</div><div class="stat-card-val">${stats.total_users}</div><div class="stat-card-change">Registered</div></div>
+        <div class="stat-card"><div class="stat-card-label">Revenue</div><div class="stat-card-val">₹${Number(stats.total_revenue).toLocaleString()}</div><div class="stat-card-change">${stats.total_bookings} bookings</div></div>`;
+    } else {
+      const bookings = await BookingsAPI.mine();
+      const total = bookings.reduce((s,b) => s + parseFloat(b.total_amount), 0);
+      const upcoming = bookings.filter(b => new Date(b.show_date) >= new Date() && b.status === 'Confirmed').length;
+      document.getElementById('statsRow').innerHTML = `
+        <div class="stat-card"><div class="stat-card-label">Total Bookings</div><div class="stat-card-val">${bookings.length}</div><div class="stat-card-change">All time</div></div>
+        <div class="stat-card"><div class="stat-card-label">Upcoming Shows</div><div class="stat-card-val">${upcoming}</div><div class="stat-card-change">Confirmed</div></div>
+        <div class="stat-card"><div class="stat-card-label">Total Spent</div><div class="stat-card-val">₹${total.toLocaleString()}</div><div class="stat-card-change">All time</div></div>
+        <div class="stat-card"><div class="stat-card-label">Seats Bought</div><div class="stat-card-val">${bookings.reduce((s,b)=>s+b.seats.length,0)}</div><div class="stat-card-change">Total</div></div>`;
+      renderBookingCards(bookings.slice(0,3), 'recentBookings');
+    }
+  } catch(e) {
+    document.getElementById('statsRow').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
+  }
+}
+
+function renderBookingCards(bookings, containerId) {
+  const cont = document.getElementById(containerId);
+  if (!bookings.length) {
+    cont.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+      <div style="font-size:2rem;margin-bottom:.5rem;">🎭</div>
+      <p>No bookings yet. <a href="/movies.html" style="color:var(--primary-light);">Book your first movie →</a></p></div>`;
+    return;
+  }
+  cont.innerHTML = `<div style="display:flex;flex-direction:column;gap:1rem;">` +
+    bookings.map(b => `
+      <div class="booking-card">
+        <div class="bc-poster">
+          ${b.poster_url
+            ? `<img src="${b.poster_url}" alt="${b.movie}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+               <div class="poster-fallback" style="display:none;font-size:1.8rem;">${genEmoji(b.genre)}</div>`
+            : `<div class="poster-fallback" style="font-size:1.8rem;">${genEmoji(b.genre)}</div>`}
+        </div>
+        <div>
+          <div class="bc-title">${b.movie}</div>
+          <div class="bc-meta">📅 ${b.show_date} &nbsp;·&nbsp; 🕐 ${b.show_time.slice(0,5)}</div>
+          <div class="bc-meta">🏛️ ${b.theatre_name}, ${b.city}</div>
+          <div class="bc-meta">🎞️ ${b.screen_name}</div>
+          <div class="bc-seats">${b.seats.map(s=>`<span class="seat-tag">${s}</span>`).join('')}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;">
+          <span class="badge badge-${b.status==='Confirmed'?'success':b.status==='Cancelled'?'cancelled':'pending'}">${b.status}</span>
+          <div style="font-weight:700;color:var(--primary);">₹${b.total_amount}</div>
+          <div class="booking-ref-badge">${b.booking_ref}</div>
+          <button class="btn btn-ghost btn-sm" onclick="viewTicket('${b.booking_ref}')">View Ticket</button>
+          ${b.status==='Confirmed'?`<button class="btn btn-sm" style="background:rgba(229,9,20,.1);color:#ff6b6b;border:1px solid rgba(229,9,20,.2);" onclick="cancelBooking('${b.booking_ref}')">Cancel</button>`:''}
+        </div>
+      </div>`).join('') + '</div>';
+}
+
+function showSection(name) {
+  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const secId = 'section' + name.charAt(0).toUpperCase() + name.slice(1);
+  const navId = 'nav'     + name.charAt(0).toUpperCase() + name.slice(1);
+  document.getElementById(secId)?.classList.add('active');
+  document.getElementById(navId)?.classList.add('active');
+  if (name === 'bookings')     loadMyBookings();
+  if (name === 'allBookings')  loadAllBookings();
+  if (name === 'allUsers')     loadAllUsers();
+  if (name === 'manageMovies') loadAdminMovies();
+  if (name === 'manageShows') loadAdminShows();
+  if (name === 'manageTheatres') loadAdminTheatres();
+}
+
+async function loadMyBookings() {
+  document.getElementById('myBookingsList').innerHTML = '<div class="spinner"></div>';
+  try {
+    const bookings = await BookingsAPI.mine();
+    renderBookingCards(bookings, 'myBookingsList');
+  } catch(e) { document.getElementById('myBookingsList').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
+}
+
+async function loadAllBookings() {
+  document.getElementById('adminBookingsTable').innerHTML = '<div class="spinner"></div>';
+  try {
+    const rows = await BookingsAPI.all();
+    if (!rows.length) { document.getElementById('adminBookingsTable').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No bookings yet.</p>'; return; }
+    document.getElementById('adminBookingsTable').innerHTML = `
+      <div class="bookings-table-wrap">
+        <table class="bookings-table">
+          <thead><tr><th>Ref</th><th>Customer</th><th>Movie</th><th>Theatre</th><th>Date</th><th>Seats</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>${rows.map(b=>`
+            <tr>
+              <td><code style="font-size:.78rem;color:var(--text-muted);">${b.booking_ref}</code></td>
+              <td>${b.customer_name}<br/><span style="font-size:.75rem;color:var(--text-muted);">${b.customer_email}</span></td>
+              <td><strong>${b.movie}</strong><br/><span style="font-size:.75rem;color:var(--text-muted);">${b.language}</span></td>
+              <td>${b.theatre_name}<br/><span style="font-size:.75rem;color:var(--text-muted);">${b.city}</span></td>
+              <td>${b.show_date}<br/><span style="font-size:.75rem;color:var(--text-muted);">${b.show_time.slice(0,5)}</span></td>
+              <td>${b.seats.join(', ')}</td>
+              <td style="font-weight:700;color:var(--primary);">₹${b.total_amount}</td>
+              <td><span class="badge badge-${b.status==='Confirmed'?'success':b.status==='Cancelled'?'cancelled':'pending'}">${b.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch(e) { document.getElementById('adminBookingsTable').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
+}
+
+async function loadAllUsers() {
+  document.getElementById('adminUsersTable').innerHTML = '<div class="spinner"></div>';
+  try {
+    const users = await AdminAPI.users();
+    document.getElementById('adminUsersTable').innerHTML = `
+      <div class="bookings-table-wrap">
+        <table class="bookings-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr></thead>
+          <tbody>${users.map(u=>`
+            <tr>
+              <td style="font-weight:600;">${u.name}</td>
+              <td>${u.email}</td>
+              <td>${u.phone||'—'}</td>
+              <td><span class="badge ${u.role==='admin'?'badge-pending':'badge-success'}">${u.role}</span></td>
+              <td style="font-size:.82rem;color:var(--text-muted);">${new Date(u.created_at).toLocaleDateString()}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch(e) { document.getElementById('adminUsersTable').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
+}
+
+async function loadAdminMovies() {
+  document.getElementById('adminMoviesTable').innerHTML = '<div class="spinner"></div>';
+  try {
+    const movies = await MoviesAPI.getAll();
+    document.getElementById('adminMoviesTable').innerHTML = `
+      <div class="bookings-table-wrap">
+        <table class="bookings-table">
+          <thead><tr><th>Poster</th><th>Title</th><th>Language</th><th>Genre</th><th>Duration</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>${movies.map(m=>`
+            <tr>
+              <td><div style="width:40px;height:56px;border-radius:6px;overflow:hidden;background:var(--bg-dark);">
+                ${m.poster_url
+                  ? `<img src="${m.poster_url}" style="width:100%;height:100%;object-fit:cover;" alt="${m.title}"/>`
+                  : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">${genEmoji(m.genre)}</div>`}
+              </div></td>
+              <td style="font-weight:700;">${m.title}</td>
+              <td>${m.language}</td>
+              <td style="font-size:.82rem;">${m.genre.split(',')[0].trim()}</td>
+              <td>${fmtDuration(m.duration_min)}</td>
+              <td>⭐ ${m.rating}</td>
+              <td><span class="badge ${m.status==='New'?'badge-pending':'badge-success'}">${m.status}</span></td>
+              <td style="white-space:nowrap;">
+                <button class="btn btn-ghost btn-sm" onclick="editMovie(${m.id})">Edit</button>
+                <button class="btn btn-sm" style="background:rgba(229,9,20,.1);color:#ff6b6b;border:1px solid rgba(229,9,20,.2);margin-left:4px;" onclick="deleteMovie(${m.id},'${m.title.replace(/'/g,"\\'")})">Delete</button>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch(e) { document.getElementById('adminMoviesTable').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
+}
+
+async function discoverTmdbMovies() {
+  const container = document.getElementById('tmdbResults');
+  const language = document.getElementById('tmdbLanguage').value;
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const movies = await AdminAPI.discoverTmdbMovies(language);
+    if (!movies.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);">No matching recent or upcoming titles found.</p>';
+      return;
+    }
+    container.innerHTML = `<div class="bookings-table-wrap"><table class="bookings-table">
+      <thead><tr><th>Poster</th><th>Title</th><th>Release</th><th>Rating</th><th></th></tr></thead>
+      <tbody>${movies.map(movie => `<tr>
+        <td>${movie.poster_url ? `<img src="${adminText(movie.poster_url)}" alt="" style="width:42px;height:60px;object-fit:cover;"/>` : '—'}</td>
+        <td>${adminText(movie.title)}</td><td>${adminText(movie.release_date || '—')}</td>
+        <td>${Number(movie.rating).toFixed(1)}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="importTmdbMovie(${Number(movie.tmdb_id)})">Import</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+  } catch(e) { container.innerHTML = `<p style="color:var(--text-muted);">${adminText(e.message)}</p>`; }
+}
+
+async function importTmdbMovie(tmdbId) {
+  const language = document.getElementById('tmdbLanguage').value;
+  try {
+    const movie = await AdminAPI.importTmdbMovie(tmdbId, language);
+    showToast(`${movie.title} added to your catalogue.`, 'success');
+    loadAdminMovies();
+    discoverTmdbMovies();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function loadAdminShows() {
+  const container = document.getElementById('adminShowsTable');
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const [shows, movies, screens] = await Promise.all([AdminAPI.shows(), MoviesAPI.getAll(), AdminAPI.screens()]);
+    document.getElementById('showMovie').innerHTML = movies.map(movie =>
+      `<option value="${movie.id}">${adminText(movie.title)} (${adminText(movie.language)})</option>`).join('');
+    document.getElementById('showScreen').innerHTML = screens.map(screen =>
+      `<option value="${screen.id}">${adminText(screen.theatre_name)} - ${adminText(screen.name)} (${adminText(screen.city)})</option>`).join('');
+    if (!shows.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);padding:1rem 0;">No scheduled shows.</p>';
+      return;
+    }
+    container.innerHTML = `<div class="bookings-table-wrap"><table class="bookings-table">
+      <thead><tr><th>Movie</th><th>Theatre / Screen</th><th>Date</th><th>Time</th><th>Standard</th><th>Premium</th><th></th></tr></thead>
+      <tbody>${shows.map(show => `<tr>
+        <td>${adminText(show.movie)}</td><td>${adminText(show.theatre)} / ${adminText(show.screen)}</td>
+        <td>${adminText(show.show_date)}</td><td>${adminText(show.show_time.slice(0, 5))}</td>
+        <td>₹${show.price_std}</td><td>₹${show.price_prem}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="deleteAdminShow(${show.id})">Remove</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+  } catch(e) { container.innerHTML = `<p style="color:var(--text-muted);">${adminText(e.message)}</p>`; }
+}
+
+async function createAdminShow() {
+  const date = document.getElementById('showDate').value;
+  const time = document.getElementById('showTime').value;
+  const priceStd = Number(document.getElementById('showPriceStd').value);
+  const pricePrem = Number(document.getElementById('showPricePrem').value);
+  if (!date || !time || priceStd <= 0 || pricePrem <= 0) {
+    showToast('Choose a date, time, and positive ticket prices.', 'error');
+    return;
+  }
+  try {
+    await AdminAPI.addShow({
+      movieId: Number(document.getElementById('showMovie').value),
+      screenId: Number(document.getElementById('showScreen').value),
+      showDate: date,
+      showTime: time,
+      priceStd,
+      pricePrem
     });
+    showToast('Show scheduled.', 'success');
+    loadAdminShows();
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-    function initDashboard() {
-      // Sidebar user info
-      const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
-      document.getElementById('sideAvatar').textContent = initials;
-      document.getElementById('sidebarName').textContent = currentUser.name;
-      document.getElementById('sidebarEmail').textContent = currentUser.email;
-      document.getElementById('welcomeTitle').textContent = 'Welcome back, ' + currentUser.name.split(' ')[0] + '!';
+async function deleteAdminShow(id) {
+  if (!confirm('Remove this show? Shows with booking history cannot be removed.')) return;
+  try {
+    await AdminAPI.deleteShow(id);
+    showToast('Show removed.', 'success');
+    loadAdminShows();
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-      // Admin nav
-      if (currentUser.role === 'admin') {
-        document.getElementById('adminNav').style.display = 'block';
-      }
-
-      // Profile form pre-fill
-      document.getElementById('profileAvatar').textContent = document.getElementById('sideAvatar').textContent;
-      document.getElementById('profileName').textContent = currentUser.name;
-      document.getElementById('profileRole').textContent = currentUser.role === 'admin' ? '🛠️ Administrator' : '👤 Customer';
-      document.getElementById('profileNameInput').value = currentUser.name;
-      document.getElementById('profileEmailInput').value = currentUser.email;
-      document.getElementById('profilePhoneInput').value = currentUser.phone || '';
-
-      renderStats();
-      renderRecentBookings();
-      if (currentUser.role === 'admin') renderAdminMovies();
+async function loadAdminTheatres() {
+  const container = document.getElementById('adminTheatresTable');
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const theatres = await AdminAPI.theatres();
+    if (!theatres.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);padding:1rem 0;">No theatres have been added.</p>';
+      return;
     }
+    container.innerHTML = `<div class="bookings-table-wrap"><table class="bookings-table">
+      <thead><tr><th>Name</th><th>City</th><th>Address</th></tr></thead>
+      <tbody>${theatres.map(theatre => `<tr><td>${adminText(theatre.name)}</td><td>${adminText(theatre.city)}</td><td>${adminText(theatre.location)}</td></tr>`).join('')}</tbody>
+    </table></div>`;
+  } catch(e) { container.innerHTML = `<p style="color:var(--text-muted);">${adminText(e.message)}</p>`; }
+}
 
-    function showSection(name) {
-      document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-      document.getElementById('section' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
-      const navEl = document.getElementById('nav' + name.charAt(0).toUpperCase() + name.slice(1));
-      if (navEl) navEl.classList.add('active');
+async function createAdminTheatre() {
+  const data = {
+    name: document.getElementById('theatreName').value.trim(),
+    city: document.getElementById('theatreCity').value.trim(),
+    location: document.getElementById('theatreLocation').value.trim(),
+    rows: Number(document.getElementById('theatreRows').value),
+    cols: Number(document.getElementById('theatreCols').value)
+  };
+  if (!data.name || !data.city || !data.location || !data.rows || !data.cols) {
+    showToast('Complete the theatre details and seat layout.', 'error');
+    return;
+  }
+  try {
+    await AdminAPI.addTheatre(data);
+    ['theatreName', 'theatreCity', 'theatreLocation'].forEach(id => { document.getElementById(id).value = ''; });
+    showToast('Theatre and first screen added.', 'success');
+    loadAdminTheatres();
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-      // Lazy-render
-      if (name === 'bookings') renderAllBookings();
-      if (name === 'allBookings') renderAdminAllBookings();
-      if (name === 'manageMovies') renderAdminMovies();
-    }
+function adminText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+}
 
-    function renderStats() {
-      const bookings = window.TicketHub.getUserBookings(currentUser.email);
-      const totalSpent = bookings.reduce((s, b) => s + b.total, 0);
-      const upcoming = bookings.filter(b => new Date(b.date) >= new Date()).length;
-      const stats = currentUser.role === 'admin'
-        ? [
-            { label: 'Total Movies', val: window.TicketHub.getMovies().length, change: 'In catalog' },
-            { label: 'Total Bookings', val: window.TicketHub.getAllBookings().length, change: 'All customers' },
-            { label: 'Active Users', val: window.TicketHub.getAllUsers().length, change: 'Registered' },
-            { label: 'Revenue', val: '₹' + window.TicketHub.getAllBookings().reduce((s,b)=>s+b.total,0).toLocaleString(), change: 'Total collected' }
-          ]
-        : [
-            { label: 'Total Bookings', val: bookings.length, change: 'All time' },
-            { label: 'Upcoming Shows', val: upcoming, change: 'Scheduled' },
-            { label: 'Total Spent', val: '₹' + totalSpent.toLocaleString(), change: 'All time' },
-            { label: 'Tickets Bought', val: bookings.reduce((s,b)=>s+b.seats.length,0), change: 'Total seats' }
-          ];
+// ── Ticket viewer ─────────────────────────────
+async function viewTicket(ref) {
+  try {
+    const b = await BookingsAPI.getOne(ref);
+    const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
+    document.getElementById('ticketViewOut').innerHTML = `
+      <div class="ticket-top">
+        <div class="ticket-movie">${genEmoji(b.genre||'')} ${b.movie}</div>
+        <div class="ticket-genre">${b.language} · ${(b.genre||'').split(',')[0].trim()}</div>
+      </div>
+      <div class="ticket-divider"></div>
+      <div class="ticket-body">
+        <div class="ticket-field"><label>Date</label><span>${b.show_date}</span></div>
+        <div class="ticket-field"><label>Time</label><span>${b.show_time.slice(0,5)}</span></div>
+        <div class="ticket-field"><label>Theatre</label><span>${b.theatre_name}</span></div>
+        <div class="ticket-field"><label>Screen</label><span>${b.screen_name}</span></div>
+        <div class="ticket-field"><label>Seats</label><span>${b.seats.join(', ')}</span></div>
+        <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${b.total_amount}</span></div>
+      </div>
+      <div class="ticket-barcode">
+        <div class="barcode-lines">${bars.map(h=>`<div class="b" style="height:${h}px;"></div>`).join('')}</div>
+        <div class="ticket-id">${b.booking_ref}</div>
+      </div>`;
+    document.getElementById('ticketViewModal').classList.add('show');
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-      document.getElementById('statsRow').innerHTML = stats.map(s => `
-        <div class="stat-card">
-          <div class="stat-card-label">${s.label}</div>
-          <div class="stat-card-val">${s.val}</div>
-          <div class="stat-card-change">${s.change}</div>
-        </div>
-      `).join('');
-    }
+async function cancelBooking(ref) {
+  if (!confirm('Cancel this booking?')) return;
+  try {
+    await BookingsAPI.cancel(ref);
+    showToast('Booking cancelled.', 'error');
+    loadMyBookings();
+    loadOverview();
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-    function bookingsTableHTML(bookings, showUser = false) {
-      if (!bookings.length) return '';
-      return `
-        <div class="bookings-table-wrap">
-          <table class="bookings-table">
-            <thead>
-              <tr>
-                <th>Booking ID</th>
-                ${showUser ? '<th>Customer</th>' : ''}
-                <th>Movie</th>
-                <th>Date & Time</th>
-                <th>Seats</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${bookings.map(b => `
-                <tr>
-                  <td><code style="font-size:0.78rem;color:var(--text-muted);">${b.id}</code></td>
-                  ${showUser ? `<td>${b.name || '—'}</td>` : ''}
-                  <td><strong>${b.movieEmoji || '🎬'} ${b.movie}</strong></td>
-                  <td>${b.date}<br/><span style="color:var(--text-muted);font-size:0.78rem;">${b.time}</span></td>
-                  <td>${b.seats ? b.seats.join(', ') : '—'}</td>
-                  <td style="font-weight:700;color:var(--primary);">₹${b.total}</td>
-                  <td><span class="badge badge-${b.status==='Confirmed'?'success':b.status==='Cancelled'?'cancelled':'pending'}">${b.status}</span></td>
-                  <td>
-                    <button class="btn btn-ghost btn-sm" onclick="viewTicket('${b.id}')">View</button>
-                    ${b.status === 'Confirmed' ? `<button class="btn btn-sm" style="background:rgba(229,9,20,0.1);color:#ff6b6b;border:1px solid rgba(229,9,20,0.2);margin-left:4px;" onclick="cancelBooking('${b.id}')">Cancel</button>` : ''}
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
+// ── Profile ───────────────────────────────────
+async function saveProfile() {
+  const name  = document.getElementById('pName').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
+  if (!name) { showToast('Name is required', 'error'); return; }
+  try {
+    await AuthAPI.updateProfile(name, phone);
+    const u = { ...currentUser, name, phone };
+    Auth.setUser(u); currentUser = u;
+    document.getElementById('profileName').textContent   = name;
+    document.getElementById('sidebarName').textContent   = name;
+    const al = document.getElementById('profileAlert');
+    al.textContent = '✅ Profile updated.'; al.classList.add('show');
+    setTimeout(() => al.classList.remove('show'), 3000);
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-    function renderRecentBookings() {
-      const bookings = window.TicketHub.getUserBookings(currentUser.email).slice(0, 5);
-      document.getElementById('recentBookingsTable').innerHTML = bookings.length
-        ? bookingsTableHTML(bookings)
-        : '<div style="text-align:center;padding:2rem;color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);"><div style="font-size:2rem;margin-bottom:0.5rem;">🎭</div><p>No bookings yet. <a href="movies.html" style="color:var(--primary-light);">Book your first movie</a></p></div>';
-    }
+async function changePwd() {
+  const cur  = document.getElementById('curPwd').value;
+  const nw   = document.getElementById('newPwd').value;
+  const conf = document.getElementById('confPwd').value;
+  const al   = document.getElementById('pwdAlert');
+  al.classList.remove('show');
+  if (!cur||!nw||!conf) { al.textContent='All fields required.'; al.classList.add('show'); return; }
+  if (nw !== conf)       { al.textContent='New passwords do not match.'; al.classList.add('show'); return; }
+  try {
+    await AuthAPI.changePassword(cur, nw);
+    showToast('Password updated!', 'success');
+    ['curPwd','newPwd','confPwd'].forEach(id => document.getElementById(id).value='');
+  } catch(e) { al.textContent = e.message; al.classList.add('show'); }
+}
 
-    function renderAllBookings() {
-      const bookings = window.TicketHub.getUserBookings(currentUser.email);
-      const container = document.getElementById('allBookingsTable');
-      const msg = document.getElementById('noBookingsMsg');
-      if (bookings.length) {
-        container.innerHTML = bookingsTableHTML(bookings);
-        msg.style.display = 'none';
-      } else {
-        container.innerHTML = '';
-        msg.style.display = 'block';
-      }
-    }
+// ── Admin: movies ─────────────────────────────
+function openMovieForm(movie = null) {
+  document.getElementById('movieFormTitle').textContent = movie ? 'Edit Movie' : 'Add Movie';
+  document.getElementById('mfTitle').value    = movie?.title    || '';
+  document.getElementById('mfGenre').value    = movie?.genre    || '';
+  document.getElementById('mfLang').value     = movie?.language || 'Malayalam';
+  document.getElementById('mfDuration').value = movie?.duration_min || movie?.durationMin || '';
+  document.getElementById('mfRating').value   = movie?.rating   || '';
+  document.getElementById('mfDesc').value     = movie?.description || '';
+  document.getElementById('mfStatus').value   = movie?.status   || 'Now Showing';
+  document.getElementById('mfEditId').value   = movie?.id       || '';
+  document.getElementById('mfAlert').classList.remove('show');
+  document.getElementById('movieFormModal').classList.add('show');
+}
 
-    function renderAdminMovies() {
-      const movies = window.TicketHub.getMovies();
-      document.getElementById('adminMoviesTable').innerHTML = `
-        <div class="bookings-table-wrap">
-          <table class="bookings-table">
-            <thead>
-              <tr>
-                <th>Movie</th><th>Genre</th><th>Language</th><th>Duration</th><th>Rating</th><th>Shows</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${movies.map(m => `
-                <tr>
-                  <td><strong>${m.emoji} ${m.title}</strong></td>
-                  <td><span class="badge badge-success">${m.genre}</span></td>
-                  <td>${m.language}</td>
-                  <td>${m.duration} min</td>
-                  <td>⭐ ${m.rating}</td>
-                  <td>${m.shows.length} shows</td>
-                  <td>
-                    <button class="btn btn-ghost btn-sm" onclick="editMovie('${m.id}')">Edit</button>
-                    <button class="btn btn-sm" style="background:rgba(229,9,20,0.1);color:#ff6b6b;border:1px solid rgba(229,9,20,0.2);margin-left:4px;" onclick="deleteMovie('${m.id}')">Delete</button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
+async function editMovie(id) {
+  try {
+    const m = await MoviesAPI.getOne(id);
+    openMovieForm(m);
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-    function renderAdminAllBookings() {
-      const bookings = window.TicketHub.getAllBookings();
-      document.getElementById('adminAllBookingsTable').innerHTML = bookings.length
-        ? bookingsTableHTML(bookings, true)
-        : '<div style="text-align:center;padding:2rem;color:var(--text-muted);">No bookings in the system yet.</div>';
-    }
+async function saveMovie() {
+  const title   = document.getElementById('mfTitle').value.trim();
+  const genre   = document.getElementById('mfGenre').value.trim();
+  const language= document.getElementById('mfLang').value;
+  const dur     = parseInt(document.getElementById('mfDuration').value);
+  const rating  = parseFloat(document.getElementById('mfRating').value);
+  const desc    = document.getElementById('mfDesc').value.trim();
+  const status  = document.getElementById('mfStatus').value;
+  const editId  = document.getElementById('mfEditId').value;
+  const al      = document.getElementById('mfAlert');
+  al.classList.remove('show');
+  if (!title || !genre || !dur) { al.textContent='Title, genre and duration are required.'; al.classList.add('show'); return; }
+  try {
+    if (editId) { await MoviesAPI.update(editId, { title, genre, language, duration_min: dur, durationMin: dur, rating, description: desc, status }); showToast('Movie updated!', 'success'); }
+    else        { await MoviesAPI.add({ title, genre, language, duration_min: dur, durationMin: dur, rating, description: desc, status }); showToast('Movie added!', 'success'); }
+    document.getElementById('movieFormModal').classList.remove('show');
+    loadAdminMovies();
+  } catch(e) { al.textContent = e.message; al.classList.add('show'); }
+}
 
-    function viewTicket(id) {
-      const bookings = currentUser.role === 'admin'
-        ? window.TicketHub.getAllBookings()
-        : window.TicketHub.getUserBookings(currentUser.email);
-      const b = bookings.find(bk => bk.id === id);
-      if (!b) return;
-      const barHeights = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
-      document.getElementById('ticketViewOutput').innerHTML = `
-        <div class="ticket-top">
-          <div class="ticket-movie">${b.movieEmoji || '🎬'} ${b.movie}</div>
-          <div class="ticket-genre">${b.genre || ''}</div>
-        </div>
-        <div class="ticket-divider"></div>
-        <div class="ticket-body">
-          <div class="ticket-field"><label>Date</label><span>${b.date}</span></div>
-          <div class="ticket-field"><label>Show Time</label><span>${b.time}</span></div>
-          <div class="ticket-field"><label>Screen</label><span>${b.screen || '—'}</span></div>
-          <div class="ticket-field"><label>Seats</label><span>${b.seats ? b.seats.join(', ') : '—'}</span></div>
-          <div class="ticket-field"><label>Passenger</label><span>${b.name || '—'}</span></div>
-          <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${b.total}</span></div>
-        </div>
-        <div class="ticket-barcode">
-          <div class="barcode-lines">
-            ${barHeights.map(h => `<div class="b" style="height:${h}px;"></div>`).join('')}
-          </div>
-          <div class="ticket-id">${b.id}</div>
-        </div>
-      `;
-      document.getElementById('ticketViewModal').classList.add('show');
-    }
+async function deleteMovie(id, title) {
+  if (!confirm(`Delete "${title}" from the catalog?`)) return;
+  try {
+    await MoviesAPI.delete(id);
+    showToast('Movie deleted.', 'error');
+    loadAdminMovies();
+  } catch(e) { showToast(e.message, 'error'); }
+}
 
-    function cancelBooking(id) {
-      if (!confirm('Are you sure you want to cancel this booking?')) return;
-      window.TicketHub.cancelBooking(id);
-      window.TicketHub.showToast('Booking cancelled.', 'error');
-      renderAllBookings();
-      renderRecentBookings();
-      renderStats();
-    }
-
-    function saveProfile() {
-      const name = document.getElementById('profileNameInput').value.trim();
-      const email = document.getElementById('profileEmailInput').value.trim();
-      const phone = document.getElementById('profilePhoneInput').value.trim();
-      if (!name || !email) { window.TicketHub.showToast('Name and email are required', 'error'); return; }
-      window.TicketHub.updateUser({ ...currentUser, name, email, phone });
-      currentUser = window.TicketHub.getCurrentUser();
-      document.getElementById('profileName').textContent = name;
-      document.getElementById('sidebarName').textContent = name;
-      const alert = document.getElementById('profileAlert');
-      alert.textContent = '✅ Profile updated successfully.';
-      alert.classList.add('show');
-      setTimeout(() => alert.classList.remove('show'), 3000);
-    }
-
-    function changePassword() {
-      const current = document.getElementById('currentPwd').value;
-      const newp = document.getElementById('newPwd').value;
-      const conf = document.getElementById('confirmPwd').value;
-      const alert = document.getElementById('pwdAlert');
-      if (!current || !newp || !conf) { alert.textContent = 'All fields required.'; alert.classList.add('show'); return; }
-      if (newp.length < 6) { alert.textContent = 'Password must be at least 6 characters.'; alert.classList.add('show'); return; }
-      if (newp !== conf) { alert.textContent = 'New passwords do not match.'; alert.classList.add('show'); return; }
-      const result = window.TicketHub.changePassword(currentUser.email, current, newp);
-      if (result.success) {
-        window.TicketHub.showToast('Password updated!', 'success');
-        ['currentPwd','newPwd','confirmPwd'].forEach(id => document.getElementById(id).value = '');
-        alert.classList.remove('show');
-      } else {
-        alert.textContent = result.message;
-        alert.classList.add('show');
-      }
-    }
-
-    function openAddMovieModal() {
-      document.getElementById('movieFormTitle').textContent = 'Add New Movie';
-      document.getElementById('mfTitle').value = '';
-      document.getElementById('mfDuration').value = '';
-      document.getElementById('mfRating').value = '';
-      document.getElementById('mfDesc').value = '';
-      document.getElementById('mfEditId').value = '';
-      document.getElementById('movieFormAlert').classList.remove('show');
-      document.getElementById('movieFormModal').classList.add('show');
-    }
-
-    function editMovie(id) {
-      const movie = window.TicketHub.getMovies().find(m => m.id === id);
-      if (!movie) return;
-      document.getElementById('movieFormTitle').textContent = 'Edit Movie';
-      document.getElementById('mfTitle').value = movie.title;
-      document.getElementById('mfGenre').value = movie.genre;
-      document.getElementById('mfLang').value = movie.language;
-      document.getElementById('mfDuration').value = movie.duration;
-      document.getElementById('mfRating').value = movie.rating;
-      document.getElementById('mfDesc').value = movie.description;
-      document.getElementById('mfEditId').value = id;
-      document.getElementById('movieFormAlert').classList.remove('show');
-      document.getElementById('movieFormModal').classList.add('show');
-    }
-
-    function saveMovie() {
-      const title = document.getElementById('mfTitle').value.trim();
-      const genre = document.getElementById('mfGenre').value;
-      const language = document.getElementById('mfLang').value;
-      const duration = parseInt(document.getElementById('mfDuration').value);
-      const rating = parseFloat(document.getElementById('mfRating').value);
-      const description = document.getElementById('mfDesc').value.trim();
-      const editId = document.getElementById('mfEditId').value;
-      const alert = document.getElementById('movieFormAlert');
-
-      if (!title || !duration || !rating) { alert.textContent = 'Title, duration, and rating are required.'; alert.classList.add('show'); return; }
-
-      const emojis = { Action:'💥', Drama:'🎭', Comedy:'😂', Thriller:'🔪', 'Sci-Fi':'🚀', Horror:'👻', Romance:'❤️' };
-      const colors = { Action:'c3', Drama:'c1', Comedy:'c5', Thriller:'c2', 'Sci-Fi':'c6', Horror:'c4', Romance:'c1' };
-
-      window.TicketHub.saveAdminMovie({
-        id: editId || 'mv_' + Date.now(),
-        title, genre, language, duration, rating, description,
-        emoji: emojis[genre] || '🎬',
-        color: colors[genre] || 'c1',
-        status: 'Now Showing',
-        shows: [
-          { time: '10:00 AM', screen: 'Screen 1', seats: 80 },
-          { time: '02:30 PM', screen: 'Screen 2', seats: 60 },
-          { time: '06:45 PM', screen: 'Screen 1', seats: 45 },
-          { time: '09:30 PM', screen: 'Screen 3', seats: 90 }
-        ]
-      });
-
-      document.getElementById('movieFormModal').classList.remove('show');
-      renderAdminMovies();
-      window.TicketHub.showToast(editId ? 'Movie updated!' : 'Movie added to catalog!', 'success');
-    }
-
-    function deleteMovie(id) {
-      if (!confirm('Delete this movie from the catalog?')) return;
-      window.TicketHub.deleteMovie(id);
-      renderAdminMovies();
-      window.TicketHub.showToast('Movie deleted.', 'error');
-    }
-
-    function handleLogout() {
-      window.TicketHub.logout();
-      window.location.href = 'index.html';
-    }
-  </script>
+function doLogout() {
+  Auth.clear();
+  window.location.href = '/index.html';
+}
+</script>
 </body>
 </html>

@@ -26,6 +26,7 @@ public class Movie {
     @Column(nullable = false, length = 15)
     private Language language;
 
+    @com.fasterxml.jackson.annotation.JsonAlias({"duration_min", "durationMin"})
     @Column(name = "duration_min", nullable = false)
     private Integer durationMin;
 
@@ -71,5 +72,15 @@ public class Movie {
             return "https://image.tmdb.org/t/p/w500" + posterPath;
         }
         return null;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("duration_min")
+    public Integer getDurationMinSnake() {
+        return durationMin;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("duration_min")
+    public void setDurationMinSnake(Integer duration) {
+        if (duration != null) this.durationMin = duration;
     }
 }
