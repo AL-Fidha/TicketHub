@@ -8,7 +8,9 @@
 </head>
 <body>
 <nav class="navbar">
-  <a href="/index.html" class="nav-brand"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></a>
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/tickethub_logo.png" alt="TicketHub Logo" class="nav-brand-img"/>
+  </a>
   <ul class="nav-links">
     <li><a href="/index.html">Home</a></li>
     <li><a href="/movies.html">Movies</a></li>
@@ -808,6 +810,12 @@ async function viewTicket(ref) {
     const b = await BookingsAPI.getOne(ref);
     const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
     document.getElementById('ticketViewOut').innerHTML = `
+      <div class="ticket-header-brand">
+        <div class="ticket-brand-badge">
+          <img src="/assets/tickethub_logo.png" alt="TicketHub Logo"/>
+        </div>
+        <div class="ticket-admit-badge">★ ADMIT ONE ★</div>
+      </div>
       <div class="ticket-top">
         <div class="ticket-movie">${genEmoji(b.genre||'')} ${b.movie}</div>
         <div class="ticket-genre">${b.language} · ${(b.genre||'').split(',')[0].trim()}</div>
@@ -818,7 +826,7 @@ async function viewTicket(ref) {
         <div class="ticket-field"><label>Time</label><span>${b.show_time.slice(0,5)}</span></div>
         <div class="ticket-field"><label>Theatre</label><span>${b.theatre_name}</span></div>
         <div class="ticket-field"><label>Screen</label><span>${b.screen_name}</span></div>
-        <div class="ticket-field"><label>Seats</label><span>${b.seats.join(', ')}</span></div>
+        <div class="ticket-field"><label>Seats</label><span style="color:var(--accent-gold);">${b.seats.join(', ')}</span></div>
         <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${b.total_amount}</span></div>
       </div>
       <div class="ticket-barcode">

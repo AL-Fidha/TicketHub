@@ -18,7 +18,9 @@
 </head>
 <body>
 <nav class="navbar">
-  <a href="/index.html" class="nav-brand"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></a>
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/tickethub_logo.png" alt="TicketHub Logo" class="nav-brand-img"/>
+  </a>
   <ul class="nav-links">
     <li><a href="/index.html">Home</a></li>
     <li><a href="/movies.html">Movies</a></li>
@@ -457,6 +459,12 @@ function showTicketModal(ref, total) {
   const time = bk.show.show_time.slice(0,5);
   const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
   document.getElementById('ticketOut').innerHTML = `
+    <div class="ticket-header-brand">
+      <div class="ticket-brand-badge">
+        <img src="/assets/tickethub_logo.png" alt="TicketHub Logo"/>
+      </div>
+      <div class="ticket-admit-badge">★ ADMIT ONE ★</div>
+    </div>
     <div class="ticket-top">
       <div class="ticket-movie">${genEmoji(bk.movie.genre)} ${bk.movie.title}</div>
       <div class="ticket-genre">${bk.movie.language} · ${bk.movie.genre.split(',')[0].trim()}</div>
@@ -467,7 +475,7 @@ function showTicketModal(ref, total) {
       <div class="ticket-field"><label>Show Time</label><span>${time}</span></div>
       <div class="ticket-field"><label>Theatre</label><span>${bk.show.theatre_name}</span></div>
       <div class="ticket-field"><label>Screen</label><span>${bk.show.screen_name}</span></div>
-      <div class="ticket-field"><label>Seats</label><span>${bk.seats.join(', ')}</span></div>
+      <div class="ticket-field"><label>Seats</label><span style="color:var(--accent-gold);">${bk.seats.join(', ')}</span></div>
       <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${total}</span></div>
     </div>
     <div class="ticket-barcode">
