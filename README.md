@@ -135,6 +135,31 @@ Then open the matching local URL, usually **http://localhost:8080** or **http://
 
 ---
 
+## 🌐 Publish a Public Website (Railway)
+
+People visiting the deployed site only need a browser. Railway builds and runs the Java container; visitors do not install Java, Maven, or MySQL.
+
+1. Review the files to be published and confirm `src/main/resources/application.properties` and any `.env` file are not staged:
+   ```powershell
+   git status --short
+   git check-ignore -v src/main/resources/application.properties
+   ```
+2. Commit and push the deployment files to this repository's `main` branch:
+   ```powershell
+   git add .gitignore .dockerignore Dockerfile railway.toml src/main/resources/application-railway.properties src/main/java/com/tickethub/TicketHubApplication.java README.md
+   git status --short
+   git commit -m "Prepare TicketHub for hosted deployment"
+   git push origin main
+   ```
+3. Sign in to Railway, create a project from the `AL-Fidha/TicketHub` GitHub repository, and add a MySQL service to the project.
+4. In the TicketHub service's Variables, set `SPRING_CONFIG_NAME=application-railway`. Add Railway's MySQL service references for `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, and `MYSQLPASSWORD` using the variable picker.
+5. Add `JWT_SECRET` (at least 32 random characters), `APP_ADMIN_EMAIL`, `APP_ADMIN_PASSWORD`, and `TMDB_API_KEY` as private Railway variables. Never put these values in GitHub or in frontend code.
+6. Deploy the service. Railway builds the Docker image and starts the JAR. Once healthy, open the service's Networking settings and choose **Generate Domain**. Share that HTTPS domain with visitors.
+
+The Railway profile does not create sample movies or unverified theatre records. After deployment, sign in with the configured admin account, import movies from TMDB, and add verified theatre addresses and screens before scheduling shows. Hosting providers may charge for the app and database; check Railway's current pricing before deploying.
+
+---
+
 ## 🔑 Login
 
 Register a customer account using **Sign Up**. To provision an administrator, set `app.admin.email` and `app.admin.password` in your local configuration before starting the app. The application does not create demo accounts or ship with a default administrator password. Existing administrators are not overwritten on restart.

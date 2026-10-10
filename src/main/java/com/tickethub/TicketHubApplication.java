@@ -45,7 +45,8 @@ public class TicketHubApplication {
             PasswordEncoder   encoder,
             TmdbService       tmdb,
             @Value("${app.admin.email:}") String adminEmail,
-            @Value("${app.admin.password:}") String adminPassword) {
+            @Value("${app.admin.password:}") String adminPassword,
+            @Value("${app.seed.demo-data:true}") boolean seedDemoData) {
 
         return args -> {
             // ── 1. Optional administrator bootstrap ────────
@@ -69,6 +70,11 @@ public class TicketHubApplication {
                 }
             } else {
                 log.warn("No administrator bootstrapped. Set app.admin.email and app.admin.password to create one.");
+            }
+
+            if (!seedDemoData) {
+                log.info("Sample movie, theatre, and show seeding is disabled.");
+                return;
             }
 
             // ── 2. Movies ──────────────────────────────────
