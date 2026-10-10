@@ -48,7 +48,10 @@ async function apiFetch(path, options = {}) {
 
   const data = await res.json().catch(() => ({}));
 
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  if (!res.ok) {
+    const errorMsg = data.error || data.message || `Request failed (${res.status})`;
+    throw new Error(errorMsg);
+  }
   return data;
 }
 
@@ -93,7 +96,21 @@ const SeatsAPI = {
 
 // ── BOOKINGS ──────────────────────────────────
 const BookingsAPI = {
-  create:  (show_id, seats)  => apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ show_id, showId: show_id, seats }) }),
+  create:  (show_id, seats)  => {
+    const numericShowId = Number(show_id);
+    const normalizedSeats = (seats || []).map(s => {
+      if (typeof s === 'string') return { label: s.trim(), type: ['A','B'].includes(s.trim().charAt(0)) ? 'premium' : 'standard' };
+      return { label: String(s.label || s).trim(), type: s.type || (['A','B'].includes(String(s.label || s).trim().charAt(0)) ? 'premium' : 'standard') };
+    });
+    return apiFetch('/bookings', {
+      method: 'POST',
+      body: JSON.stringify({
+        show_id: numericShowId,
+        showId: numericShowId,
+        seats: normalizedSeats
+      })
+    });
+  },
   mine:    ()                => apiFetch('/bookings/mine'),
   getOne:  (ref)             => apiFetch(`/bookings/${ref}`),
   cancel:  (ref)             => apiFetch(`/bookings/${ref}/cancel`, { method: 'PUT' }),
@@ -135,17 +152,39 @@ function updateNav() {
   const el   = document.getElementById('navActions');
   if (!el) return;
   if (user) {
-    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    const avatarEmoji = localStorage.getItem('th_user_avatar') || '🍿';
+    const adminBadge = user.role === 'admin'
+      ? `<a href="/dashboard.html#manageMovies" class="nav-admin-pill" style="text-decoration:none;">🛡️ Admin</a>`
+      : '';
     el.innerHTML = `
+      ${adminBadge}
       <a href="/dashboard.html" class="nav-user">
-        <div class="nav-avatar">${initials}</div>
-        <span class="nav-username">${user.name.split(' ')[0]}</span>
+        <div class="nav-avatar" style="font-size:1.1rem;background:var(--bg-card2);border:1px solid var(--border);">${avatarEmoji}</div>
+        <span class="nav-username">${(user.name || 'User').split(' ')[0]}</span>
       </a>`;
   } else {
     el.innerHTML = `
+      <a href="/admin-login.html" class="btn-nav-admin" title="Admin Portal">🛡️ Admin</a>
       <a href="/login.html" class="btn-nav-login">Log In</a>
       <a href="/login.html" class="btn-nav-signup btn">Sign Up</a>`;
   }
+}
+
+function initCinemaIntro() {
+  const intro = document.getElementById('cinemaIntro');
+  if (!intro) return;
+  if (sessionStorage.getItem('th_intro_played')) {
+    intro.style.display = 'none';
+    return;
+  }
+  sessionStorage.setItem('th_intro_played', 'true');
+  const hideIntro = () => {
+    intro.classList.add('fade-out');
+    setTimeout(() => { intro.style.display = 'none'; }, 850);
+  };
+  const skipBtn = document.getElementById('skipIntroBtn');
+  if (skipBtn) skipBtn.addEventListener('click', hideIntro);
+  setTimeout(hideIntro, 1800);
 }
 
 // ── POSTER helper (Real TMDB / Image URLs) ─────

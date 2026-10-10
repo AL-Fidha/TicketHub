@@ -257,6 +257,11 @@ function filterCity(city) {
 
 function renderTheatres() {
   const filtered = selectedCity === 'all' ? allShows : allShows.filter(s => s.city === selectedCity);
+  window.allShowsById = {};
+  filtered.forEach(s => {
+    window.allShowsById[s.show_id] = s;
+  });
+
   // Group by theatre
   const theatreMap = {};
   filtered.forEach(s => {
@@ -279,7 +284,7 @@ function renderTheatres() {
           const avail = s.total_seats - s.seats_booked;
           const full  = avail <= 0;
           const time  = s.show_time.slice(0,5);
-          return `<button class="show-chip${full?' housefull':''}" onclick="${full?'':(`selectShow(${JSON.stringify(s).replace(/"/g,"'")})`)}" ${full?'disabled':''}>
+          return `<button class="show-chip${full?' housefull':''}" onclick="${full?'':(`selectShowById(${s.show_id})`)}" ${full?'disabled':''}>
             ${time}
             <small>${full ? 'Housefull' : avail + ' seats left'}</small>
           </button>`;
@@ -288,8 +293,14 @@ function renderTheatres() {
     </div>`).join('');
 }
 
+function selectShowById(showId) {
+  const show = window.allShowsById && window.allShowsById[showId];
+  if (show) selectShow(show);
+}
+
 function selectShow(show) {
   bk.show = show;
+  bk.seats = []; // fresh seat selection when picking new show
   const time = show.show_time.slice(0,5);
   document.getElementById('sumTime').textContent    = time;
   document.getElementById('sumTheatre').textContent = show.theatre_name;
@@ -401,23 +412,44 @@ function renderConfirm() {
 }
 
 async function confirmBooking() {
-  if (!Auth.loggedIn()) { window.location.href = '/login.html'; return; }
+  if (!Auth.loggedIn()) {
+    showToast('Please log in to confirm booking', 'error');
+    setTimeout(() => window.location.href = '/login.html', 1000);
+    return;
+  }
   const alertEl = document.getElementById('bookingAlert');
   const btn     = document.getElementById('confirmBtn');
   alertEl.classList.remove('show');
-  btn.disabled = true; btn.textContent = 'Processing…';
+
+  const showId = bk.show ? (bk.show.show_id || bk.show.id) : null;
+  if (!showId) {
+    alertEl.textContent = 'Please choose a theatre showtime.';
+    alertEl.classList.add('show');
+    return;
+  }
+
+  if (!bk.seats || bk.seats.length === 0) {
+    alertEl.textContent = 'Please select at least 1 seat before confirming.';
+    alertEl.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Processing & Securing Seats…';
 
   const seats = bk.seats.map(label => ({
-    label,
-    type: ['A','B'].includes(label[0]) ? 'premium' : 'standard'
+    label: String(label).trim(),
+    type: ['A','B'].includes(String(label).charAt(0)) ? 'premium' : 'standard'
   }));
 
   try {
-    const { booking_ref, total } = await BookingsAPI.create(bk.show.show_id, seats);
-    showTicketModal(booking_ref, total);
+    const res = await BookingsAPI.create(showId, seats);
+    showTicketModal(res.booking_ref, res.total);
   } catch(e) {
-    alertEl.textContent = e.message; alertEl.classList.add('show');
-    btn.disabled = false; btn.textContent = '🎟️ Confirm & Get Ticket';
+    alertEl.textContent = e.message || 'Booking failed. Please try again.';
+    alertEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = '🎟️ Confirm & Get Ticket';
   }
 }
 
@@ -448,22 +480,32 @@ function showTicketModal(ref, total) {
 
 // ── Step navigation ───────────────────────────
 function goStep(n) {
-  bk.seats = [];
+  // Only clear seats if changing movie or date/theatre step
+  if (n <= 2) {
+    bk.seats = [];
+  }
   document.querySelectorAll('.booking-step').forEach((s,i) => s.style.display = (i+1===n)?'block':'none');
   for (let i=1; i<=4; i++) {
     const si = document.getElementById('si'+i);
-    si.classList.remove('active','done');
-    if (i < n) si.classList.add('done');
-    if (i === n) si.classList.add('active');
+    if (si) {
+      si.classList.remove('active','done');
+      if (i < n) si.classList.add('done');
+      if (i === n) si.classList.add('active');
+    }
     const line = document.getElementById('sil'+i);
     if (line) line.classList.toggle('done', i < n);
   }
   if (n === 2) {
-    // Init date picker
     renderDateChips('datePicker', date => loadTheatresStep(date));
   }
-  if (n === 3) { bk.seats = []; loadSeats(); updateSeatSummary(); }
-  if (n === 4) renderConfirm();
+  if (n === 3) {
+    loadSeats();
+    updateSeatSummary();
+  }
+  if (n === 4) {
+    renderConfirm();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>

@@ -72,128 +72,169 @@ public class TicketHubApplication {
             }
 
             // ── 2. Movies ──────────────────────────────────
+            List<Movie> defaultMovies = List.of(
+                // ── MALAYALAM ──
+                movie("Manjummel Boys", "Adventure, Thriller, Survival",
+                      Movie.Language.Malayalam, 135, 8.6, 1069945L,
+                      "https://image.tmdb.org/t/p/w500/bswrtewwthpsh6nABiqKevU4UBI.jpg",
+                      "A group of close friends from Kochi embark on a trip to Kodaikanal where a harrowing cave accident tests their friendship and resilience.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Aavesham", "Action, Comedy",
+                      Movie.Language.Malayalam, 158, 8.4, 1084812L,
+                      "https://image.tmdb.org/t/p/w500/k5RWPaNjgRcNvGoawYaQHQwyctI.jpg",
+                      "Three engineering freshmen in Bangalore befriend an eccentric local gangster named Ranga to stand up against college bullies.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Premalu", "Romance, Comedy",
+                      Movie.Language.Malayalam, 156, 8.2, 1196422L,
+                      "https://image.tmdb.org/t/p/w500/uPpmBjY3znUqGY8kYwI5xvOrSc0.jpg",
+                      "Sachin moves to Hyderabad with dreams of higher education and finds his life turned upside down when he falls for the confident Reenu.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Bramayugam", "Horror, Mystery, Thriller",
+                      Movie.Language.Malayalam, 139, 8.5, 1160164L,
+                      "https://image.tmdb.org/t/p/w500/snQLwRrfQAl5YFKVefZq9Lbscki.jpg",
+                      "A fleeing folk singer in 17th-century Malabar seeks shelter in a shadowy mana, only to discover a sinister game of ancient sorcery.",
+                      Movie.Status.NOW_SHOWING),
+                movie("The Goat Life (Aadujeevitham)", "Adventure, Drama, Survival",
+                      Movie.Language.Malayalam, 172, 8.7, 507241L,
+                      "https://image.tmdb.org/t/p/w500/l7z3Skv1xLASnUt0whC4IInaXt0.jpg",
+                      "Based on the acclaimed true story, Najeeb endures years of forced isolation and desert labor in a desperate quest for freedom.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Kishkindha Kaandam", "Mystery, Thriller",
+                      Movie.Language.Malayalam, 125, 8.5, 1344445L,
+                      "https://image.tmdb.org/t/p/w500/rniBYHDRs6e8qMkPr4D4ZE5uMhF.jpg",
+                      "Strange occurrences in a monkey-inhabited reserve forest unravel deep family secrets and missing firearms in an intricate puzzle.",
+                      Movie.Status.NOW_SHOWING),
+                movie("ARM (Ajayante Randam Moshanam)", "Action, Adventure, Fantasy",
+                      Movie.Language.Malayalam, 147, 8.1, 1038234L,
+                      "https://image.tmdb.org/t/p/w500/6OgA9x6jvwBIj8e7x8LANTbVvR2.jpg",
+                      "Set in Northern Kerala across three generations, three heroes battle to protect a celestial treasure entrusted to their land.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Turbo", "Action, Comedy",
+                      Movie.Language.Malayalam, 152, 7.8, 1205371L,
+                      "https://image.tmdb.org/t/p/w500/inTKQni4YW8syrfgnXHwzmNeSo4.jpg",
+                      "Turbo Jose, an unyielding man from Idukki, lands in Chennai and gets entangled in a massive corporate and underworld conspiracy.",
+                      Movie.Status.NOW_SHOWING),
+
+                // ── ENGLISH ──
+                movie("Dune: Part Two", "Sci-Fi, Adventure, Action",
+                      Movie.Language.English, 166, 8.9, 693134L,
+                      "https://image.tmdb.org/t/p/w500/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg",
+                      "Paul Atreides unites with Chani and the Fremen while seeking vengeance against the conspirators who destroyed his house.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Oppenheimer", "Biography, Drama, History",
+                      Movie.Language.English, 180, 8.9, 872585L,
+                      "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+                      "The compelling story of theoretical physicist J. Robert Oppenheimer, whose leadership of the Manhattan Project forever altered world history.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Deadpool & Wolverine", "Action, Comedy, Sci-Fi",
+                      Movie.Language.English, 128, 8.5, 533535L,
+                      "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+                      "Wade Wilson's quiet retirement is shattered when the TVA pulls him into an interdimensional mission requiring the claws of Wolverine.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Interstellar", "Sci-Fi, Adventure, Drama",
+                      Movie.Language.English, 169, 8.7, 157336L,
+                      "https://image.tmdb.org/t/p/w500/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+                      "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+                      Movie.Status.NOW_SHOWING),
+                movie("The Batman", "Action, Crime, Drama",
+                      Movie.Language.English, 176, 8.3, 414906L,
+                      "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg",
+                      "When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Gladiator II", "Action, Adventure, Drama",
+                      Movie.Language.English, 148, 8.4, 558449L,
+                      "https://image.tmdb.org/t/p/w500/2cxhvwyEwRlysAmRH4iodkvo0z5.jpg",
+                      "Decades after Maximus, Lucius enters the Colosseum to fight for the future of Rome and restore glory to its people.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Avatar: The Way of Water", "Sci-Fi, Adventure, Action",
+                      Movie.Language.English, 192, 8.6, 76600L,
+                      "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+                      "Jake Sully lives with his newfound family formed on the extrasolar moon Pandora once more facing a familiar threat.",
+                      Movie.Status.NOW_SHOWING),
+
+                // ── TAMIL ──
+                movie("Leo", "Action, Crime, Thriller",
+                      Movie.Language.Tamil, 164, 8.0, 1072790L,
+                      "https://image.tmdb.org/t/p/w500/gSOVog7ydsaF1YpgAqBqnKYFGY.jpg",
+                      "Parthiban lives a quiet life in Theog until a violent incident exposes him to an international cartel seeking a long-lost operative.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Jailer", "Action, Comedy, Crime",
+                      Movie.Language.Tamil, 168, 8.2, 946310L,
+                      "https://image.tmdb.org/t/p/w500/upwdEyhhYZ7pT2hD535fr2MGfpx.jpg",
+                      "A retired jailer goes on a ruthless manhunt to track down the gangsters who kidnapped his son.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Amaran", "Action, Biography, Drama",
+                      Movie.Language.Tamil, 169, 8.8, 927342L,
+                      "https://image.tmdb.org/t/p/w500/eCB06m1KUGilEOlIzb40nkQhVY0.jpg",
+                      "The inspiring and courageous journey of Major Mukund Varadarajan and his Rajput Regiment brothers in counter-insurgency operations.",
+                      Movie.Status.NOW_SHOWING),
+                movie("The Greatest of All Time (GOAT)", "Action, Sci-Fi, Thriller",
+                      Movie.Language.Tamil, 179, 8.1, 1184918L,
+                      "https://image.tmdb.org/t/p/w500/uYzHkzZPp84B7nHOKaJZWjyGFUL.jpg",
+                      "A veteran hostage negotiator and counter-terrorism specialist is pulled back into action when an old nemesis reappears.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Maharaja", "Action, Crime, Thriller",
+                      Movie.Language.Tamil, 140, 8.5, 1118224L,
+                      "https://image.tmdb.org/t/p/w500/s0m4TM1XRAftQStgKpw024RvkJo.jpg",
+                      "A quiet barber reports his dustbin stolen to the police, sparking a gripping investigation that conceals an intensely personal crusade.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Vikram", "Action, Thriller, Crime",
+                      Movie.Language.Tamil, 175, 8.6, 764835L,
+                      "https://image.tmdb.org/t/p/w500/774UV1aCURb4s4JfEFg3IEMu5Zj.jpg",
+                      "A black-ops commander investigates a series of murders committed by a masked vigilante group targeting a brutal drug kingpin.",
+                      Movie.Status.NOW_SHOWING),
+
+                // ── HINDI ──
+                movie("Stree 2", "Comedy, Horror",
+                      Movie.Language.Hindi, 149, 8.4, 1114513L,
+                      "https://image.tmdb.org/t/p/w500/nfnhwfUEFuSOxxf4jDdBlY6Lccw.jpg",
+                      "The residents of Chanderi confront a terrifying headless demon known as Sarkata, requiring an unlikely union of old friends.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Jawan", "Action, Thriller",
+                      Movie.Language.Hindi, 169, 8.3, 872585L,
+                      "https://image.tmdb.org/t/p/w500/jFt1gS4BGHlK8xt76Y81Alp4dbt.jpg",
+                      "An enigmatic vigilante orchestrates high-stakes operations across the country to expose corruption and bring justice to ordinary citizens.",
+                      Movie.Status.NOW_SHOWING),
+                movie("12th Fail", "Biography, Drama",
+                      Movie.Language.Hindi, 147, 9.1, 1181548L,
+                      "https://image.tmdb.org/t/p/w500/eebUPRI4Z5e1Z7Hev4JZAwMIFkX.jpg",
+                      "Based on true events, Manoj Kumar Sharma battles extreme poverty and setbacks to restart his journey towards clearing the UPSC exam.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Animal", "Action, Crime, Drama",
+                      Movie.Language.Hindi, 201, 8.0, 781732L,
+                      "https://image.tmdb.org/t/p/w500/6pzI1DIlxwAFffw9OZcG6cr031U.jpg",
+                      "An all-consuming devotion between father and son spirals into a brutal underworld conflict when an assassination attempt occurs.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Fighter", "Action, Thriller, War",
+                      Movie.Language.Hindi, 166, 8.1, 850165L,
+                      "https://image.tmdb.org/t/p/w500/dJPT2Uf12X6aFg8i5N67NTpIZ9t.jpg",
+                      "Top Indian Air Force aviators come together to form Air Dragons, an elite aerial combat unit responding to militant threats.",
+                      Movie.Status.NOW_SHOWING),
+                movie("Bhool Bhulaiyaa 3", "Comedy, Horror",
+                      Movie.Language.Hindi, 158, 8.0, 1132644L,
+                      "https://image.tmdb.org/t/p/w500/3AfHD1HoaQpQwKH8kxRdBKVmzeU.jpg",
+                      "Rooh Baba travels to the royal kingdom of Raktaghat in West Bengal and comes face-to-face with two vengeful spirits.",
+                      Movie.Status.NOW_SHOWING)
+            );
+
             if (movieRepo.count() == 0) {
-                List<Movie> movies = List.of(
-                    // ── MALAYALAM ──
-                    movie("Manjummel Boys", "Adventure, Thriller, Survival",
-                          Movie.Language.Malayalam, 135, 8.6, 1205371L,
-                          "https://image.tmdb.org/t/p/w500/4ux5z0Bl7NrtKpj08YLzJEB4HO3.jpg",
-                          "A group of close friends from Kochi embark on a trip to Kodaikanal where a harrowing cave accident tests their friendship and resilience.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Aavesham", "Action, Comedy",
-                          Movie.Language.Malayalam, 158, 8.4, 1084812L,
-                          "https://image.tmdb.org/t/p/w500/k5RWPaNjgRcNvGoawYaQHQwyctI.jpg",
-                          "Three engineering freshmen in Bangalore befriend an eccentric local gangster named Ranga to stand up against college bullies.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Premalu", "Romance, Comedy",
-                          Movie.Language.Malayalam, 156, 8.2, 1196422L,
-                          "https://upload.wikimedia.org/wikipedia/en/c/c5/Premalu_film_poster.jpg",
-                          "Sachin moves to Hyderabad with dreams of higher education and finds his life turned upside down when he falls for the confident Reenu.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Bramayugam", "Horror, Mystery, Thriller",
-                          Movie.Language.Malayalam, 139, 8.5, 1160164L,
-                          "https://upload.wikimedia.org/wikipedia/en/0/09/Bramayugam_poster.jpg",
-                          "A fleeing folk singer in 17th-century Malabar seeks shelter in a shadowy mana, only to discover a sinister game of ancient sorcery.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("The Goat Life (Aadujeevitham)", "Adventure, Drama, Survival",
-                          Movie.Language.Malayalam, 172, 8.7, 507241L,
-                          "https://upload.wikimedia.org/wikipedia/en/f/fb/The_Goat_Life_poster.jpg",
-                          "Based on the acclaimed true story, Najeeb endures years of forced isolation and desert labor in a desperate quest for freedom.",
-                          Movie.Status.NOW_SHOWING),
-
-                    // ── TAMIL ──
-                    movie("Amaran", "Action, Biography, Drama",
-                          Movie.Language.Tamil, 169, 8.8, 927342L,
-                          "https://image.tmdb.org/t/p/w500/7cNE2qydew1c8fqnlhWjkE3DHc2.jpg",
-                          "The inspiring and courageous journey of Major Mukund Varadarajan and his Rajput Regiment brothers in counter-insurgency operations.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Leo", "Action, Crime, Thriller",
-                          Movie.Language.Tamil, 164, 8.0, 1072790L,
-                          "https://image.tmdb.org/t/p/w500/9Rj8l6gElLpRL7Kj17iZhrT5Zuw.jpg",
-                          "Parthiban lives a quiet life in Theog until a violent incident exposes him to an international cartel seeking a long-lost operative.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("The Greatest of All Time (GOAT)", "Action, Sci-Fi, Thriller",
-                          Movie.Language.Tamil, 179, 8.1, 1184918L,
-                          "https://image.tmdb.org/t/p/w500/4ux5z0Bl7NrtKpj08YLzJEB4HO3.jpg",
-                          "A veteran hostage negotiator and counter-terrorism specialist is pulled back into action when an old nemesis reappears with deadly technology.",
-                          Movie.Status.NOW_SHOWING),
-
-                    // ── HINDI ──
-                    movie("Stree 2", "Comedy, Horror",
-                          Movie.Language.Hindi, 149, 8.4, 1114513L,
-                          "https://upload.wikimedia.org/wikipedia/en/a/a1/Stree_2.jpg",
-                          "The residents of Chanderi confront a terrifying headless demon known as Sarkata, requiring an unlikely union of old friends.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Jawan", "Action, Thriller",
-                          Movie.Language.Hindi, 169, 8.3, 872585L,
-                          "https://upload.wikimedia.org/wikipedia/en/3/39/Jawan_film_poster.jpg",
-                          "An enigmatic vigilante orchestrates high-stakes operations across the country to expose corruption and bring justice to ordinary citizens.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Animal", "Action, Crime, Drama",
-                          Movie.Language.Hindi, 201, 8.0, 781732L,
-                          "https://upload.wikimedia.org/wikipedia/en/9/90/Animal_%282023_film%29_poster.jpg",
-                          "An all-consuming devotion between father and son spirals into a brutal underworld conflict when an assassination attempt occurs.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("12th Fail", "Biography, Drama",
-                          Movie.Language.Hindi, 147, 9.1, 1181548L,
-                          "https://upload.wikimedia.org/wikipedia/en/f/f2/12th_Fail_poster.jpeg",
-                          "Based on true events, Manoj Kumar Sharma battles extreme poverty and setbacks to restart his journey towards clearing the UPSC exam.",
-                          Movie.Status.NOW_SHOWING),
-
-                    // ── ENGLISH (HOLLYWOOD) ──
-                    movie("Deadpool & Wolverine", "Action, Comedy, Sci-Fi",
-                          Movie.Language.English, 128, 8.5, 533535L,
-                          "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
-                          "Wade Wilson's quiet retirement is shattered when the TVA pulls him into an interdimensional mission requiring the claws of Wolverine.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Dune: Part Two", "Action, Adventure, Sci-Fi",
-                          Movie.Language.English, 166, 8.9, 693134L,
-                          "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
-                          "Paul Atreides unites with Chani and the Fremen while seeking vengeance against those who destroyed his house, shaping the universe's fate.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Gladiator II", "Action, Adventure, Drama",
-                          Movie.Language.English, 148, 8.4, 558449L,
-                          "https://upload.wikimedia.org/wikipedia/en/0/04/Gladiator_II_%282024%29_poster.jpg",
-                          "Decades after Maximus, Lucius enters the Colosseum to fight for the future of Rome and restore glory to its people.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Oppenheimer", "Biography, Drama, History",
-                          Movie.Language.English, 180, 8.9, 872585L,
-                          "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
-                          "The compelling story of theoretical physicist J. Robert Oppenheimer, whose leadership of the Manhattan Project forever altered world history.",
-                          Movie.Status.NOW_SHOWING),
-                    movie("Inside Out 2", "Animation, Adventure, Comedy",
-                          Movie.Language.English, 96, 8.3, 1022789L,
-                          "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
-                          "Joy and the gang meet new teenage emotions including Anxiety, Envy, Ennui, and Embarrassment inside Riley's evolving mind.",
-                          Movie.Status.NOW_SHOWING)
-                );
-                movieRepo.saveAll(movies);
-                log.info("17 blockbuster movies with real posters seeded.");
+                movieRepo.saveAll(defaultMovies);
+                log.info("27 blockbuster movies with real posters seeded.");
             } else {
-                for (Movie m : movieRepo.findAll()) {
-                    if (m.getPosterPath() == null || m.getPosterPath().isBlank()) {
-                        String fallbackPoster = switch (m.getTitle()) {
-                            case "Bethlehem Kudumba Unit (BKU)" -> "https://upload.wikimedia.org/wikipedia/en/c/c5/Premalu_film_poster.jpg";
-                            case "Pradhama Drishtya Kuttakkar" -> "https://upload.wikimedia.org/wikipedia/en/0/09/Bramayugam_poster.jpg";
-                            case "L&O: Law and Order" -> "https://image.tmdb.org/t/p/w500/7cNE2qydew1c8fqnlhWjkE3DHc2.jpg";
-                            case "It's a Medical Miracle" -> "https://image.tmdb.org/t/p/w500/k5RWPaNjgRcNvGoawYaQHQwyctI.jpg";
-                            case "I'm Game" -> "https://image.tmdb.org/t/p/w500/4ux5z0Bl7NrtKpj08YLzJEB4HO3.jpg";
-                            case "Resident Evil (2026)" -> "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg";
-                            case "Spider-Man: Brand New Day" -> "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg";
-                            case "Practical Magic 2" -> "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg";
-                            case "The Uprising" -> "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg";
-                            case "The Odyssey" -> "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg";
-                            case "Mandaadi" -> "https://image.tmdb.org/t/p/w500/9Rj8l6gElLpRL7Kj17iZhrT5Zuw.jpg";
-                            case "Sardar 2" -> "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg";
-                            case "Sandakkari" -> "https://upload.wikimedia.org/wikipedia/en/f/fb/The_Goat_Life_poster.jpg";
-                            case "Hi" -> "https://image.tmdb.org/t/p/w500/4ux5z0Bl7NrtKpj08YLzJEB4HO3.jpg";
-                            case "Vishwanath and Sons" -> "https://upload.wikimedia.org/wikipedia/en/a/a1/Stree_2.jpg";
-                            default -> tmdb.fetchPosterUrl(m.getTitle(), m.getTmdbId());
-                        };
-                        if (fallbackPoster != null) {
-                            m.setPosterPath(fallbackPoster);
-                            movieRepo.save(m);
-                        }
+                for (Movie dm : defaultMovies) {
+                    Movie existing = movieRepo.findAll().stream()
+                        .filter(m -> m.getTitle().equalsIgnoreCase(dm.getTitle()))
+                        .findFirst().orElse(null);
+                    if (existing == null) {
+                        movieRepo.save(dm);
+                    } else if (existing.getPosterPath() == null || !existing.getPosterPath().equals(dm.getPosterPath())) {
+                        existing.setPosterPath(dm.getPosterPath());
+                        existing.setDescription(dm.getDescription());
+                        existing.setGenre(dm.getGenre());
+                        existing.setLanguage(dm.getLanguage());
+                        existing.setRating(dm.getRating());
+                        existing.setDurationMin(dm.getDurationMin());
+                        movieRepo.save(existing);
                     }
                 }
             }

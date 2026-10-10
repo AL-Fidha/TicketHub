@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Portal – Ticket Hub</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <style>
+    .admin-auth-card {
+      background: linear-gradient(145deg, rgba(25, 20, 30, 0.95), rgba(12, 14, 22, 0.98));
+      border: 1px solid rgba(245, 197, 24, 0.35);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 197, 24, 0.12);
+    }
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 197, 24, 0.12);
+      border: 1px solid rgba(245, 197, 24, 0.4);
+      color: var(--accent-gold);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+    .demo-creds-box {
+      background: rgba(245, 197, 24, 0.06);
+      border: 1px dashed rgba(245, 197, 24, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-fill-creds {
+      background: rgba(245, 197, 24, 0.18);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 197, 24, 0.4);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-fill-creds:hover {
+      background: var(--accent-gold);
+      color: #000;
+    }
+  </style>
+</head>
+<body class="auth-page">
+<div class="auth-container">
+  <div class="auth-logo">
+    <a href="/index.html" style="display:inline-flex;align-items:center;gap:10px;color:inherit;">
+      <span style="background:linear-gradient(135deg, #f5c518, #b8860b);border-radius:8px;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 0 20px rgba(245,197,24,0.4);">🛡️</span>
+      Ticket<span>Hub</span>
+    </a>
+  </div>
+
+  <div class="auth-card admin-auth-card">
+    <div style="text-align:center;margin-bottom:1.25rem;">
+      <div class="admin-badge">🛡️ Authorized Admin Gateway</div>
+      <h2 style="font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;">Admin Sign In</h2>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">Manage movie repertoire, theatre screens, shows, and all bookings</p>
+    </div>
+
+    <div class="demo-creds-box">
+      <div>
+        <strong>Admin Login:</strong> <span style="color:var(--text-primary);">admin@tickethub.com</span><br/>
+        <span style="font-size:0.75rem;color:var(--text-muted);">Configured system administrator</span>
+      </div>
+      <button type="button" class="btn-fill-creds" onclick="fillAdminCreds()">Auto-fill</button>
+    </div>
+
+    <div id="adminAlert" class="form-alert error"></div>
+
+    <div class="form-group">
+      <label class="form-label">Administrator Email</label>
+      <input class="form-input" type="email" id="adminEmail" placeholder="admin@tickethub.com" autocomplete="email"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-group">
+        <input class="form-input" type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password"/>
+        <span class="input-icon" onclick="togglePwd('adminPassword',this)">👁️</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="adminLoginBtn" onclick="handleAdminLogin()" style="background:linear-gradient(135deg, #e50914, #b80610);font-weight:700;">
+      Access Admin Panel →
+    </button>
+
+    <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;">
+      <a href="/login.html" style="font-size:0.85rem;color:var(--text-secondary);display:inline-flex;align-items:center;gap:6px;">
+        👤 Are you a customer? <strong>Switch to Customer Login</strong>
+      </a>
+    </div>
+  </div>
+
+  <div class="auth-footer">
+    <a href="/index.html">← Return to Homepage</a>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/api.js"></script>
+<script>
+  if (Auth.loggedIn() && Auth.isAdmin()) {
+    window.location.href = '/dashboard.html#manageMovies';
+  }
+
+  function fillAdminCreds() {
+    document.getElementById('adminEmail').value = 'admin@tickethub.com';
+    document.getElementById('adminPassword').value = 'MyStrongPassword123';
+    showToast('Admin credentials filled!', 'info');
+  }
+
+  function togglePwd(id, icon) {
+    const inp = document.getElementById(id);
+    inp.type  = inp.type === 'password' ? 'text' : 'password';
+    icon.textContent = inp.type === 'password' ? '👁️' : '🙈';
+  }
+
+  async function handleAdminLogin() {
+    const email    = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const alertEl  = document.getElementById('adminAlert');
+    const btn      = document.getElementById('adminLoginBtn');
+    alertEl.classList.remove('show');
+
+    if (!email || !password) {
+      alertEl.textContent = 'Both administrator email and password are required.';
+      alertEl.classList.add('show');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Verifying Admin Privileges…';
+
+    try {
+      const res = await AuthAPI.login(email, password);
+      const user = res.user || { id: res.id, name: res.name, email: res.email, role: res.role };
+
+      if (user.role !== 'admin') {
+        Auth.clear();
+        throw new Error('Access denied: This account does not possess administrator privileges. Please use Customer Login.');
+      }
+
+      Auth.setToken(res.token);
+      Auth.setUser(user);
+      showToast('Welcome Administrator! Launching Admin Panel…', 'success');
+      setTimeout(() => window.location.href = '/dashboard.html#manageMovies', 700);
+    } catch(e) {
+      alertEl.textContent = e.message || 'Authentication failed. Please verify admin credentials.';
+      alertEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Access Admin Panel →';
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleAdminLogin();
+  });
+</script>
+</body>
+</html>

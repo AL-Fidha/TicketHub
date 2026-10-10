@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ticket Hub – Movie Ticket Booking</title>
+  <title>Ticket Hub – Premier Movie Ticket Booking</title>
   <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body>
+
+<!-- CINEMATIC INTRO SPLASH & LOGO ANIMATION -->
+<div id="cinemaIntro" class="cinema-intro-overlay">
+  <button class="cinema-intro-skip" id="skipIntroBtn">Skip Intro ✕</button>
+  <div class="cinema-intro-bg-glow"></div>
+  <div class="cinema-intro-content">
+    <div class="cinema-intro-icon-wrap">🎬</div>
+    <div class="cinema-intro-title">Ticket<span>Hub</span></div>
+    <div class="cinema-intro-tagline">Kerala's Premier Cinema Experience</div>
+  </div>
+</div>
+
 <nav class="navbar">
   <a href="/index.html" class="nav-brand"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></a>
   <ul class="nav-links">
@@ -25,17 +37,18 @@
     <div class="hero-bg"><div class="hero-grid"></div></div>
     <div class="hero-content">
       <div class="hero-text">
-        <div class="hero-badge">KERALA'S LOCAL CINEMA GUIDE</div>
-        <h1 class="hero-title">Your next<br/>great story<br/><span class="highlight">starts here.</span></h1>
-        <p class="hero-desc">Find a film, choose a nearby showtime, and reserve the seats you want. Your ticket is ready when the lights go down.</p>
+        <div class="hero-badge">KERALA'S PREMIER CINEMA PORTAL</div>
+        <h1 class="hero-title">Experience cinema<br/>the way it was<br/><span class="highlight">meant to be seen.</span></h1>
+        <p class="hero-desc">Discover the biggest blockbusters across Malayalam, English, Tamil, and Hindi. Choose your cinema screen, lock your seats instantly, and receive verified digital tickets.</p>
         <div class="hero-actions">
-          <a href="/movies.html" class="btn btn-primary btn-lg">🎬 &nbsp; Browse Movies</a>
-          <a href="/login.html"  class="btn btn-secondary btn-lg">Get Started</a>
+          <a href="/movies.html" class="btn btn-primary btn-lg">🎬 &nbsp; Browse All Movies</a>
+          <a href="/booking.html" class="btn btn-secondary btn-lg">🎟️ &nbsp; Book Tickets</a>
         </div>
-        <div class="hero-stats">
-          <div class="stat-item"><div class="stat-num" id="statMovies">—</div><div class="stat-label">Movies</div></div>
-          <div class="stat-item"><div class="stat-num" id="statTheatres">—</div><div class="stat-label">Kerala Theatres</div></div>
-          <div class="stat-item"><div class="stat-num" id="statLanguages">—</div><div class="stat-label">Languages</div></div>
+        <div class="hero-cinema-badges">
+          <div class="cinema-badge-item"><span>🔊</span> Dolby Atmos 7.1</div>
+          <div class="cinema-badge-item"><span>💎</span> 4K Laser Projection</div>
+          <div class="cinema-badge-item"><span>⚡</span> Live Seat Availability</div>
+          <div class="cinema-badge-item"><span>🎟️</span> Instant E-Ticket QR</div>
         </div>
       </div>
       <div class="hero-visual">
@@ -46,17 +59,27 @@
     </div>
   </section>
 
-  <!-- NOW SHOWING -->
-  <div style="background:linear-gradient(180deg,transparent,var(--bg-card));padding:0.5rem 0;">
+  <!-- NOW SHOWING WITH LANGUAGE TABS -->
+  <div style="background:linear-gradient(180deg,transparent,var(--bg-card));padding:1rem 0 3rem;">
     <section class="section">
-      <div class="section-header">
-        <div class="section-label">On the marquee</div>
-        <h2 class="section-title">Find your next film</h2>
-        <p class="section-desc">Explore Malayalam, Tamil, Hindi, English, and more.</p>
+      <div class="section-header" style="text-align:center;margin-bottom:2rem;">
+        <div class="section-label">Now In Cinemas</div>
+        <h2 class="section-title">Blockbusters on the Big Screen</h2>
+        <p class="section-desc">Experience top-rated films across multiple languages in state-of-the-art Kerala theatres.</p>
       </div>
+
+      <!-- Quick Language Filter -->
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:2.5rem;" id="homeLangTabs">
+        <button class="filter-chip active" onclick="filterHomeByLang('all', this)">All Releases</button>
+        <button class="filter-chip" onclick="filterHomeByLang('Malayalam', this)">Malayalam</button>
+        <button class="filter-chip" onclick="filterHomeByLang('English', this)">English</button>
+        <button class="filter-chip" onclick="filterHomeByLang('Tamil', this)">Tamil</button>
+        <button class="filter-chip" onclick="filterHomeByLang('Hindi', this)">Hindi</button>
+      </div>
+
       <div id="homeMoviesGrid" class="movies-grid"></div>
-      <div style="text-align:center;margin-top:2.5rem;">
-        <a href="/movies.html" class="btn btn-secondary">View All Movies &nbsp;→</a>
+      <div style="text-align:center;margin-top:3rem;">
+        <a href="/movies.html" class="btn btn-secondary btn-lg">Explore Full Cinema Catalog &nbsp;→</a>
       </div>
     </section>
   </div>
@@ -64,16 +87,16 @@
   <!-- FEATURES -->
   <section class="section">
     <div class="section-header">
-      <div class="section-label">Why Ticket Hub</div>
-      <h2 class="section-title">Everything You Need</h2>
+      <div class="section-label">The Ticket Hub Difference</div>
+      <h2 class="section-title">Built For The Ultimate Movie Fan</h2>
     </div>
     <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon fi-red">🪑</div><h3 class="feature-title">Seats that stay in sync</h3><p class="feature-desc">Availability updates as bookings are made, so two guests cannot reserve the same seat.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-blue">🔐</div><h3 class="feature-title">Secure Login</h3><p class="feature-desc">JWT-secured accounts. Your bookings and data are safe with bcrypt-hashed passwords.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-green">🎟️</div><h3 class="feature-title">Instant Tickets</h3><p class="feature-desc">Unique booking reference generated the moment you confirm. Print or save it.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-gold">🏙️</div><h3 class="feature-title">Your local theatres</h3><p class="feature-desc">Find cinema listings by city and see the screen and showtime before you book.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-purple">🎬</div><h3 class="feature-title">Real film artwork</h3><p class="feature-desc">Movie posters and details make it easier to find the right show.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-teal">🛠️</div><h3 class="feature-title">Admin Panel</h3><p class="feature-desc">Manage the full movie catalog, view all bookings, monitor revenue — all from one dashboard.</p></div>
+      <div class="feature-card"><div class="feature-icon fi-red">🪑</div><h3 class="feature-title">Real-Time Seat Locking</h3><p class="feature-desc">Concurrent booking prevention ensures no two moviegoers can reserve the same seat simultaneously.</p></div>
+      <div class="feature-card"><div class="feature-icon fi-blue">🔐</div><h3 class="feature-title">Secure Student & Customer Accounts</h3><p class="feature-desc">JWT session management with encrypted bcrypt passwords keep your personal reservations safe.</p></div>
+      <div class="feature-card"><div class="feature-icon fi-green">🎟️</div><h3 class="feature-title">Instant Digital E-Tickets</h3><p class="feature-desc">Verified unique alphanumeric reference and barcode generated instantly upon booking confirmation.</p></div>
+      <div class="feature-card"><div class="feature-icon fi-gold">🏙️</div><h3 class="feature-title">Top Kerala Theatres</h3><p class="feature-desc">Browse screenings across Kochi, Thiruvananthapuram, Kozhikode, Thrissur, Kollam, and more.</p></div>
+      <div class="feature-card"><div class="feature-icon fi-purple">🎬</div><h3 class="feature-title">Exact High-Res Artwork</h3><p class="feature-desc">Verified official cinematic posters and full synopses so you never mistake one release for another.</p></div>
+      <div class="feature-card"><div class="feature-icon fi-teal">🛡️</div><h3 class="feature-title">Dedicated Admin Portal</h3><p class="feature-desc">Complete administrative control over movies, screens, showtimes, and booking records.</p></div>
     </div>
   </section>
 
@@ -81,14 +104,14 @@
   <div style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
     <section class="section">
       <div class="section-header">
-        <div class="section-label">How It Works</div>
+        <div class="section-label">Booking Flow</div>
         <h2 class="section-title">Book in 4 Simple Steps</h2>
       </div>
       <div class="steps-row">
-        <div class="step-item"><div class="step-num">🔑</div><h4 class="step-title">Create Account</h4><p class="step-desc">Sign up in seconds and log in to unlock the full booking experience.</p></div>
-        <div class="step-item"><div class="step-num">🎬</div><h4 class="step-title">Pick a Movie</h4><p class="step-desc">Browse the catalog and choose your show, date, and theatre.</p></div>
-        <div class="step-item"><div class="step-num">🪑</div><h4 class="step-title">Select Seats</h4><p class="step-desc">View the live seat map and pick your spots — Standard or Premium.</p></div>
-        <div class="step-item"><div class="step-num">🎟️</div><h4 class="step-title">Get Your Ticket</h4><p class="step-desc">Confirm and receive your unique ticket with booking reference instantly.</p></div>
+        <div class="step-item"><div class="step-num">🔑</div><h4 class="step-title">1. Sign In</h4><p class="step-desc">Log into your customer profile to access reserved seat maps.</p></div>
+        <div class="step-item"><div class="step-num">🎬</div><h4 class="step-title">2. Choose Film</h4><p class="step-desc">Select your desired movie, preferred date, and Kerala theatre.</p></div>
+        <div class="step-item"><div class="step-num">🪑</div><h4 class="step-title">3. Pick Seats</h4><p class="step-desc">Choose Standard (₹220) or Premium (₹380) spots on the interactive screen map.</p></div>
+        <div class="step-item"><div class="step-num">🎟️</div><h4 class="step-title">4. Get Ticket</h4><p class="step-desc">Receive your digital cinema pass instantly ready for entry or printing.</p></div>
       </div>
     </section>
   </div>
@@ -96,10 +119,10 @@
   <!-- CTA -->
   <section class="section" style="text-align:center;">
     <div class="cinema-callout">
-      <div style="font-size:3rem;margin-bottom:1rem;">🎬</div>
-      <h2>Make it a movie night.</h2>
-      <p>Choose your film, find a showtime, and take your seat.</p>
-      <a href="/login.html" class="btn btn-primary btn-lg">Start Booking Now</a>
+      <div style="font-size:3.5rem;margin-bottom:1rem;">🍿</div>
+      <h2>Ready for movie night?</h2>
+      <p style="color:var(--text-secondary);max-width:550px;margin:0 auto 1.5rem;">Pick your favorite seats today and experience cinema the way it was meant to be experienced.</p>
+      <a href="/movies.html" class="btn btn-primary btn-lg">Browse Showtimes Now</a>
     </div>
   </section>
 </div>
@@ -108,11 +131,11 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="nav-brand" style="font-size:1.4rem;margin-bottom:0.75rem;"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></div>
-      <p>Movie ticket bookings backed by a local Java and MySQL application.</p>
+      <p>Movie ticket booking platform powered by Spring Boot, MySQL, and modern JavaScript.</p>
     </div>
-    <div class="footer-col"><h4>Navigate</h4><a href="/index.html">Home</a><a href="/movies.html">Movies</a><a href="/booking.html">Book Tickets</a><a href="/dashboard.html">Dashboard</a></div>
-    <div class="footer-col"><h4>Account</h4><a href="/login.html">Log In</a><a href="/login.html">Sign Up</a></div>
-    <div class="footer-col"><h4>Info</h4><a href="#">About</a><a href="#">Contact</a></div>
+    <div class="footer-col"><h4>Navigate</h4><a href="/index.html">Home</a><a href="/movies.html">Movies</a><a href="/booking.html">Book Tickets</a><a href="/dashboard.html">My Bookings</a></div>
+    <div class="footer-col"><h4>Portals</h4><a href="/login.html">Customer Sign In</a><a href="/login.html">Create Account</a><a href="/admin-login.html" style="color:var(--accent-gold);">🛡️ Admin Portal</a></div>
+    <div class="footer-col"><h4>Academic Info</h4><a href="#">Department of CSE</a><a href="#">Micro Project 2026</a></div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 Ticket Hub — College of Engineering, Muttathara, Thiruvananthapuram</span>
@@ -123,54 +146,68 @@
 <div class="toast-container" id="toastContainer"></div>
 <script src="/js/api.js"></script>
 <script>
+let homeMovies = [];
+
 document.addEventListener('DOMContentLoaded', async () => {
   updateNav();
+  initCinemaIntro();
+
   try {
-    const movies = await MoviesAPI.getAll();
-    const theatres = await TheatresAPI.getAll().catch(() => []);
-    // Hero cards
+    homeMovies = await MoviesAPI.getAll();
+
+    // Hero cards — top 3
     const heroCards = document.getElementById('heroCards');
-    const top3 = movies.slice(0,3);
-    heroCards.innerHTML = top3.map(m => {
-      return `
+    const top3 = homeMovies.slice(0, 3);
+    heroCards.innerHTML = top3.map(m => `
       <div class="movie-card-preview">
-        <div class="mcp-poster" style="height:200px;overflow:hidden;">${posterImg(m)}
-        </div>
+        <div class="mcp-poster" style="height:280px;overflow:hidden;">${posterImg(m)}</div>
         <div class="mcp-info">
           <div class="mcp-title">${m.title}</div>
-          <div class="mcp-meta"><span>${m.genre.split(',')[0]}</span><span>⭐ ${m.rating}</span></div>
-        </div>
-      </div>`;
-    }).join('');
-
-    // Home grid — first 6
-    const grid = document.getElementById('homeMoviesGrid');
-    grid.innerHTML = movies.slice(0,6).map(m => `
-      <div class="movie-card" onclick="window.location.href='/booking.html?movie=${m.id}'">
-        <div class="movie-poster">
-          ${posterImg(m)}
-          <div class="movie-rating">⭐ ${m.rating}</div>
-          ${m.status==='New'||m.status==='NEW'?'<div class="movie-badge">New</div>':''}
-          <div class="movie-overlay"><button class="overlay-btn">Book Now</button></div>
-        </div>
-        <div class="movie-info">
-          <div class="movie-title">${m.title}</div>
-          <div class="movie-genre">${m.genre.split(',')[0].trim()} · ${fmtDuration(m.duration_min || m.durationMin)}</div>
-          <div class="movie-meta">
-            <span class="movie-lang">${m.language}</span>
-            <span style="font-size:0.75rem;color:var(--text-muted);">⭐ ${m.rating}</span>
-          </div>
+          <div class="mcp-meta"><span>${m.language}</span><span>⭐ ${m.rating}</span></div>
         </div>
       </div>`).join('');
 
-    document.getElementById('statMovies').textContent   = movies.length;
-    document.getElementById('statTheatres').textContent = theatres.length || '—';
-    document.getElementById('statLanguages').textContent = new Set(movies.map(movie => movie.language)).size;
+    renderHomeGrid(homeMovies.slice(0, 8));
   } catch(e) {
     document.getElementById('homeMoviesGrid').innerHTML =
-      '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">⚠️ Could not load movies. Make sure the backend server is running.</p>';
+      '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">⚠️ Could not load movies. Make sure TicketHub is running.</p>';
   }
 });
+
+function renderHomeGrid(movies) {
+  const grid = document.getElementById('homeMoviesGrid');
+  if (!movies.length) {
+    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">No movies available in this category.</p>';
+    return;
+  }
+  grid.innerHTML = movies.map(m => `
+    <div class="movie-card" onclick="window.location.href='/booking.html?movie=${m.id}'">
+      <div class="movie-poster">
+        ${posterImg(m)}
+        <div class="movie-rating">⭐ ${m.rating}</div>
+        <div class="movie-overlay"><button class="overlay-btn">Book Tickets</button></div>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">${m.title}</div>
+        <div class="movie-genre">${m.genre.split(',')[0].trim()} · ${fmtDuration(m.duration_min || m.durationMin)}</div>
+        <div class="movie-meta">
+          <span class="movie-lang">${m.language}</span>
+          <span style="font-size:0.78rem;font-weight:700;color:var(--accent-gold);">⭐ ${m.rating}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterHomeByLang(lang, btn) {
+  document.querySelectorAll('#homeLangTabs .filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  if (lang === 'all') {
+    renderHomeGrid(homeMovies.slice(0, 8));
+  } else {
+    const filtered = homeMovies.filter(m => m.language.toLowerCase() === lang.toLowerCase());
+    renderHomeGrid(filtered);
+  }
+}
 </script>
 </body>
 </html>

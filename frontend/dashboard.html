@@ -70,34 +70,172 @@
 
       <!-- MY BOOKINGS -->
       <div class="dash-section" id="sectionBookings">
-        <h1 class="dash-title">My Bookings</h1>
-        <p class="dash-subtitle">All your ticket purchases.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:0.5rem;">
+          <div>
+            <h1 class="dash-title">My Bookings</h1>
+            <p class="dash-subtitle">View, search, print, or manage your cinema reservations.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportBookingsCSV()">📄 Export Statement (CSV)</button>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin:1.5rem 0;background:var(--bg-card);padding:1rem;border:1px solid var(--border);border-radius:var(--radius);">
+          <div class="search-bar" style="flex:1;min-width:240px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="bookingSearchInput" placeholder="Search by film or booking reference…" oninput="filterMyBookings()"/>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="bookingStatusTabs">
+            <button class="filter-chip active" onclick="setBookingStatusFilter('all', this)">All</button>
+            <button class="filter-chip" onclick="setBookingStatusFilter('Confirmed', this)">Confirmed</button>
+            <button class="filter-chip" onclick="setBookingStatusFilter('Upcoming', this)">Upcoming</button>
+            <button class="filter-chip" onclick="setBookingStatusFilter('Cancelled', this)">Cancelled</button>
+          </div>
+        </div>
+
         <div id="myBookingsList"></div>
       </div>
 
       <!-- PROFILE -->
       <div class="dash-section" id="sectionProfile">
-        <h1 class="dash-title">My Profile</h1>
-        <p class="dash-subtitle">Manage your account information.</p>
-        <div style="max-width:540px;">
-          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;">
-            <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
-              <div class="avatar-circle" id="profileAvatar" style="width:64px;height:64px;font-size:1.4rem;">?</div>
-              <div><div style="font-weight:700;font-size:1.1rem;" id="profileName">—</div><div style="font-size:.85rem;color:var(--text-muted);" id="profileRole">—</div></div>
+        <h1 class="dash-title">My Profile & Cinema Preferences</h1>
+        <p class="dash-subtitle">Personalize your cinema experience, loyalty rewards, and account security.</p>
+        
+        <div style="max-width:720px;">
+          <!-- CINECLUB LOYALTY CARD -->
+          <div class="cineclub-card">
+            <div>
+              <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-gold);margin-bottom:4px;">TicketHub CineClub Tier</div>
+              <div style="font-size:1.4rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;">
+                <span id="loyaltyBadgeIcon">⭐</span> <span id="loyaltyTierName">Gold Cinephile</span>
+              </div>
+              <div style="font-size:0.85rem;color:var(--text-secondary);margin-top:4px;" id="loyaltyPerks">
+                Complimentary 10% concessions discount at partner PVR and INOX screens
+              </div>
             </div>
-            <div id="profileAlert" class="form-alert success"></div>
-            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text" id="pName"/></div>
-            <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="pEmail" disabled style="opacity:.5;cursor:not-allowed;"/></div>
-            <div class="form-group"><label class="form-label">Mobile Number</label><input class="form-input" type="tel" id="pPhone"/></div>
-            <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+            <div style="text-align:right;">
+              <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Reward Points</div>
+              <div style="font-size:1.8rem;font-weight:900;color:var(--accent-gold);" id="loyaltyPoints">450 pts</div>
+            </div>
           </div>
+
+          <!-- AVATAR SELECTION -->
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.25rem;">Choose Your Cinema Avatar</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);">Pick your favorite cinema persona badge for navigation and ticket confirmations.</p>
+            <div class="avatar-selector-grid" id="avatarSelector">
+              <div class="avatar-choice" onclick="selectAvatar('🍿', this)" title="Movie Buff">🍿</div>
+              <div class="avatar-choice" onclick="selectAvatar('🎬', this)" title="Film Director">🎬</div>
+              <div class="avatar-choice" onclick="selectAvatar('🦁', this)" title="Action Hero">🦁</div>
+              <div class="avatar-choice" onclick="selectAvatar('🕶️', this)" title="Secret Agent">🕶️</div>
+              <div class="avatar-choice" onclick="selectAvatar('🚀', this)" title="Sci-Fi Voyager">🚀</div>
+              <div class="avatar-choice" onclick="selectAvatar('🎭', this)" title="Drama Connoisseur">🎭</div>
+            </div>
+          </div>
+
+          <!-- PERSONAL DETAILS FORM -->
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;">
+            <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
+              <div class="avatar-circle" id="profileAvatar" style="width:68px;height:68px;font-size:2rem;background:var(--bg-card2);border:2px solid var(--primary);">🍿</div>
+              <div>
+                <div style="font-weight:800;font-size:1.2rem;" id="profileName">—</div>
+                <div style="font-size:0.85rem;color:var(--accent-gold);font-weight:600;" id="profileRole">Verified Customer</div>
+              </div>
+            </div>
+            
+            <div id="profileAlert" class="form-alert success"></div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="form-input" type="text" id="pName"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mobile Number</label>
+                <input class="form-input" type="tel" id="pPhone" placeholder="+91 98765 43210"/>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Registered Email</label>
+              <input class="form-input" type="email" id="pEmail" disabled style="opacity:.6;cursor:not-allowed;background:rgba(255,255,255,0.03);"/>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Preferred Kerala District / City</label>
+              <select class="form-input" id="pCity">
+                <option value="Kochi">Kochi (Ernakulam)</option>
+                <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                <option value="Kozhikode">Kozhikode (Calicut)</option>
+                <option value="Thrissur">Thrissur</option>
+                <option value="Kollam">Kollam</option>
+                <option value="Alappuzha">Alappuzha</option>
+                <option value="Kannur">Kannur</option>
+                <option value="Palakkad">Palakkad</option>
+                <option value="Kottayam">Kottayam</option>
+              </select>
+            </div>
+
+            <!-- CINEMA PREFERENCES -->
+            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+              <label class="form-label">Favorite Film Languages</label>
+              <div class="pref-pills" id="langPrefPills">
+                <span class="pref-pill active" onclick="togglePrefPill(this)">Malayalam</span>
+                <span class="pref-pill active" onclick="togglePrefPill(this)">English</span>
+                <span class="pref-pill active" onclick="togglePrefPill(this)">Tamil</span>
+                <span class="pref-pill active" onclick="togglePrefPill(this)">Hindi</span>
+              </div>
+            </div>
+
+            <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+              <label class="form-label" style="margin-bottom:0.75rem;">Notification Channels</label>
+              <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <label class="form-check" style="font-size:0.88rem;color:var(--text-secondary);">
+                  <input type="checkbox" id="prefWhatsapp" checked/> Receive instant ticket confirmations via WhatsApp & SMS
+                </label>
+                <label class="form-check" style="font-size:0.88rem;color:var(--text-secondary);">
+                  <input type="checkbox" id="prefEmail" checked/> Email digital printable ticket PDF upon booking
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-top:2rem;">
+              <button class="btn btn-primary" onclick="saveProfile()">Save Profile & Preferences</button>
+            </div>
+          </div>
+
+          <!-- CHANGE PASSWORD -->
           <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;">
-            <h3 style="font-weight:700;margin-bottom:1.25rem;">Change Password</h3>
+            <h3 style="font-weight:700;margin-bottom:0.5rem;">Security & Password</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1.5rem;">Keep your account secure with a strong password.</p>
+            
             <div id="pwdAlert" class="form-alert error"></div>
-            <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" id="curPwd" placeholder="••••••••"/></div>
-            <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" id="newPwd" placeholder="Min. 6 characters"/></div>
-            <div class="form-group"><label class="form-label">Confirm New</label><input class="form-input" type="password" id="confPwd" placeholder="Repeat new password"/></div>
-            <button class="btn btn-ghost" onclick="changePwd()">Update Password</button>
+            
+            <div class="form-group">
+              <label class="form-label">Current Password</label>
+              <div class="input-group">
+                <input class="form-input" type="password" id="curPwd" placeholder="Enter current password"/>
+                <span class="input-icon" onclick="togglePwd('curPwd',this)">👁️</span>
+              </div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <div class="input-group">
+                  <input class="form-input" type="password" id="newPwd" placeholder="Min. 6 characters"/>
+                  <span class="input-icon" onclick="togglePwd('newPwd',this)">👁️</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <div class="input-group">
+                  <input class="form-input" type="password" id="confPwd" placeholder="Repeat new password"/>
+                  <span class="input-icon" onclick="togglePwd('confPwd',this)">👁️</span>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="changePwd()">Update Password</button>
           </div>
         </div>
       </div>
@@ -236,24 +374,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function initDash() {
   const initials = currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('sideAvatar').textContent    = initials;
+  const savedAvatar = localStorage.getItem('th_user_avatar') || initials;
+  document.getElementById('sideAvatar').textContent    = savedAvatar;
   document.getElementById('sidebarName').textContent   = currentUser.name;
   document.getElementById('sidebarEmail').textContent  = currentUser.email;
   document.getElementById('welcomeTitle').textContent  = 'Welcome back, ' + currentUser.name.split(' ')[0] + '!';
   document.getElementById('welcomeSub').textContent    = currentUser.role === 'admin'
     ? 'Admin dashboard — manage movies, view all bookings.'
     : 'Here\'s your activity on Ticket Hub.';
-  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileAvatar').textContent = savedAvatar;
   document.getElementById('profileName').textContent   = currentUser.name;
   document.getElementById('profileRole').textContent   = currentUser.role === 'admin' ? '🛠️ Administrator' : '👤 Customer';
   document.getElementById('pName').value               = currentUser.name;
   document.getElementById('pEmail').value              = currentUser.email;
   document.getElementById('pPhone').value              = currentUser.phone || '';
 
+  const savedCity = localStorage.getItem('th_pref_city');
+  if (savedCity && document.getElementById('pCity')) document.getElementById('pCity').value = savedCity;
+
+  const savedLangs = localStorage.getItem('th_pref_langs');
+  if (savedLangs) {
+    try {
+      const langs = JSON.parse(savedLangs);
+      document.querySelectorAll('#langPrefPills .pref-pill').forEach(p => {
+        if (langs.includes(p.textContent.trim())) p.classList.add('active');
+        else p.classList.remove('active');
+      });
+    } catch(e){}
+  }
+
   if (currentUser.role === 'admin') document.getElementById('adminNavItems').style.display = 'block';
 
   loadOverview();
 }
+
+let myCachedBookings = [];
+let bookingStatusFilter = 'all';
 
 async function loadOverview() {
   try {
@@ -266,6 +422,7 @@ async function loadOverview() {
         <div class="stat-card"><div class="stat-card-label">Revenue</div><div class="stat-card-val">₹${Number(stats.total_revenue).toLocaleString()}</div><div class="stat-card-change">${stats.total_bookings} bookings</div></div>`;
     } else {
       const bookings = await BookingsAPI.mine();
+      myCachedBookings = bookings;
       const total = bookings.reduce((s,b) => s + parseFloat(b.total_amount), 0);
       const upcoming = bookings.filter(b => new Date(b.show_date) >= new Date() && b.status === 'Confirmed').length;
       document.getElementById('statsRow').innerHTML = `
@@ -274,6 +431,29 @@ async function loadOverview() {
         <div class="stat-card"><div class="stat-card-label">Total Spent</div><div class="stat-card-val">₹${total.toLocaleString()}</div><div class="stat-card-change">All time</div></div>
         <div class="stat-card"><div class="stat-card-label">Seats Bought</div><div class="stat-card-val">${bookings.reduce((s,b)=>s+b.seats.length,0)}</div><div class="stat-card-change">Total</div></div>`;
       renderBookingCards(bookings.slice(0,3), 'recentBookings');
+
+      // Update CineClub Loyalty Tier & Points
+      const points = Math.round(total * 0.5) + (bookings.length * 50);
+      const ptsEl = document.getElementById('loyaltyPoints');
+      const tierEl = document.getElementById('loyaltyTierName');
+      const iconEl = document.getElementById('loyaltyBadgeIcon');
+      const perkEl = document.getElementById('loyaltyPerks');
+      if (ptsEl) ptsEl.textContent = `${points} pts`;
+      if (tierEl) {
+        if (points >= 1500) {
+          tierEl.textContent = 'Platinum Premiere Member';
+          if (iconEl) iconEl.textContent = '👑';
+          if (perkEl) perkEl.textContent = 'Free seat upgrades, zero booking convenience fee & VIP lounge pass.';
+        } else if (points >= 500) {
+          tierEl.textContent = 'Gold Cinephile';
+          if (iconEl) iconEl.textContent = '⭐';
+          if (perkEl) perkEl.textContent = 'Complimentary 10% concessions discount at partner PVR and INOX screens.';
+        } else {
+          tierEl.textContent = 'Silver Film Buff';
+          if (iconEl) iconEl.textContent = '🎬';
+          if (perkEl) perkEl.textContent = 'Earn 50 pts on every movie ticket booking across all Kerala screens.';
+        }
+      }
     }
   } catch(e) {
     document.getElementById('statsRow').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
@@ -333,8 +513,84 @@ async function loadMyBookings() {
   document.getElementById('myBookingsList').innerHTML = '<div class="spinner"></div>';
   try {
     const bookings = await BookingsAPI.mine();
-    renderBookingCards(bookings, 'myBookingsList');
+    myCachedBookings = bookings;
+    filterMyBookings();
   } catch(e) { document.getElementById('myBookingsList').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
+}
+
+function setBookingStatusFilter(status, btn) {
+  bookingStatusFilter = status;
+  document.querySelectorAll('#bookingStatusTabs .filter-chip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  filterMyBookings();
+}
+
+function filterMyBookings() {
+  const query = (document.getElementById('bookingSearchInput')?.value || '').toLowerCase().trim();
+  const filtered = myCachedBookings.filter(b => {
+    const matchesSearch = !query || 
+      b.movie.toLowerCase().includes(query) || 
+      b.booking_ref.toLowerCase().includes(query) ||
+      (b.theatre_name && b.theatre_name.toLowerCase().includes(query));
+    
+    let matchesStatus = true;
+    if (bookingStatusFilter === 'Confirmed') {
+      matchesStatus = b.status === 'Confirmed';
+    } else if (bookingStatusFilter === 'Cancelled') {
+      matchesStatus = b.status === 'Cancelled';
+    } else if (bookingStatusFilter === 'Upcoming') {
+      matchesStatus = b.status === 'Confirmed' && new Date(b.show_date) >= new Date();
+    }
+    return matchesSearch && matchesStatus;
+  });
+  renderBookingCards(filtered, 'myBookingsList');
+}
+
+function exportBookingsCSV() {
+  if (!myCachedBookings || !myCachedBookings.length) {
+    showToast('No booking history to export.', 'error');
+    return;
+  }
+  const headers = ['Booking Reference', 'Movie', 'Language', 'Theatre', 'City', 'Screen', 'Show Date', 'Show Time', 'Seats', 'Total (INR)', 'Status'];
+  const rows = myCachedBookings.map(b => [
+    `"${b.booking_ref}"`,
+    `"${b.movie}"`,
+    `"${b.language || 'Malayalam'}"`,
+    `"${b.theatre_name}"`,
+    `"${b.city}"`,
+    `"${b.screen_name}"`,
+    `"${b.show_date}"`,
+    `"${b.show_time.slice(0,5)}"`,
+    `"${(b.seats || []).join(';')}"`,
+    b.total_amount,
+    `"${b.status}"`
+  ]);
+  const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `TicketHub_Bookings_${currentUser.name.replace(/\s+/g,'_')}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('Booking statement exported to CSV!', 'success');
+}
+
+function selectAvatar(emoji, el) {
+  document.querySelectorAll('#avatarSelector .avatar-choice').forEach(c => c.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  localStorage.setItem('th_user_avatar', emoji);
+  const sideAv = document.getElementById('sideAvatar');
+  const profAv = document.getElementById('profileAvatar');
+  if (sideAv) sideAv.textContent = emoji;
+  if (profAv) profAv.textContent = emoji;
+  showToast(`Avatar updated to ${emoji}`, 'success');
+}
+
+function togglePrefPill(el) {
+  el.classList.toggle('active');
+  const activeLangs = Array.from(document.querySelectorAll('#langPrefPills .pref-pill.active')).map(p => p.textContent.trim());
+  localStorage.setItem('th_pref_langs', JSON.stringify(activeLangs));
 }
 
 async function loadAllBookings() {
@@ -592,10 +848,14 @@ async function saveProfile() {
     await AuthAPI.updateProfile(name, phone);
     const u = { ...currentUser, name, phone };
     Auth.setUser(u); currentUser = u;
+
+    const cityEl = document.getElementById('pCity');
+    if (cityEl) localStorage.setItem('th_pref_city', cityEl.value);
+
     document.getElementById('profileName').textContent   = name;
     document.getElementById('sidebarName').textContent   = name;
     const al = document.getElementById('profileAlert');
-    al.textContent = '✅ Profile updated.'; al.classList.add('show');
+    al.textContent = '✅ Profile & preferences successfully updated.'; al.classList.add('show');
     setTimeout(() => al.classList.remove('show'), 3000);
   } catch(e) { showToast(e.message, 'error'); }
 }

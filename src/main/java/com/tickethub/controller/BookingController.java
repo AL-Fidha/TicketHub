@@ -21,6 +21,9 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<?> create(@AuthenticationPrincipal User user,
                                     @Valid @RequestBody BookingRequest req) {
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Please log in to book tickets."));
+        }
         try {
             return ResponseEntity.status(201).body(bookingService.createBooking(user.getId(), req));
         } catch (RuntimeException e) {

@@ -45,7 +45,7 @@ public class BookingService {
 
         // Calculate total
         BigDecimal total = req.getSeats().stream()
-            .map(s -> "premium".equals(s.getType()) ? show.getPricePrem() : show.getPriceStd())
+            .map(s -> "premium".equalsIgnoreCase(s.getType()) ? show.getPricePrem() : show.getPriceStd())
             .reduce(BigDecimal.ZERO, BigDecimal::add)
             .add(BigDecimal.valueOf(30)); // convenience fee
 
@@ -64,14 +64,13 @@ public class BookingService {
         bookingRepo.save(booking);
 
         for (BookingRequest.SeatSelection s : req.getSeats()) {
+            boolean isPrem = "premium".equalsIgnoreCase(s.getType());
             BookingSeat bs = BookingSeat.builder()
                 .booking(booking)
                 .show(show)
                 .seatLabel(s.getLabel())
-                .seatType("premium".equals(s.getType())
-                    ? BookingSeat.SeatType.premium
-                    : BookingSeat.SeatType.standard)
-                .price("premium".equals(s.getType()) ? show.getPricePrem() : show.getPriceStd())
+                .seatType(isPrem ? BookingSeat.SeatType.premium : BookingSeat.SeatType.standard)
+                .price(isPrem ? show.getPricePrem() : show.getPriceStd())
                 .build();
             bsRepo.save(bs);
         }
