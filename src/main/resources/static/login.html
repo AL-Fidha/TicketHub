@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – Ticket Hub</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body class="auth-page">
+<div class="auth-container">
+  <div class="auth-logo">
+    <a href="/index.html" style="display:inline-flex;align-items:center;gap:10px;color:inherit;">
+      <span style="background:var(--primary);border-radius:8px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;">🎬</span>
+      Ticket<span>Hub</span>
+    </a>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin"  onclick="switchTab('login')">Log In</div>
+      <div class="auth-tab"        id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div id="loginAlert" class="form-alert error"></div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-group">
+          <input class="form-input" type="password" id="loginPassword" placeholder="Your password" autocomplete="current-password"/>
+          <span class="input-icon" onclick="togglePwd('loginPassword',this)">👁️</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="loginBtn" onclick="handleLogin()">Log In →</button>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signupForm" style="display:none;">
+      <div id="signupAlert" class="form-alert error"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" id="signupFirst" placeholder="First"/></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" id="signupLast" placeholder="Last"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" id="signupEmail" placeholder="you@example.com"/></div>
+      <div class="form-group"><label class="form-label">Mobile Number</label><input class="form-input" type="tel" id="signupPhone" placeholder="+91 00000 00000"/></div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-group">
+          <input class="form-input" type="password" id="signupPassword" placeholder="Min. 6 characters"/>
+          <span class="input-icon" onclick="togglePwd('signupPassword',this)">👁️</span>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Confirm Password</label><input class="form-input" type="password" id="signupConfirm" placeholder="Repeat password"/></div>
+      <div class="form-group">
+        <label class="form-check"><input type="checkbox" id="agreeTerms"/> I agree to the Terms of Service</label>
+      </div>
+      <button class="btn btn-primary btn-full" id="signupBtn" onclick="handleSignup()">Create Account →</button>
+    </div>
+  </div>
+  <div class="auth-footer"><a href="/index.html">← Back to Home</a></div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/api.js"></script>
+<script>
+  if (Auth.loggedIn()) window.location.href = '/dashboard.html';
+
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabSignup').classList.toggle('active', !isLogin);
+    document.getElementById('loginForm').style.display  = isLogin ? 'block' : 'none';
+    document.getElementById('signupForm').style.display = isLogin ? 'none'  : 'block';
+  }
+
+  function togglePwd(id, icon) {
+    const inp = document.getElementById(id);
+    inp.type  = inp.type === 'password' ? 'text' : 'password';
+    icon.textContent = inp.type === 'password' ? '👁️' : '🙈';
+  }
+
+  async function handleLogin() {
+    const email    = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const alertEl  = document.getElementById('loginAlert');
+    const btn      = document.getElementById('loginBtn');
+    alertEl.classList.remove('show');
+    if (!email || !password) { alertEl.textContent = 'Email and password are required.'; alertEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Logging in…';
+    try {
+      const { token, user } = await AuthAPI.login(email, password);
+      Auth.setToken(token); Auth.setUser(user);
+      showToast('Welcome back, ' + user.name + '! 👋', 'success');
+      setTimeout(() => window.location.href = '/dashboard.html', 700);
+    } catch (e) {
+      alertEl.textContent = e.message; alertEl.classList.add('show');
+      btn.disabled = false; btn.textContent = 'Log In →';
+    }
+  }
+
+  async function handleSignup() {
+    const first    = document.getElementById('signupFirst').value.trim();
+    const last     = document.getElementById('signupLast').value.trim();
+    const email    = document.getElementById('signupEmail').value.trim();
+    const phone    = document.getElementById('signupPhone').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirm  = document.getElementById('signupConfirm').value;
+    const agree    = document.getElementById('agreeTerms').checked;
+    const alertEl  = document.getElementById('signupAlert');
+    const btn      = document.getElementById('signupBtn');
+    alertEl.classList.remove('show');
+    if (!first || !last || !email || !password) { alertEl.textContent = 'Please fill in all required fields.'; alertEl.classList.add('show'); return; }
+    if (password.length < 6)                   { alertEl.textContent = 'Password must be at least 6 characters.'; alertEl.classList.add('show'); return; }
+    if (password !== confirm)                  { alertEl.textContent = 'Passwords do not match.'; alertEl.classList.add('show'); return; }
+    if (!agree)                                { alertEl.textContent = 'Please agree to the Terms of Service.'; alertEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    try {
+      const { token, user } = await AuthAPI.register(first + ' ' + last, email, phone, password);
+      Auth.setToken(token); Auth.setUser(user);
+      showToast('Account created! Welcome to Ticket Hub 🎉', 'success');
+      setTimeout(() => window.location.href = '/dashboard.html', 700);
+    } catch (e) {
+      alertEl.textContent = e.message; alertEl.classList.add('show');
+      btn.disabled = false; btn.textContent = 'Create Account →';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    ['loginEmail','loginPassword'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if (e.key==='Enter') handleLogin(); }));
+  });
+</script>
+</body>
+</html>

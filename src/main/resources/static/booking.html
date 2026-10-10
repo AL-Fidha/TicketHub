@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Tickets – Ticket Hub</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <style>
+    .step-indicator{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+    .si-circle{width:36px;height:36px;border-radius:50%;background:var(--bg-card2);border:2px solid var(--border-hover);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--text-muted);transition:all .3s}
+    .si-label{font-size:.72rem;font-weight:600;color:var(--text-muted);white-space:nowrap}
+    .si-line{flex:1;height:2px;background:var(--border);margin-bottom:18px;transition:background .3s}
+    .step-indicator.active .si-circle{background:var(--primary);border-color:var(--primary);color:#fff}
+    .step-indicator.active .si-label{color:var(--primary-light)}
+    .step-indicator.done .si-circle{background:var(--accent-green);border-color:var(--accent-green);color:#fff}
+    .si-line.done{background:var(--accent-green)}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/index.html" class="nav-brand"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></a>
+  <ul class="nav-links">
+    <li><a href="/index.html">Home</a></li>
+    <li><a href="/movies.html">Movies</a></li>
+    <li><a href="/booking.html" class="active">Book Tickets</a></li>
+    <li><a href="/dashboard.html">My Bookings</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions"></div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="page-hero" style="padding-bottom:1.5rem;">
+    <div class="section-label">Step-by-step booking</div>
+    <h1 class="page-hero-title">🎟️ Book Your Tickets</h1>
+  </div>
+
+  <!-- Step indicator -->
+  <div style="max-width:1200px;margin:0 auto;padding:1.5rem 2rem 0;">
+    <div style="display:flex;align-items:center;max-width:520px;margin:0 auto 2rem;">
+      <div class="step-indicator active" id="si1"><div class="si-circle">1</div><div class="si-label">Movie</div></div>
+      <div class="si-line" id="sil1"></div>
+      <div class="step-indicator" id="si2"><div class="si-circle">2</div><div class="si-label">Theatre & Show</div></div>
+      <div class="si-line" id="sil2"></div>
+      <div class="step-indicator" id="si3"><div class="si-circle">3</div><div class="si-label">Seats</div></div>
+      <div class="si-line" id="sil3"></div>
+      <div class="step-indicator" id="si4"><div class="si-circle">4</div><div class="si-label">Confirm</div></div>
+    </div>
+  </div>
+
+  <div class="booking-layout">
+    <!-- LEFT -->
+    <div class="booking-main">
+
+      <!-- Step 1: Movie -->
+      <div id="step1" class="booking-step">
+        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;">🎬 Choose a Movie</h2>
+        <div id="moviePicker" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;"><div class="spinner"></div></div>
+      </div>
+
+      <!-- Step 2: Theatre & Showtime -->
+      <div id="step2" class="booking-step" style="display:none;">
+        <button onclick="goStep(1)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:6px;">← Back</button>
+        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;">🏙️ Select Theatre &amp; Showtime</h2>
+
+        <!-- Date chips -->
+        <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.75rem;">Date</div>
+        <div style="display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:1.5rem;" id="datePicker"></div>
+
+        <!-- City filter -->
+        <div class="city-tabs" id="cityTabs"><div class="spinner" style="width:24px;height:24px;margin:0;"></div></div>
+
+        <!-- Theatre list -->
+        <div id="theatreList"><div class="spinner"></div></div>
+      </div>
+
+      <!-- Step 3: Seats -->
+      <div id="step3" class="booking-step" style="display:none;">
+        <button onclick="goStep(2)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:6px;">← Back to Shows</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <h2 style="font-size:1.3rem;font-weight:700;">🪑 Select Seats</h2>
+          <div id="seatStatsBar"></div>
+        </div>
+        <div class="seat-screen"></div>
+        <div class="seat-section-label">🌟 PREMIUM ROW (A–B) &nbsp;·&nbsp; ₹<span id="premPrice">380</span></div>
+        <div class="seat-map-wrapper"><div id="seatMap"></div></div>
+        <div class="seat-section-label" style="margin-top:.5rem;">🎟️ STANDARD ROW (C–H) &nbsp;·&nbsp; ₹<span id="stdPrice">220</span></div>
+        <div class="seat-legend">
+          <div class="legend-item"><div class="legend-box available"></div>Available</div>
+          <div class="legend-item"><div class="legend-box selected"></div>Selected</div>
+          <div class="legend-item"><div class="legend-box booked" style="background:#ef4444;border-color:#b91c1c;"></div>Booked (Unavailable)</div>
+          <div class="legend-item"><div class="legend-box premium"></div>Premium</div>
+        </div>
+        <div style="margin-top:2rem;text-align:center;">
+          <button class="btn btn-primary" id="proceedBtn" onclick="goStep(4)" disabled style="min-width:200px;opacity:.5;">Select seats to continue</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Confirm -->
+      <div id="step4" class="booking-step" style="display:none;">
+        <button onclick="goStep(3)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:6px;">← Change seats</button>
+        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;">✅ Confirm Booking</h2>
+        <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;" id="confirmDetails"></div>
+        <div id="bookingAlert" class="form-alert error"></div>
+        <button class="btn btn-primary btn-full btn-lg" id="confirmBtn" onclick="confirmBooking()">🎟️ &nbsp;Confirm &amp; Get Ticket</button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Summary -->
+    <div class="booking-sidebar">
+      <div class="booking-summary">
+        <div class="summary-title">📋 Booking Summary</div>
+        <div class="summary-movie" id="summaryMovie">
+          <div class="summary-poster" id="sumPoster" style="background:var(--bg-dark);display:flex;align-items:center;justify-content:center;font-size:2.5rem;border-radius:8px;">🎬</div>
+          <div class="summary-movie-info">
+            <h3 id="sumMovieTitle">Select a movie</h3>
+            <p id="sumGenre" style="color:var(--text-muted);font-size:.82rem;">—</p>
+            <p id="sumLang"  style="color:var(--text-muted);font-size:.82rem;">—</p>
+          </div>
+        </div>
+        <div class="summary-row"><span class="label">Date</span><span class="val" id="sumDate">—</span></div>
+        <div class="summary-row"><span class="label">Show Time</span><span class="val" id="sumTime">—</span></div>
+        <div class="summary-row"><span class="label">Theatre</span><span class="val" id="sumTheatre">—</span></div>
+        <div class="summary-row"><span class="label">Screen</span><span class="val" id="sumScreen">—</span></div>
+        <div class="summary-row"><span class="label">Seats</span><span class="val" id="sumSeats">—</span></div>
+        <div id="seatTags" style="margin-top:.5rem;display:flex;flex-wrap:wrap;gap:5px;"></div>
+        <div class="summary-row" style="margin-top:1rem;"><span class="label">Ticket(s)</span><span class="val" id="sumUnitPrice">—</span></div>
+        <div class="summary-row"><span class="label">Convenience Fee</span><span class="val" id="sumFee">—</span></div>
+        <div class="summary-total"><span>Total</span><span class="total-amount" id="sumTotal">₹0</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ticket Modal -->
+<div class="modal-overlay" id="ticketModal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <h2 class="modal-title">🎉 Booking Confirmed!</h2>
+      <div class="modal-close" id="closeTicket">✕</div>
+    </div>
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <div style="font-size:3rem;margin-bottom:.5rem;">🎟️</div>
+      <p style="color:var(--text-secondary);font-size:.9rem;">Show your ticket at the entrance.</p>
+    </div>
+    <div class="ticket" id="ticketOut"></div>
+    <div style="display:flex;gap:.75rem;margin-top:1.5rem;">
+      <button class="btn btn-secondary" style="flex:1;" onclick="window.print()">🖨️ Print</button>
+      <a href="/dashboard.html" class="btn btn-primary" style="flex:1;">My Bookings</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/api.js"></script>
+<script>
+// ── State ─────────────────────────────────────
+const bk = { movie: null, date: null, show: null, seats: [], seatMap: null };
+const CONV_FEE = 30;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  updateNav();
+  if (!Auth.loggedIn()) { showToast('Please log in to book tickets', 'error'); setTimeout(() => window.location.href='/login.html', 1500); return; }
+
+  document.getElementById('closeTicket').addEventListener('click', () => {
+    document.getElementById('ticketModal').classList.remove('show');
+    window.location.href = '/dashboard.html';
+  });
+
+  // Load movies
+  try {
+    const movies = await MoviesAPI.getAll();
+    document.getElementById('moviePicker').innerHTML = movies.map(m => `
+      <div style="background:var(--bg-card2);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;"
+           id="mpCard${m.id}" onclick="selectMovie(${m.id})">
+        <div style="height:180px;overflow:hidden;">
+          ${m.poster_url
+            ? `<img src="${m.poster_url}" style="width:100%;height:100%;object-fit:cover;" alt="${m.title}"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+               <div style="display:none;height:100%;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#1a0a14,#3d1a2e);">${genEmoji(m.genre)}</div>`
+            : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#1a0a14,#3d1a2e);">${genEmoji(m.genre)}</div>`}
+        </div>
+        <div style="padding:.75rem;">
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.title}</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">${m.language} · ${fmtDuration(m.duration_min)}</div>
+        </div>
+      </div>`).join('');
+
+    // Pre-select from URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('movie')) { const mv = movies.find(m => m.id == params.get('movie')); if (mv) selectMovieObj(mv); }
+  } catch(e) {
+    document.getElementById('moviePicker').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
+  }
+});
+
+// ── Step 1: select movie ──────────────────────
+async function selectMovie(id) {
+  try {
+    const m = await MoviesAPI.getOne(id);
+    selectMovieObj(m);
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+function selectMovieObj(m) {
+  bk.movie = m;
+  document.querySelectorAll('[id^="mpCard"]').forEach(c => { c.style.borderColor='var(--border)'; c.style.background='var(--bg-card2)'; });
+  const card = document.getElementById('mpCard' + m.id);
+  if (card) { card.style.borderColor='var(--primary)'; card.style.background='rgba(229,9,20,0.08)'; }
+
+  // Update summary
+  if (m.poster_url) {
+    document.getElementById('sumPoster').innerHTML = `<img src="${m.poster_url}" style="width:70px;height:95px;object-fit:cover;border-radius:8px;" alt="${m.title}"/>`;
+  } else {
+    document.getElementById('sumPoster').textContent = genEmoji(m.genre);
+  }
+  document.getElementById('sumMovieTitle').textContent = m.title;
+  document.getElementById('sumGenre').textContent = m.genre.split(',')[0].trim();
+  document.getElementById('sumLang').textContent  = m.language;
+
+  goStep(2);
+}
+
+// ── Step 2: theatre & showtime ────────────────
+let allShows = [];
+let selectedCity = 'all';
+
+async function loadTheatresStep(date) {
+  bk.date = date;
+  document.getElementById('sumDate').textContent = date;
+  document.getElementById('theatreList').innerHTML = '<div class="spinner"></div>';
+  try {
+    allShows = await MoviesAPI.getShows(bk.movie.id, { date });
+    renderCityTabs();
+    renderTheatres();
+  } catch(e) {
+    document.getElementById('theatreList').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
+  }
+}
+
+function renderCityTabs() {
+  const cities = ['all', ...new Set(allShows.map(s => s.city))];
+  document.getElementById('cityTabs').innerHTML = cities.map(c => `
+    <button class="city-tab${c===selectedCity?' active':''}" onclick="filterCity('${c}')">${c==='all'?'All Cities':c}</button>`).join('');
+}
+
+function filterCity(city) {
+  selectedCity = city;
+  renderCityTabs();
+  renderTheatres();
+}
+
+function renderTheatres() {
+  const filtered = selectedCity === 'all' ? allShows : allShows.filter(s => s.city === selectedCity);
+  // Group by theatre
+  const theatreMap = {};
+  filtered.forEach(s => {
+    if (!theatreMap[s.theatre_id]) theatreMap[s.theatre_id] = { name: s.theatre_name, location: s.location, city: s.city, shows: [] };
+    theatreMap[s.theatre_id].shows.push(s);
+  });
+
+  const entries = Object.entries(theatreMap);
+  if (!entries.length) {
+    document.getElementById('theatreList').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No shows available for this date.</p>';
+    return;
+  }
+
+  document.getElementById('theatreList').innerHTML = entries.map(([tid, t]) => `
+    <div class="theatre-card" id="tc_${tid}">
+      <div class="theatre-name">${t.name}</div>
+      <div class="theatre-loc">📍 ${t.location}, ${t.city}</div>
+      <div class="theatre-shows">
+        ${t.shows.map(s => {
+          const avail = s.total_seats - s.seats_booked;
+          const full  = avail <= 0;
+          const time  = s.show_time.slice(0,5);
+          return `<button class="show-chip${full?' housefull':''}" onclick="${full?'':(`selectShow(${JSON.stringify(s).replace(/"/g,"'")})`)}" ${full?'disabled':''}>
+            ${time}
+            <small>${full ? 'Housefull' : avail + ' seats left'}</small>
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function selectShow(show) {
+  bk.show = show;
+  const time = show.show_time.slice(0,5);
+  document.getElementById('sumTime').textContent    = time;
+  document.getElementById('sumTheatre').textContent = show.theatre_name;
+  document.getElementById('sumScreen').textContent  = show.screen_name;
+  goStep(3);
+}
+
+// ── Step 3: seats ─────────────────────────────
+async function loadSeats() {
+  document.getElementById('seatMap').innerHTML = '<div class="spinner"></div>';
+  try {
+    bk.seatMap = await SeatsAPI.getMap(bk.show.show_id);
+    document.getElementById('stdPrice').textContent  = bk.seatMap.price_std;
+    document.getElementById('premPrice').textContent = bk.seatMap.price_prem;
+    renderSeatMap();
+  } catch(e) { document.getElementById('seatMap').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`; }
+}
+
+function renderSeatMap() {
+  const { rows, cols, booked } = bk.seatMap;
+  const rowLabels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').slice(0, rows);
+
+  // Live stats bar
+  const total = rows * cols;
+  const bookedCount = (booked || []).length;
+  const availCount = total - bookedCount;
+  const statsEl = document.getElementById('seatStatsBar');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span style="font-size:0.85rem;color:var(--text-muted);">
+          Total: <strong style="color:var(--text-primary);">${total}</strong> &nbsp;|&nbsp;
+          Available: <strong style="color:#22c55e;">${availCount}</strong> &nbsp;|&nbsp;
+          Booked: <strong style="color:#ef4444;">${bookedCount}</strong>
+        </span>
+        <button class="btn btn-sm btn-secondary" onclick="loadSeats()" style="padding:4px 10px;font-size:0.78rem;">↻ Refresh</button>
+      </div>`;
+  }
+
+  document.getElementById('seatMap').innerHTML = rowLabels.map(row => {
+    const isPremium = ['A','B'].includes(row);
+    return `<div class="seat-row">
+      <div class="row-label">${row}</div>
+      ${Array.from({length: cols}, (_, i) => {
+        const label    = `${row}${i+1}`;
+        const isTaken  = (booked || []).includes(label);
+        const isSel    = bk.seats.includes(label);
+        return `<div class="seat${isPremium?' premium':''}${isTaken?' booked':''}${isSel?' selected':''}"
+          id="s_${label}" onclick="${isTaken?'':(`toggleSeat('${label}','${isPremium}')`)}"
+          title="${label} — ${isTaken ? 'BOOKED (Reserved by user)' : (isPremium ? 'Premium ₹'+bk.seatMap.price_prem : 'Standard ₹'+bk.seatMap.price_std)}"
+        >${isTaken ? '✕' : (i+1)}</div>`;
+      }).join('')}
+      <div class="row-label">${row}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSeat(label, isPremium) {
+  const idx = bk.seats.indexOf(label);
+  const el  = document.getElementById('s_' + label);
+  if (idx >= 0) {
+    bk.seats.splice(idx, 1);
+    el && el.classList.remove('selected');
+  } else {
+    if (bk.seats.length >= 8) { showToast('Max 8 seats per booking', 'error'); return; }
+    bk.seats.push(label);
+    el && el.classList.add('selected');
+  }
+  updateSeatSummary();
+}
+
+function updateSeatSummary() {
+  const premSeats = bk.seats.filter(s => ['A','B'].includes(s[0]));
+  const stdSeats  = bk.seats.filter(s => !['A','B'].includes(s[0]));
+  const subtotal  = (premSeats.length * parseFloat(bk.seatMap.price_prem)) + (stdSeats.length * parseFloat(bk.seatMap.price_std));
+  const total     = bk.seats.length ? subtotal + CONV_FEE : 0;
+
+  document.getElementById('sumSeats').textContent = bk.seats.length ? bk.seats.join(', ') : '—';
+  document.getElementById('seatTags').innerHTML   = bk.seats.map(s => `<span class="seat-tag">${s}</span>`).join('');
+
+  const breakdown = [];
+  if (stdSeats.length)  breakdown.push(`₹${bk.seatMap.price_std} × ${stdSeats.length}`);
+  if (premSeats.length) breakdown.push(`₹${bk.seatMap.price_prem} × ${premSeats.length} (Prem)`);
+  document.getElementById('sumUnitPrice').textContent = breakdown.join(' + ') || '—';
+  document.getElementById('sumFee').textContent       = bk.seats.length ? `₹${CONV_FEE}` : '—';
+  document.getElementById('sumTotal').textContent     = `₹${total}`;
+
+  const btn = document.getElementById('proceedBtn');
+  btn.disabled   = bk.seats.length === 0;
+  btn.style.opacity = bk.seats.length ? '1' : '.5';
+  btn.textContent   = bk.seats.length ? `Continue with ${bk.seats.length} seat${bk.seats.length>1?'s':''} →` : 'Select seats to continue';
+}
+
+// ── Step 4: confirm ───────────────────────────
+function renderConfirm() {
+  const premSeats = bk.seats.filter(s => ['A','B'].includes(s[0]));
+  const stdSeats  = bk.seats.filter(s => !['A','B'].includes(s[0]));
+  const total     = (premSeats.length * parseFloat(bk.seatMap.price_prem)) + (stdSeats.length * parseFloat(bk.seatMap.price_std)) + CONV_FEE;
+  const time      = bk.show.show_time.slice(0,5);
+  document.getElementById('confirmDetails').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      ${[['Movie', bk.movie.title], ['Date', bk.date], ['Time', time],
+         ['Theatre', bk.show.theatre_name], ['Screen', bk.show.screen_name],
+         ['Seats', bk.seats.join(', ')], ['Language', bk.movie.language],
+         ['Total', '₹' + total]
+        ].map(([l,v]) => `<div><div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px;">${l}</div>
+          <div style="font-weight:700;${l==='Total'?'color:var(--primary);font-size:1.1rem;':''}">${v}</div></div>`).join('')}
+    </div>`;
+}
+
+async function confirmBooking() {
+  if (!Auth.loggedIn()) { window.location.href = '/login.html'; return; }
+  const alertEl = document.getElementById('bookingAlert');
+  const btn     = document.getElementById('confirmBtn');
+  alertEl.classList.remove('show');
+  btn.disabled = true; btn.textContent = 'Processing…';
+
+  const seats = bk.seats.map(label => ({
+    label,
+    type: ['A','B'].includes(label[0]) ? 'premium' : 'standard'
+  }));
+
+  try {
+    const { booking_ref, total } = await BookingsAPI.create(bk.show.show_id, seats);
+    showTicketModal(booking_ref, total);
+  } catch(e) {
+    alertEl.textContent = e.message; alertEl.classList.add('show');
+    btn.disabled = false; btn.textContent = '🎟️ Confirm & Get Ticket';
+  }
+}
+
+function showTicketModal(ref, total) {
+  const time = bk.show.show_time.slice(0,5);
+  const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18];
+  document.getElementById('ticketOut').innerHTML = `
+    <div class="ticket-top">
+      <div class="ticket-movie">${genEmoji(bk.movie.genre)} ${bk.movie.title}</div>
+      <div class="ticket-genre">${bk.movie.language} · ${bk.movie.genre.split(',')[0].trim()}</div>
+    </div>
+    <div class="ticket-divider"></div>
+    <div class="ticket-body">
+      <div class="ticket-field"><label>Date</label><span>${bk.date}</span></div>
+      <div class="ticket-field"><label>Show Time</label><span>${time}</span></div>
+      <div class="ticket-field"><label>Theatre</label><span>${bk.show.theatre_name}</span></div>
+      <div class="ticket-field"><label>Screen</label><span>${bk.show.screen_name}</span></div>
+      <div class="ticket-field"><label>Seats</label><span>${bk.seats.join(', ')}</span></div>
+      <div class="ticket-field"><label>Total Paid</label><span style="color:var(--accent-green);">₹${total}</span></div>
+    </div>
+    <div class="ticket-barcode">
+      <div class="barcode-lines">${bars.map(h=>`<div class="b" style="height:${h}px;"></div>`).join('')}</div>
+      <div class="ticket-id">${ref}</div>
+    </div>`;
+  document.getElementById('ticketModal').classList.add('show');
+  showToast('🎉 Booking confirmed! Enjoy the movie!', 'success');
+}
+
+// ── Step navigation ───────────────────────────
+function goStep(n) {
+  bk.seats = [];
+  document.querySelectorAll('.booking-step').forEach((s,i) => s.style.display = (i+1===n)?'block':'none');
+  for (let i=1; i<=4; i++) {
+    const si = document.getElementById('si'+i);
+    si.classList.remove('active','done');
+    if (i < n) si.classList.add('done');
+    if (i === n) si.classList.add('active');
+    const line = document.getElementById('sil'+i);
+    if (line) line.classList.toggle('done', i < n);
+  }
+  if (n === 2) {
+    // Init date picker
+    renderDateChips('datePicker', date => loadTheatresStep(date));
+  }
+  if (n === 3) { bk.seats = []; loadSeats(); updateSeatSummary(); }
+  if (n === 4) renderConfirm();
+}
+</script>
+</body>
+</html>

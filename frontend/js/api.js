@@ -1,0 +1,175 @@
+// ─────────────────────────────────────────────────────────────
+//  frontend/js/api.js
+//  All fetch() calls to the Node.js backend.
+//  Every page imports this via <script src="/js/api.js">
+// ─────────────────────────────────────────────────────────────
+
+const API_BASE = 'http://localhost:5000/api';
+
+// ── token helpers ─────────────────────────────
+const Auth = {
+  getToken: ()       => localStorage.getItem('th_token'),
+  setToken: (t)      => localStorage.setItem('th_token', t),
+  setUser:  (u)      => localStorage.setItem('th_user', JSON.stringify(u)),
+  getUser:  ()       => { try { return JSON.parse(localStorage.getItem('th_user')); } catch { return null; } },
+  clear:    ()       => { localStorage.removeItem('th_token'); localStorage.removeItem('th_user'); },
+  isAdmin:  ()       => Auth.getUser()?.role === 'admin',
+  loggedIn: ()       => !!Auth.getToken(),
+};
+
+// ── core fetch wrapper ────────────────────────
+async function apiFetch(path, options = {}) {
+  const token = Auth.getToken();
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
+}
+
+// ── AUTH ──────────────────────────────────────
+const AuthAPI = {
+  login:    (email, password)       => apiFetch('/auth/login',    { method: 'POST', body: JSON.stringify({ email, password }) }),
+  register: (name, email, phone, password) => apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, phone, password }) }),
+  me:       ()                      => apiFetch('/auth/me'),
+  updateProfile: (name, phone)      => apiFetch('/auth/profile',  { method: 'PUT',  body: JSON.stringify({ name, phone }) }),
+  changePassword: (currentPassword, newPassword) => apiFetch('/auth/password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) }),
+};
+
+// ── MOVIES ────────────────────────────────────
+const MoviesAPI = {
+  getAll:   (params = {}) => apiFetch('/movies?' + new URLSearchParams(params)),
+  getOne:   (id)          => apiFetch(`/movies/${id}`),
+  getShows: (id, params)  => apiFetch(`/movies/${id}/shows?` + new URLSearchParams(params)),
+  add:      (data)        => apiFetch('/movies',     { method: 'POST',   body: JSON.stringify(data) }),
+  update:   (id, data)    => apiFetch(`/movies/${id}`, { method: 'PUT',  body: JSON.stringify(data) }),
+  delete:   (id)          => apiFetch(`/movies/${id}`, { method: 'DELETE' }),
+};
+
+// ── THEATRES ──────────────────────────────────
+const TheatresAPI = {
+  getAll:   (params = {}) => apiFetch('/theatres?' + new URLSearchParams(params)),
+  getCities:()            => apiFetch('/theatres/cities'),
+  getOne:   (id)          => apiFetch(`/theatres/${id}`),
+};
+
+// ── SEATS ─────────────────────────────────────
+const SeatsAPI = {
+  getMap: (show_id) => apiFetch(`/seats/${show_id}`),
+};
+
+// ── BOOKINGS ──────────────────────────────────
+const BookingsAPI = {
+  create:  (show_id, seats)  => apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ show_id, seats }) }),
+  mine:    ()                => apiFetch('/bookings/mine'),
+  getOne:  (ref)             => apiFetch(`/bookings/${ref}`),
+  cancel:  (ref)             => apiFetch(`/bookings/${ref}/cancel`, { method: 'PUT' }),
+  // admin
+  all:     ()                => apiFetch('/bookings'),
+};
+
+// ── ADMIN ─────────────────────────────────────
+const AdminAPI = {
+  stats: () => apiFetch('/admin/stats'),
+  users: () => apiFetch('/admin/users'),
+};
+
+// ── TOAST ─────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span>
+                  <span class="toast-msg">${msg}</span>
+                  <span class="toast-close" onclick="this.parentElement.remove()">✕</span>`;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 4500);
+}
+
+// ── NAV: reflect login state ──────────────────
+function updateNav() {
+  const user = Auth.getUser();
+  const el   = document.getElementById('navActions');
+  if (!el) return;
+  if (user) {
+    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+    el.innerHTML = `
+      <a href="/dashboard.html" class="nav-user">
+        <div class="nav-avatar">${initials}</div>
+        <span class="nav-username">${user.name.split(' ')[0]}</span>
+      </a>`;
+  } else {
+    el.innerHTML = `
+      <a href="/login.html" class="btn-nav-login">Log In</a>
+      <a href="/login.html" class="btn-nav-signup btn">Sign Up</a>`;
+  }
+}
+
+// ── POSTER helper (Real TMDB / Image URLs) ─────
+function posterImg(movie, cls = '') {
+  const url = movie.poster_url || movie.posterUrl || movie.posterPath;
+  if (url) {
+    return `<img src="${url}" alt="${movie.title}" class="poster-img ${cls}" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <div class="poster-fallback" style="display:none;background:linear-gradient(135deg,#141420,#0a0a0f);color:#a0a0b0;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:1rem;text-align:center;width:100%;height:100%;">
+              <span style="font-size:2rem;color:var(--primary);">🎬</span>
+              <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary);">${movie.title}</span>
+            </div>`;
+  }
+  return `<div class="poster-fallback" style="display:flex;background:linear-gradient(135deg,#141420,#0a0a0f);color:#a0a0b0;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:1rem;text-align:center;width:100%;height:100%;">
+            <span style="font-size:2rem;color:var(--primary);">🎬</span>
+            <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary);">${movie.title}</span>
+          </div>`;
+}
+
+function genEmoji(genre) {
+  const map = { Action:'💥', Thriller:'🔍', Crime:'🚔', Drama:'🎭', Horror:'👻',
+                Comedy:'😄', Romance:'💕', 'Sci-Fi':'🚀', Adventure:'🗺️',
+                Sport:'🏆', Mystery:'🕵️', War:'⚔️', History:'📜', Fantasy:'🪄' };
+  for (const k of Object.keys(map)) {
+    if (genre && genre.toLowerCase().includes(k.toLowerCase())) return map[k];
+  }
+  return '🎬';
+}
+
+// ── Duration formatter ────────────────────────
+function fmtDuration(mins) {
+  return `${Math.floor(mins/60)}h ${mins%60}m`;
+}
+
+// ── Date chips helper ─────────────────────────
+function renderDateChips(containerId, onSelect) {
+  const days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const cont   = document.getElementById(containerId);
+  if (!cont) return;
+  const today  = new Date();
+  cont.innerHTML = Array.from({length: 7}, (_, i) => {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    const iso  = d.toISOString().split('T')[0];
+    const label = i === 0 ? 'Today' : i === 1 ? 'Tmrw' : days[d.getDay()];
+    return `<div class="date-chip${i===0?' active':''}" data-date="${iso}" onclick="selectDateChip(this,'${containerId}')">
+              <div class="dc-day">${label}</div>
+              <div class="dc-num">${d.getDate()}</div>
+              <div class="dc-mon">${months[d.getMonth()]}</div>
+            </div>`;
+  }).join('');
+
+  // wire up chips to caller
+  window[`_dateChipCb_${containerId}`] = onSelect;
+  // fire for today
+  const first = cont.querySelector('.date-chip');
+  if (first) onSelect(first.dataset.date);
+}
+
+function selectDateChip(el, containerId) {
+  document.querySelectorAll(`#${containerId} .date-chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const cb = window[`_dateChipCb_${containerId}`];
+  if (cb) cb(el.dataset.date);
+}

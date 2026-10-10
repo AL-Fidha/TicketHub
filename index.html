@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticket Hub – Movie Ticket Booking</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="logo-icon">🎬</div>
+      Ticket<span>Hub</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="booking.html">Book Tickets</a></li>
+      <li><a href="dashboard.html">My Bookings</a></li>
+    </ul>
+    <div class="nav-actions" id="navActions">
+      <a href="login.html" class="btn-nav-login">Log In</a>
+      <a href="login.html" class="btn-nav-signup btn">Sign Up</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+      <div class="hero-bg">
+        <div class="hero-grid"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-badge">🎟️ &nbsp; Now Booking — Latest Releases</div>
+          <h1 class="hero-title">
+            Book Your<br/>Perfect<br/><span class="highlight">Cinema Seat</span>
+          </h1>
+          <p class="hero-desc">
+            Ticket Hub makes movie booking fast, simple, and hassle-free.
+            Browse shows, pick your seats in real-time, and get instant ticket confirmation — all in one place.
+          </p>
+          <div class="hero-actions">
+            <a href="movies.html" class="btn btn-primary btn-lg">🎬 &nbsp; Browse Movies</a>
+            <a href="login.html" class="btn btn-secondary btn-lg">Get Started</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num">50+</div>
+              <div class="stat-label">Movies Available</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">12</div>
+              <div class="stat-label">Screens</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">10K+</div>
+              <div class="stat-label">Happy Customers</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-card-stack">
+            <div class="movie-card-preview">
+              <div class="mcp-poster p1">🌌</div>
+              <div class="mcp-info">
+                <div class="mcp-title">Galactic Siege</div>
+                <div class="mcp-meta"><span>Sci-Fi</span><span>⭐ 9.1</span></div>
+              </div>
+            </div>
+            <div class="movie-card-preview">
+              <div class="mcp-poster p2">🌊</div>
+              <div class="mcp-info">
+                <div class="mcp-title">Deep Blue</div>
+                <div class="mcp-meta"><span>Thriller</span><span>⭐ 8.4</span></div>
+              </div>
+            </div>
+            <div class="movie-card-preview">
+              <div class="mcp-poster p3">🔥</div>
+              <div class="mcp-info">
+                <div class="mcp-title">Inferno Rising</div>
+                <div class="mcp-meta"><span>Action</span><span>⭐ 8.7</span></div>
+              </div>
+            </div>
+            <div class="float-badge fb1">🎫 &nbsp; Seat A4 Booked!</div>
+            <div class="float-badge fb2">✅ &nbsp; Instant Confirmation</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── NOW SHOWING ── -->
+    <div style="background: linear-gradient(180deg, transparent, var(--bg-card)); padding: 0.5rem 0;">
+      <section class="section">
+        <div class="section-header">
+          <div class="section-label">Now Showing</div>
+          <h2 class="section-title">Top Movies This Week</h2>
+          <p class="section-desc">From pulse-pounding action to heartfelt drama — catch the best of cinema right now.</p>
+        </div>
+        <div class="movies-grid" id="homeMoviesGrid"></div>
+        <div style="text-align:center; margin-top:2.5rem;">
+          <a href="movies.html" class="btn btn-secondary">View All Movies &nbsp;→</a>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── FEATURES ── -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-label">Why Ticket Hub</div>
+        <h2 class="section-title">Everything You Need</h2>
+        <p class="section-desc">A complete cinema booking experience — fast, secure, and built with you in mind.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon fi-red">🪑</div>
+          <h3 class="feature-title">Real-Time Seat Selection</h3>
+          <p class="feature-desc">See live seat availability, pick your favourite spots, and lock them instantly — no more double bookings.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-blue">🔐</div>
+          <h3 class="feature-title">Secure Authentication</h3>
+          <p class="feature-desc">Your account and booking data are protected with secure login and encrypted local storage.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-green">🎟️</div>
+          <h3 class="feature-title">Instant Ticket Generation</h3>
+          <p class="feature-desc">Get a unique booking ID and a formatted ticket printout the moment your booking is confirmed.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-gold">📋</div>
+          <h3 class="feature-title">Full Booking History</h3>
+          <p class="feature-desc">Track all your past and upcoming bookings from your personal dashboard — anytime, anywhere.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-purple">🎬</div>
+          <h3 class="feature-title">Rich Movie Catalog</h3>
+          <p class="feature-desc">Browse movies by genre, language, and show timings. Every detail — cast, duration, rating — at a glance.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-teal">🛠️</div>
+          <h3 class="feature-title">Admin Controls</h3>
+          <p class="feature-desc">Administrators can manage the full movie catalog, schedule shows, and monitor screen inventories with ease.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ── -->
+    <div style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <section class="section">
+        <div class="section-header">
+          <div class="section-label">How It Works</div>
+          <h2 class="section-title">Book in 4 Simple Steps</h2>
+          <p class="section-desc">From browsing to watching — the whole journey takes less than two minutes.</p>
+        </div>
+        <div class="steps-row">
+          <div class="step-item">
+            <div class="step-num">🔑</div>
+            <h4 class="step-title">Create Account</h4>
+            <p class="step-desc">Sign up in seconds and log in to unlock the full booking experience.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">🎬</div>
+            <h4 class="step-title">Pick a Movie</h4>
+            <p class="step-desc">Browse the catalog, filter by genre or language, and choose your show timing.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">🪑</div>
+            <h4 class="step-title">Select Seats</h4>
+            <p class="step-desc">View the live seat map and pick your perfect spots. Standard or premium — your choice.</p>
+          </div>
+          <div class="step-item">
+            <div class="step-num">🎟️</div>
+            <h4 class="step-title">Get Your Ticket</h4>
+            <p class="step-desc">Confirm your booking and receive a unique ticket with your booking ID instantly.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── CTA BANNER ── -->
+    <section class="section" style="text-align:center;">
+      <div style="background: linear-gradient(135deg, rgba(229,9,20,0.15), rgba(74,144,217,0.08)); border: 1px solid rgba(229,9,20,0.2); border-radius: var(--radius-lg); padding: 4rem 2rem;">
+        <div style="font-size:3rem; margin-bottom:1rem;">🎬</div>
+        <h2 style="font-family:'Poppins',sans-serif; font-size:2rem; font-weight:800; margin-bottom:1rem;">
+          Ready for Your Next Movie Night?
+        </h2>
+        <p style="color:var(--text-secondary); margin-bottom:2rem; max-width:480px; margin-left:auto; margin-right:auto;">
+          Join thousands of movie lovers already using Ticket Hub. Your perfect seat is just a few clicks away.
+        </p>
+        <a href="login.html" class="btn btn-primary btn-lg">Start Booking Now</a>
+      </div>
+    </section>
+
+  </div><!-- end page-wrapper -->
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-brand" style="font-size:1.4rem; margin-bottom:0.75rem;">
+          <div class="logo-icon">🎬</div> Ticket<span>Hub</span>
+        </div>
+        <p>A standalone movie ticket booking management system. Fast, secure, and simple — built for cinema lovers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a href="index.html">Home</a>
+        <a href="movies.html">Movies</a>
+        <a href="booking.html">Book Tickets</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="login.html">Log In</a>
+        <a href="login.html">Sign Up</a>
+        <a href="dashboard.html">My Bookings</a>
+        <a href="dashboard.html">Profile</a>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ticket Hub — College of Engineering, Muttathara, Thiruvananthapuram</span>
+      <span>Built with ❤️ by Abhinav S, Abhirami M K, Adhithya R M, AL-Fidha S R</span>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Render 6 featured movies on home page
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('homeMoviesGrid');
+      if (grid && window.TicketHub) {
+        const movies = window.TicketHub.getMovies().slice(0, 6);
+        grid.innerHTML = movies.map(m => window.TicketHub.renderMovieCard(m)).join('');
+      }
+      window.TicketHub && window.TicketHub.updateNav();
+    });
+  </script>
+</body>
+</html>

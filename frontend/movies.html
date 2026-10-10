@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movies – Ticket Hub</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/index.html" class="nav-brand"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></a>
+  <ul class="nav-links">
+    <li><a href="/index.html">Home</a></li>
+    <li><a href="/movies.html" class="active">Movies</a></li>
+    <li><a href="/booking.html">Book Tickets</a></li>
+    <li><a href="/dashboard.html">My Bookings</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions"></div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="page-hero">
+    <div class="section-label">Now Showing & New</div>
+    <h1 class="page-hero-title">🎬 Movie Catalog</h1>
+    <p class="page-hero-sub">15 films — Malayalam, English and Tamil. Real TMDB posters.</p>
+  </div>
+
+  <section class="section" style="padding-top:2.5rem;">
+    <!-- Filters -->
+    <div class="filter-bar" id="filterBar">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search movies…"/>
+      </div>
+      <button class="filter-chip active" data-filter="all"        data-type="all">All</button>
+      <button class="filter-chip"        data-filter="Malayalam"  data-type="lang">Malayalam</button>
+      <button class="filter-chip"        data-filter="English"    data-type="lang">English</button>
+      <button class="filter-chip"        data-filter="Tamil"      data-type="lang">Tamil</button>
+      <button class="filter-chip"        data-filter="Action"     data-type="genre">Action</button>
+      <button class="filter-chip"        data-filter="Thriller"   data-type="genre">Thriller</button>
+      <button class="filter-chip"        data-filter="Comedy"     data-type="genre">Comedy</button>
+      <button class="filter-chip"        data-filter="Drama"      data-type="genre">Drama</button>
+      <button class="filter-chip"        data-filter="Horror"     data-type="genre">Horror</button>
+    </div>
+
+    <div id="moviesGrid" class="movies-grid"><div class="spinner"></div></div>
+    <div id="emptyState" style="display:none;text-align:center;padding:4rem 0;color:var(--text-muted);">
+      <div style="font-size:3rem;margin-bottom:1rem;">🎭</div>
+      <h3 style="margin-bottom:0.5rem;">No movies found</h3>
+      <p>Try a different filter or search term.</p>
+    </div>
+  </section>
+</div>
+
+<!-- Movie Detail Modal -->
+<div class="modal-overlay" id="movieModal">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Movie Details</h2>
+      <div class="modal-close" id="closeModal">✕</div>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="nav-brand" style="font-size:1.4rem;margin-bottom:0.75rem;"><div class="logo-icon">🎬</div>Ticket<span>Hub</span></div><p>Movie ticket booking for Kerala.</p></div>
+    <div class="footer-col"><h4>Navigate</h4><a href="/index.html">Home</a><a href="/movies.html">Movies</a><a href="/booking.html">Book Tickets</a></div>
+    <div class="footer-col"><h4>Account</h4><a href="/login.html">Log In</a><a href="/login.html">Sign Up</a></div>
+    <div class="footer-col"><h4>Info</h4><a href="#">About</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Ticket Hub — College of Engineering, Muttathara</span></div>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/api.js"></script>
+<script>
+let allMovies = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  updateNav();
+  document.getElementById('closeModal').addEventListener('click', () => document.getElementById('movieModal').classList.remove('show'));
+  document.getElementById('movieModal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('show'); });
+
+  document.querySelectorAll('.filter-chip').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active'); applyFilters();
+  }));
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+  try {
+    allMovies = await MoviesAPI.getAll();
+    renderGrid(allMovies);
+  } catch(e) {
+    document.getElementById('moviesGrid').innerHTML = `<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">⚠️ ${e.message}</p>`;
+  }
+});
+
+function applyFilters() {
+  const chip   = document.querySelector('.filter-chip.active');
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filter = chip?.dataset.filter || 'all';
+  const type   = chip?.dataset.type   || 'all';
+  let list = allMovies;
+  if (filter !== 'all') {
+    if (type === 'lang')  list = list.filter(m => m.language === filter);
+    if (type === 'genre') list = list.filter(m => m.genre.toLowerCase().includes(filter.toLowerCase()));
+  }
+  if (search) list = list.filter(m => m.title.toLowerCase().includes(search));
+  renderGrid(list);
+}
+
+function renderGrid(movies) {
+  const grid  = document.getElementById('moviesGrid');
+  const empty = document.getElementById('emptyState');
+  if (!movies.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = movies.map(m => `
+    <div class="movie-card" onclick="openDetail(${m.id})">
+      <div class="movie-poster">
+        ${posterImg(m)}
+        <div class="movie-rating">⭐ ${m.rating}</div>
+        ${m.status==='New'?'<div class="movie-badge">New</div>':''}
+        <div class="movie-overlay"><button class="overlay-btn">View Details</button></div>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">${m.title}</div>
+        <div class="movie-genre">${m.genre.split(',')[0].trim()} · ${fmtDuration(m.duration_min)}</div>
+        <div class="movie-meta">
+          <span class="movie-lang">${m.language}</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);">⭐ ${m.rating}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function openDetail(id) {
+  const m = allMovies.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('modalTitle').textContent = m.title;
+  document.getElementById('modalBody').innerHTML = `
+    <div style="display:flex;gap:1.25rem;margin-bottom:1.5rem;">
+      <div style="width:110px;height:160px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--bg-dark);">
+        ${m.poster_url
+          ? `<img src="${m.poster_url}" style="width:100%;height:100%;object-fit:cover;" alt="${m.title}"/>`
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;">${genEmoji(m.genre)}</div>`}
+      </div>
+      <div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:0.75rem;">
+          <span class="badge badge-success">${m.genre.split(',')[0].trim()}</span>
+          <span class="movie-lang">${m.language}</span>
+          ${m.status==='New'?'<span class="badge badge-pending">New</span>':''}
+        </div>
+        <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.7;margin-bottom:0.75rem;">${m.description}</p>
+        <div style="font-size:0.85rem;color:var(--text-muted);">⭐ ${m.rating} &nbsp;·&nbsp; ⏱ ${fmtDuration(m.duration_min)}</div>
+      </div>
+    </div>
+    <a href="/booking.html?movie=${m.id}" class="btn btn-primary btn-full">Book Tickets →</a>`;
+  document.getElementById('movieModal').classList.add('show');
+}
+</script>
+</body>
+</html>
