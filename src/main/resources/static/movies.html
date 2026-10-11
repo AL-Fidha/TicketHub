@@ -1,3 +1,5 @@
+  const descExcerpt = m.description ? (m.description.slice(0, 78) + '…') : 'Discover this film and find a nearby showtime.';
+            <span class="movie-brand-mark" title="TicketHub">TH</span>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,7 +149,7 @@ function renderGrid(movies) {
       <div class="movie-info">
         <div>
           <div class="movie-card-header">
-            <span class="movie-brand-mark">WC</span>
+            <span class="movie-brand-mark" title="TicketHub">TH</span>
             <span class="movie-tagline">${m.genre.split(',')[0].trim()} PREMIERE</span>
             ${m.status === 'New' ? '<span class="movie-badge">NEW</span>' : ''}
           </div>
@@ -155,7 +157,6 @@ function renderGrid(movies) {
           <div class="movie-meta">
             <span class="movie-lang">${m.language}</span>
             <span class="movie-duration">⏱ ${fmtDuration(m.duration_min || m.durationMin)}</span>
-            <span class="movie-genre">${m.genre}</span>
             <span class="movie-rating">⭐ ${m.rating}</span>
           </div>
           <p style="font-size:0.86rem;color:#a0a6b8;line-height:1.55;max-width:540px;margin-bottom:1.2rem;">${descExcerpt}</p>
