@@ -233,13 +233,17 @@ public class TicketHubApplication {
                         .findFirst().orElse(null);
                     if (existing == null) {
                         movieRepo.save(dm);
-                    } else if (existing.getPosterPath() == null || !existing.getPosterPath().equals(dm.getPosterPath())) {
-                        existing.setPosterPath(dm.getPosterPath());
+                    } else {
+                        if (existing.getPosterPath() == null || !existing.getPosterPath().equals(dm.getPosterPath())) {
+                            existing.setPosterPath(dm.getPosterPath());
+                        }
                         existing.setDescription(dm.getDescription());
                         existing.setGenre(dm.getGenre());
                         existing.setLanguage(dm.getLanguage());
                         existing.setRating(dm.getRating());
                         existing.setDurationMin(dm.getDurationMin());
+                        if (existing.getCast() == null || existing.getCast().isBlank()) existing.setCast(dm.getCast());
+                        if (existing.getProducers() == null || existing.getProducers().isBlank()) existing.setProducers(dm.getProducers());
                         movieRepo.save(existing);
                     }
                 }
@@ -308,45 +312,57 @@ public class TicketHubApplication {
                 log.info("40 screens seeded for existing theatres.");
             }
 
-            // ── 4. Shows — Seed shows across multiple theatres & screens for each movie ──────
-            List<Movie>  movies  = movieRepo.findAll();
-            List<Screen> screens = screenRepo.findAll();
-            if (!screens.isEmpty() && !movies.isEmpty() && showRepo.count() < 400) {
-                LocalTime[] times = {
-                    LocalTime.of(10, 0), LocalTime.of(14, 0),
-                    LocalTime.of(18, 0), LocalTime.of(21, 30)
-                };
+            // ── 4. Shows — every movie plays at every Kerala theatre ──────
+            List<Movie> movies = movieRepo.findAll();
+            List<Theatre> allTheatres = theatreRepo.findAll();
+            if (!allTheatres.isEmpty() && !movies.isEmpty()) {
+                List<Show> existingShows = showRepo.findAllWithDetails();
+                java.util.Set<String> showKeys = new java.util.HashSet<>();
+                java.util.Set<String> movieTheatrePairs = new java.util.HashSet<>();
+                for (Show existing : existingShows) {
+                    showKeys.add(existing.getMovie().getId() + "|" + existing.getScreen().getId() + "|"
+                        + existing.getShowDate() + "|" + existing.getShowTime());
+                    movieTheatrePairs.add(existing.getMovie().getId() + "|" + existing.getScreen().getTheatre().getId());
+                }
 
-                for (Movie m : movies) {
-                    // Pick 5 different screens across different theatres for every movie
-                    for (int s = 0; s < Math.min(5, screens.size()); s++) {
-                        int screenIndex = (int) ((m.getId() * 3 + s * 4) % screens.size());
-                        Screen sc = screens.get(screenIndex);
+                java.util.Map<Long, Screen> firstScreenByTheatre = new java.util.LinkedHashMap<>();
+                for (Screen screen : screenRepo.findAll()) {
+                    firstScreenByTheatre.putIfAbsent(screen.getTheatre().getId(), screen);
+                }
 
+                LocalTime[] times = { LocalTime.of(14, 0), LocalTime.of(18, 30), LocalTime.of(21, 15) };
+                java.util.List<Show> batch = new java.util.ArrayList<>();
+                for (Movie movie : movies) {
+                    for (Theatre theatre : allTheatres) {
+                        Screen screen = firstScreenByTheatre.get(theatre.getId());
+                        if (screen == null) continue;
+                        String pair = movie.getId() + "|" + theatre.getId();
+                        if (movieTheatrePairs.contains(pair)) continue;
                         for (int d = 0; d < 5; d++) {
                             LocalDate date = LocalDate.now().plusDays(d);
-                            // Schedule 2-3 showtimes per screen
-                            for (int tIdx = 0; tIdx < 3; tIdx++) {
-                                LocalTime time = times[(s + tIdx) % times.length];
-                                // Avoid duplicate show if exists
-                                boolean exists = showRepo.findByMovieFiltered(m.getId(), date, sc.getTheatre().getId())
-                                    .stream()
-                                    .anyMatch(existingShow -> existingShow.getShowTime().equals(time) && existingShow.getScreen().getId().equals(sc.getId()));
-                                if (!exists) {
-                                    showRepo.save(Show.builder()
-                                        .movie(m)
-                                        .screen(sc)
-                                        .showDate(date)
-                                        .showTime(time)
-                                        .priceStd(BigDecimal.valueOf(220))
-                                        .pricePrem(BigDecimal.valueOf(380))
-                                        .build());
-                                }
+                            for (LocalTime time : times) {
+                                String key = movie.getId() + "|" + screen.getId() + "|" + date + "|" + time;
+                                if (showKeys.contains(key)) continue;
+                                batch.add(Show.builder()
+                                    .movie(movie)
+                                    .screen(screen)
+                                    .showDate(date)
+                                    .showTime(time)
+                                    .priceStd(BigDecimal.valueOf(220))
+                                    .pricePrem(BigDecimal.valueOf(380))
+                                    .build());
+                                showKeys.add(key);
                             }
                         }
+                        movieTheatrePairs.add(pair);
                     }
                 }
-                log.info("Comprehensive multi-theatre shows seeded across Kerala.");
+                if (!batch.isEmpty()) {
+                    showRepo.saveAll(batch);
+                    log.info("{} shows added so every movie plays at every theatre.", batch.size());
+                } else {
+                    log.info("All movies already have showtimes at every theatre.");
+                }
             }
         };
     }

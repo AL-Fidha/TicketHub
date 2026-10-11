@@ -71,6 +71,7 @@ public class TmdbService {
         String url = UriComponentsBuilder.fromUriString(baseUrl)
             .path("/movie/{id}")
             .queryParam("api_key", apiKey)
+            .queryParam("append_to_response", "credits")
             .buildAndExpand(tmdbId).encode().toUriString();
         try {
             return mapper.readTree(restTemplate.getForObject(url, String.class));

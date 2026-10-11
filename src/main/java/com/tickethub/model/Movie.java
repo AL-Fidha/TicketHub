@@ -42,6 +42,7 @@ public class Movie {
     @Column(name = "poster_path", length = 500)
     private String posterPath;   // TMDB path /abc.jpg or full image URL
 
+    @com.fasterxml.jackson.annotation.JsonProperty("cast")
     @Column(name = "cast_members", length = 500)
     private String cast;
 
@@ -63,6 +64,15 @@ public class Movie {
 
     public enum Language { Malayalam, English, Tamil, Hindi, Telugu }
     public enum Status   { NOW_SHOWING, NEW, COMING_SOON }
+
+    @com.fasterxml.jackson.annotation.JsonSetter("status")
+    public void setStatusFlexible(String raw) {
+        if (raw == null || raw.isBlank()) return;
+        String key = raw.trim().toUpperCase().replace(' ', '_').replace('-', '_');
+        if ("NOWSHOWING".equals(key)) key = "NOW_SHOWING";
+        if ("COMINGSOON".equals(key)) key = "COMING_SOON";
+        try { this.status = Status.valueOf(key); } catch (Exception ignored) {}
+    }
 
     // Convenience: full poster URL (populated in service layer or fallback)
     @Transient

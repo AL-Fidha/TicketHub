@@ -33,7 +33,7 @@ public class SecurityConfig {
                 // Auth endpoints — public
                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                 // Movie & theatre browsing — public
-                .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/theatres/**", "/api/seats/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/theatres/**", "/api/seats/**", "/api/shows/**").permitAll()
                 // Admin-only endpoints
                 .requestMatchers(HttpMethod.POST,   "/api/movies/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT,    "/api/movies/**").hasRole("ADMIN")

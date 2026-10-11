@@ -126,6 +126,69 @@ public class AdminService {
     }
 
     @Transactional
+    public Map<String, Object> broadcastShowToAllTheatres(com.tickethub.dto.AdminBroadcastShowRequest request) {
+        if (request.showDate().isBefore(LocalDate.now()))
+            throw new IllegalArgumentException("Show date cannot be in the past.");
+        Movie movie = movieRepo.findById(request.movieId())
+            .orElseThrow(() -> new IllegalArgumentException("Movie not found."));
+        int created = 0;
+        int skipped = 0;
+        for (Theatre theatre : theatreRepo.findAll()) {
+            java.util.List<Screen> screens = screenRepo.findByTheatreId(theatre.getId());
+            if (screens.isEmpty()) { skipped++; continue; }
+            Screen screen = screens.get(0);
+            if (showRepo.existsByScreen_IdAndShowDateAndShowTime(screen.getId(), request.showDate(), request.showTime())) {
+                skipped++;
+                continue;
+            }
+            showRepo.save(Show.builder()
+                .movie(movie)
+                .screen(screen)
+                .showDate(request.showDate())
+                .showTime(request.showTime())
+                .priceStd(request.priceStd())
+                .pricePrem(request.pricePrem())
+                .build());
+            created++;
+        }
+        return Map.of("created", created, "skipped", skipped, "movie", movie.getTitle());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getTheatreLineup() {
+        List<Map<String, Object>> lineup = new java.util.ArrayList<>();
+        for (Theatre theatre : theatreRepo.findAll()) {
+            var shows = showRepo.findByTheatreId(theatre.getId());
+            java.util.LinkedHashMap<Long, Map<String, Object>> movies = new java.util.LinkedHashMap<>();
+            for (Show show : shows) {
+                movies.computeIfAbsent(show.getMovie().getId(), id -> {
+                    Map<String, Object> movie = new java.util.LinkedHashMap<>();
+                    movie.put("id", show.getMovie().getId());
+                    movie.put("title", show.getMovie().getTitle());
+                    movie.put("language", show.getMovie().getLanguage().name());
+                    movie.put("genre", show.getMovie().getGenre());
+                    movie.put("cast", show.getMovie().getCast());
+                    movie.put("producers", show.getMovie().getProducers());
+                    movie.put("poster_url", show.getMovie().getPosterUrl());
+                    movie.put("showtimes", new java.util.ArrayList<String>());
+                    return movie;
+                });
+                @SuppressWarnings("unchecked")
+                java.util.List<String> times = (java.util.List<String>) movies.get(show.getMovie().getId()).get("showtimes");
+                times.add(show.getShowDate() + " " + show.getShowTime().toString().substring(0, 5));
+            }
+            lineup.add(Map.of(
+                "id", theatre.getId(),
+                "name", theatre.getName(),
+                "city", theatre.getCity(),
+                "location", theatre.getLocation(),
+                "movies", movies.values()
+            ));
+        }
+        return lineup;
+    }
+
+    @Transactional
     public void deleteShow(Long showId) {
         Show show = showRepo.findById(showId)
             .orElseThrow(() -> new IllegalArgumentException("Show not found."));
@@ -158,6 +221,20 @@ public class AdminService {
         if (!releaseDate.isBlank() && LocalDate.parse(releaseDate).isAfter(LocalDate.now()))
             status = Movie.Status.COMING_SOON;
 
+        java.util.List<String> castNames = new java.util.ArrayList<>();
+        details.path("credits").path("cast").forEach(person -> {
+            String name = person.path("name").asText("");
+            if (!name.isBlank() && castNames.size() < 6) castNames.add(name);
+        });
+        java.util.List<String> crewNames = new java.util.ArrayList<>();
+        details.path("credits").path("crew").forEach(person -> {
+            String job = person.path("job").asText("");
+            if (("Director".equals(job) || "Producer".equals(job) || "Executive Producer".equals(job)) && crewNames.size() < 5) {
+                String name = person.path("name").asText("");
+                if (!name.isBlank() && !crewNames.contains(name)) crewNames.add(name);
+            }
+        });
+
         Movie movie = movieRepo.save(Movie.builder()
             .title(title)
             .genre(genres.isEmpty() ? "Drama" : String.join(", ", genres))
@@ -167,6 +244,8 @@ public class AdminService {
             .description(details.path("overview").asText(""))
             .tmdbId(tmdbId)
             .posterPath(details.path("poster_path").asText(null))
+            .cast(castNames.isEmpty() ? "Ensemble Cast" : String.join(", ", castNames))
+            .producers(crewNames.isEmpty() ? "TicketHub Premiere Studios" : String.join(", ", crewNames))
             .status(status)
             .build());
 

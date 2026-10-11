@@ -130,6 +130,8 @@ public class BookingService {
         map.put("language",      movie.getLanguage().name());
         map.put("genre",         movie.getGenre());
         map.put("poster_url",    tmdb.buildUrl(movie.getPosterPath()));
+        map.put("cast",          movie.getCast() != null ? movie.getCast() : "");
+        map.put("producers",     movie.getProducers() != null ? movie.getProducers() : "");
         map.put("show_date",     show.getShowDate().toString());
         map.put("show_time",     show.getShowTime().toString());
         map.put("screen_name",   screen.getName());

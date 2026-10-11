@@ -61,6 +61,20 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/shows/broadcast")
+    public ResponseEntity<?> broadcastShow(@Valid @RequestBody com.tickethub.dto.AdminBroadcastShowRequest request) {
+        try {
+            return ResponseEntity.status(201).body(adminService.broadcastShowToAllTheatres(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/theatre-lineup")
+    public ResponseEntity<?> theatreLineup() {
+        return ResponseEntity.ok(adminService.getTheatreLineup());
+    }
+
     @DeleteMapping("/shows/{id}")
     public ResponseEntity<?> deleteShow(@PathVariable Long id) {
         try {

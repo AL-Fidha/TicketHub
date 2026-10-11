@@ -13,6 +13,9 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
             "ORDER BY s.showDate DESC, s.showTime")
         List<Show> findAllWithDetails();
 
+        @Query("SELECT s FROM Show s JOIN FETCH s.movie JOIN FETCH s.screen sc JOIN FETCH sc.theatre WHERE s.id = :id")
+        java.util.Optional<Show> findByIdWithDetails(@Param("id") Long id);
+
         @Query("SELECT s FROM Show s JOIN FETCH s.movie m JOIN FETCH s.screen sc JOIN FETCH sc.theatre t " +
                "WHERE t.id = :theatreId AND s.showDate >= CURRENT_DATE ORDER BY s.showDate, s.showTime")
         List<Show> findByTheatreId(@Param("theatreId") Long theatreId);
