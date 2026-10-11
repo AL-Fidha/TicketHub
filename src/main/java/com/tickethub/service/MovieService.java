@@ -84,6 +84,8 @@ public class MovieService {
         existing.setDurationMin(updated.getDurationMin());
         existing.setRating(updated.getRating());
         existing.setDescription(updated.getDescription());
+        existing.setCast(updated.getCast());
+        existing.setProducers(updated.getProducers());
         existing.setStatus(updated.getStatus());
         return movieRepo.save(existing);
     }

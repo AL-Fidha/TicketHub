@@ -42,6 +42,12 @@ public class Movie {
     @Column(name = "poster_path", length = 500)
     private String posterPath;   // TMDB path /abc.jpg or full image URL
 
+    @Column(name = "cast_members", length = 500)
+    private String cast;
+
+    @Column(length = 300)
+    private String producers;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private Status status;

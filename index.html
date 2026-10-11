@@ -35,28 +35,49 @@
 </nav>
 
 <div class="page-wrapper">
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-bg"><div class="hero-grid"></div></div>
-    <div class="hero-content">
-      <div class="hero-text">
-        <div class="hero-badge">KERALA'S PREMIER CINEMA PORTAL</div>
-        <h1 class="hero-title">Experience cinema<br/>the way it was<br/><span class="highlight">meant to be seen.</span></h1>
-        <p class="hero-desc">Discover the biggest blockbusters across Malayalam, English, Tamil, and Hindi. Choose your cinema screen, lock your seats instantly, and receive verified digital tickets.</p>
-        <div class="hero-actions">
-          <a href="/movies.html" class="btn btn-primary btn-lg">🎬 &nbsp; Browse All Movies</a>
-          <a href="/booking.html" class="btn btn-secondary btn-lg">🎟️ &nbsp; Book Tickets</a>
+  <!-- MOVIETIME & CINEPASS INSPIRED BILLBOARD HERO -->
+  <section class="hero hero-billboard" id="heroBillboardSection">
+    <div class="hero-billboard-backdrop" id="heroBackdrop"></div>
+    <div class="hero-billboard-overlay"></div>
+    
+    <div class="hero-content hero-billboard-content">
+      <div class="hero-text hero-billboard-text" id="heroBillboardDetails">
+        <div class="hero-badge" id="heroFeaturedBadge">⭐ FEATURED BLOCKBUSTER PREMIERE</div>
+        <h1 class="hero-title" id="heroFeaturedBannerTitle">Experience cinema<br/>the way it was<br/><span class="highlight">meant to be seen.</span></h1>
+        
+        <div class="hero-billboard-tags" id="heroFeaturedBannerTags" style="display:flex;gap:10px;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
+          <span class="cinepass-tag" id="hbLangTag">Malayalam</span>
+          <span class="cinepass-tag" id="hbGenreTag">Adventure, Thriller</span>
+          <span class="cinepass-tag rating" id="hbRatingTag">★ 8.6</span>
+          <span class="cinepass-tag cert">IMAX 4K Laser</span>
+          <span class="cinepass-tag cert">Dolby Atmos</span>
         </div>
-        <div class="hero-cinema-badges">
+
+        <p class="hero-desc" id="heroFeaturedBannerDesc" style="max-width:540px;line-height:1.7;color:#e2e8f0;margin-bottom:2rem;">
+          Discover the biggest blockbusters across Malayalam, English, Tamil, and Hindi. Choose your cinema screen, lock your seats instantly, and receive verified digital tickets.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/booking.html" class="btn btn-primary btn-lg" id="heroBookNowBtn" style="gap:8px;">🎟️ &nbsp; Book Seats Now</a>
+          <a href="/movies.html" class="btn btn-secondary btn-lg">🎬 &nbsp; All Releases</a>
+        </div>
+
+        <div class="hero-cinema-badges" style="margin-top:1.5rem;">
           <div class="cinema-badge-item"><span>🔊</span> Dolby Atmos 7.1</div>
           <div class="cinema-badge-item"><span>💎</span> 4K Laser Projection</div>
           <div class="cinema-badge-item"><span>⚡</span> Live Seat Availability</div>
           <div class="cinema-badge-item"><span>🎟️</span> Instant E-Ticket QR</div>
         </div>
       </div>
-      <div class="hero-visual">
-        <div class="hero-card-stack" id="heroCards">
-          <div class="movie-card-preview"><div class="mcp-poster p1" style="font-size:3rem;display:flex;align-items:center;justify-content:center;">🎬</div><div class="mcp-info"><div class="mcp-title">Loading...</div></div></div>
+
+      <!-- Thumbnail Carousel Rail inspired by Movietime & CinePass -->
+      <div class="hero-billboard-rail-wrap">
+        <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-gold);margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+          <span>Trending Blockbusters</span>
+          <span style="font-size:0.7rem;color:var(--text-muted);">Click to preview</span>
+        </div>
+        <div class="hero-thumbnail-rail" id="heroThumbnailRail">
+          <!-- Filled dynamically -->
         </div>
       </div>
     </div>
@@ -152,6 +173,8 @@
 <script src="/js/api.js"></script>
 <script>
 let homeMovies = [];
+let currentBillboardIndex = 0;
+let billboardInterval = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   updateNav();
@@ -160,17 +183,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     homeMovies = await MoviesAPI.getAll();
 
-    // Hero cards — top 3
-    const heroCards = document.getElementById('heroCards');
-    const top3 = homeMovies.slice(0, 3);
-    heroCards.innerHTML = top3.map(m => `
-      <div class="movie-card-preview">
-        <div class="mcp-poster" style="height:280px;overflow:hidden;">${posterImg(m)}</div>
-        <div class="mcp-info">
-          <div class="mcp-title">${m.title}</div>
-          <div class="mcp-meta"><span>${m.language}</span><span>⭐ ${m.rating}</span></div>
-        </div>
-      </div>`).join('');
+    if (homeMovies.length > 0) {
+      initBillboardHero(homeMovies);
+    }
 
     renderHomeGrid(homeMovies.slice(0, 8));
   } catch(e) {
@@ -178,6 +193,76 @@ document.addEventListener('DOMContentLoaded', async () => {
       '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem;">⚠️ Could not load movies. Make sure TicketHub is running.</p>';
   }
 });
+
+function initBillboardHero(movies) {
+  const topMovies = movies.slice(0, 6);
+  const rail = document.getElementById('heroThumbnailRail');
+  
+  rail.innerHTML = topMovies.map((m, idx) => `
+    <div class="hero-rail-thumb${idx === 0 ? ' active' : ''}" id="railThumb_${idx}" onclick="selectBillboardMovie(${idx})">
+      <img src="${m.poster_url || ''}" alt="${m.title}" onerror="this.src='/assets/tickethub_logo.png'"/>
+      <div class="rail-thumb-overlay">
+        <span class="rail-thumb-title">${m.title}</span>
+        <span class="rail-thumb-rating">★ ${m.rating}</span>
+      </div>
+    </div>
+  `).join('');
+
+  setBillboardMovie(0);
+
+  // Auto-rotate every 6 seconds with smooth cinematic transition
+  billboardInterval = setInterval(() => {
+    currentBillboardIndex = (currentBillboardIndex + 1) % topMovies.length;
+    setBillboardMovie(currentBillboardIndex);
+  }, 6000);
+}
+
+function selectBillboardMovie(idx) {
+  if (billboardInterval) clearInterval(billboardInterval);
+  currentBillboardIndex = idx;
+  setBillboardMovie(idx);
+  // Restart timer
+  billboardInterval = setInterval(() => {
+    const topMovies = homeMovies.slice(0, 6);
+    currentBillboardIndex = (currentBillboardIndex + 1) % topMovies.length;
+    setBillboardMovie(currentBillboardIndex);
+  }, 6000);
+}
+
+function setBillboardMovie(idx) {
+  const m = homeMovies[idx];
+  if (!m) return;
+
+  const backdrop = document.getElementById('heroBackdrop');
+  const title = document.getElementById('heroFeaturedBannerTitle');
+  const desc = document.getElementById('heroFeaturedBannerDesc');
+  const langTag = document.getElementById('hbLangTag');
+  const genreTag = document.getElementById('hbGenreTag');
+  const ratingTag = document.getElementById('hbRatingTag');
+  const bookBtn = document.getElementById('heroBookNowBtn');
+  const badge = document.getElementById('heroFeaturedBadge');
+
+  // Trigger smooth fade
+  backdrop.style.opacity = '0';
+  setTimeout(() => {
+    backdrop.style.backgroundImage = `url('${m.poster_url || '/assets/brand_banner.png'}')`;
+    backdrop.style.opacity = '0.35';
+  }, 250);
+
+  title.textContent = m.title;
+  desc.textContent = m.description || 'Experience the cinematic spectacle on the grand screen with premium Dolby Atmos sound.';
+  langTag.textContent = m.language;
+  genreTag.textContent = m.genre.split(',')[0].trim();
+  ratingTag.textContent = `★ ${m.rating}`;
+  bookBtn.href = `/booking.html?movie=${m.id}`;
+  badge.textContent = `⭐ FEATURED ${m.language.toUpperCase()} PREMIERE`;
+
+  // Update active thumbnail
+  document.querySelectorAll('.hero-rail-thumb').forEach((t, i) => {
+    if (i === idx) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+}
 
 function renderHomeGrid(movies) {
   const grid = document.getElementById('homeMoviesGrid');

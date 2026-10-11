@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TicketHub Executive Admin Control Center</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <style>
+    :root {
+      --admin-bg-base: #060709;
+      --admin-bg-surface: #0e1017;
+      --admin-bg-card: #151822;
+      --admin-gold: #c9a96e;
+      --admin-gold-glow: rgba(201, 169, 110, 0.25);
+      --admin-border: rgba(201, 169, 110, 0.2);
+      --admin-border-subtle: rgba(255, 255, 255, 0.08);
+      --admin-accent-cyan: #38bdf8;
+      --admin-accent-emerald: #10b981;
+    }
+
+    body.admin-portal-body {
+      background-color: var(--admin-bg-base);
+      color: #e2e8f0;
+      font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Top Console Bar */
+    .admin-console-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(14, 16, 23, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 100;
+    }
+
+    .admin-console-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-console-brand img {
+      height: 36px;
+    }
+
+    .admin-pill-badge {
+      background: linear-gradient(135deg, rgba(201, 169, 110, 0.2), rgba(201, 169, 110, 0.05));
+      border: 1px solid var(--admin-gold);
+      color: var(--admin-gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .admin-user-tag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .admin-user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--admin-gold), #8f7238);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    /* Admin Sidebar Layout */
+    .admin-sidebar {
+      position: fixed;
+      top: 64px;
+      bottom: 0;
+      left: 0;
+      width: 250px;
+      background: var(--admin-bg-surface);
+      border-right: 1px solid var(--admin-border-subtle);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      overflow-y: auto;
+      z-index: 90;
+    }
+
+    .admin-sidebar-section-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #64748b;
+      padding: 0.8rem 0.75rem 0.3rem;
+    }
+
+    .admin-sidebar-tab {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .admin-sidebar-tab:hover {
+      background: rgba(201, 169, 110, 0.08);
+      color: #f1f5f9;
+      transform: translateX(3px);
+    }
+
+    .admin-sidebar-tab.active {
+      background: linear-gradient(90deg, rgba(201, 169, 110, 0.18), rgba(201, 169, 110, 0.04));
+      color: var(--admin-gold);
+      border-left: 3px solid var(--admin-gold);
+      font-weight: 700;
+    }
+
+    /* Admin Main Content */
+    .admin-main-container {
+      margin-left: 250px;
+      margin-top: 64px;
+      flex: 1;
+      padding: 2.5rem;
+      max-width: calc(100vw - 250px);
+      box-sizing: border-box;
+    }
+
+    .admin-section {
+      display: none;
+      animation: fadeInAdmin 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    @keyframes fadeInAdmin {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .admin-page-header {
+      margin-bottom: 2rem;
+    }
+
+    .admin-page-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 0.4rem 0;
+    }
+
+    .admin-page-desc {
+      color: #94a3b8;
+      font-size: 0.92rem;
+      margin: 0;
+    }
+
+    /* Metric Cards */
+    .admin-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .admin-metric-card {
+      background: var(--admin-bg-card);
+      border: 1px solid var(--admin-border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .admin-metric-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--admin-border);
+    }
+
+    .admin-metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--admin-gold), transparent);
+    }
+
+    .admin-metric-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      font-feature-settings: "tnum";
+    }
+
+    .admin-metric-sub {
+      font-size: 0.78rem;
+      color: var(--admin-gold);
+      margin-top: 0.4rem;
+    }
+
+    /* Panels & Tables */
+    .admin-panel-card {
+      background: var(--admin-bg-surface);
+      border: 1px solid var(--admin-border-subtle);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--admin-border-subtle);
+    }
+
+    .admin-panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.86rem;
+    }
+
+    .admin-table th {
+      background: rgba(255,255,255,0.03);
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.75rem;
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--admin-border-subtle);
+    }
+
+    .admin-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(201, 169, 110, 0.03);
+    }
+
+    .admin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .admin-btn-gold {
+      background: linear-gradient(135deg, var(--admin-gold), #9b7e42);
+      color: #070709;
+      box-shadow: 0 4px 14px var(--admin-gold-glow);
+    }
+
+    .admin-btn-gold:hover {
+      background: linear-gradient(135deg, #dfc38d, var(--admin-gold));
+      transform: translateY(-1px);
+    }
+
+    .admin-btn-ghost {
+      background: rgba(255,255,255,0.05);
+      color: #e2e8f0;
+      border: 1px solid var(--admin-border-subtle);
+    }
+
+    .admin-btn-ghost:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--admin-gold);
+      color: var(--admin-gold);
+    }
+
+    .admin-btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .admin-btn-danger:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .admin-form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .admin-field label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+    }
+
+    .admin-field input, .admin-field select, .admin-field textarea {
+      background: #090b10;
+      border: 1px solid var(--admin-border-subtle);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus {
+      border-color: var(--admin-gold);
+      box-shadow: 0 0 0 3px var(--admin-gold-glow);
+    }
+  </style>
+</head>
+<body class="admin-portal-body">
+
+  <!-- TOP CONSOLE BAR -->
+  <header class="admin-console-header">
+    <div class="admin-console-brand">
+      <a href="/index.html"><img src="/assets/tickethub_logo.png" alt="TicketHub Admit One"/></a>
+      <span class="admin-pill-badge">Operations Console</span>
+    </div>
+    <div class="admin-header-actions">
+      <a href="/index.html" class="admin-btn admin-btn-ghost" style="padding:4px 12px;font-size:0.78rem;">🌐 View Live Site</a>
+      <a href="/dashboard.html" class="admin-btn admin-btn-ghost" style="padding:4px 12px;font-size:0.78rem;">👤 Customer Profile</a>
+      <div class="admin-user-tag">
+        <div class="admin-user-avatar" id="adminUserInitial">A</div>
+        <div>
+          <div style="color:#fff;font-weight:700;font-size:0.82rem;" id="adminUserName">Administrator</div>
+          <div style="font-size:0.72rem;color:var(--admin-gold);">Super Admin</div>
+        </div>
+      </div>
+      <button class="admin-btn admin-btn-danger" style="padding:4px 10px;font-size:0.78rem;" onclick="adminLogout()">🚪 Log Out</button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-section-title">Core Controls</div>
+    <div class="admin-sidebar-tab active" onclick="switchAdminTab('overview')" id="tabOverview">
+      <span>📊</span> Operations Overview
+    </div>
+    <div class="admin-sidebar-tab" onclick="switchAdminTab('movies')" id="tabMovies">
+      <span>🎬</span> Movie Catalog
+    </div>
+    <div class="admin-sidebar-tab" onclick="switchAdminTab('tmdb')" id="tabTmdb">
+      <span>🌐</span> TMDB Live Importer
+    </div>
+    <div class="admin-sidebar-tab" onclick="switchAdminTab('shows')" id="tabShows">
+      <span>🕒</span> Showtime Scheduler
+    </div>
+    <div class="admin-sidebar-tab" onclick="switchAdminTab('theatres')" id="tabTheatres">
+      <span>🏙️</span> Kerala Theatres &amp; Screens
+    </div>
+
+    <div class="admin-sidebar-section-title" style="margin-top:1rem;">User &amp; Audit Logs</div>
+    <div class="admin-sidebar-tab" onclick="switchAdminTab('bookings')" id="tabBookings">
+      <span>📋</span> All Customer Bookings
+    </div>
+    <div class="admin-sidebar-tab" onclick="switchAdminTab('users')" id="tabUsers">
+      <span>👥</span> Registered Cinephiles
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="admin-main-container">
+
+    <!-- 1. OVERVIEW TAB -->
+    <section class="admin-section active" id="secOverview">
+      <div class="admin-page-header">
+        <h1 class="admin-page-title">📊 Operations &amp; Box Office Metrics</h1>
+        <p class="admin-page-desc">Real-time health, screening schedules, and ticketing volume across Kerala theatres.</p>
+      </div>
+
+      <div class="admin-metrics-grid" id="adminMetricsGrid">
+        <div class="spinner"></div>
+      </div>
+
+      <div class="admin-panel-card">
+        <div class="admin-panel-head">
+          <h2 class="admin-panel-title">🎟️ Recent System-Wide Bookings</h2>
+          <button class="admin-btn admin-btn-ghost" onclick="switchAdminTab('bookings')">View All Bookings →</button>
+        </div>
+        <div id="adminRecentBookingsWrap">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MOVIES TAB -->
+    <section class="admin-section" id="secMovies">
+      <div class="admin-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <h1 class="admin-page-title">🎬 Movie Catalogue Management</h1>
+          <p class="admin-page-desc">Curate active theatrical releases, genres, cast credits, and official artwork.</p>
+        </div>
+        <button class="admin-btn admin-btn-gold" onclick="openAdminMovieForm()">+ Add New Release</button>
+      </div>
+
+      <div class="admin-panel-card">
+        <div id="adminMoviesListWrap"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- 3. TMDB DISCOVERY & IMPORTER TAB -->
+    <section class="admin-section" id="secTmdb">
+      <div class="admin-page-header">
+        <h1 class="admin-page-title">🌐 The Movie Database (TMDB) Auto-Importer</h1>
+        <p class="admin-page-desc">Synchronize exact high-resolution posters, synopses, and metadata in one click.</p>
+      </div>
+
+      <div class="admin-panel-card">
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <div class="admin-field" style="width:220px;">
+            <label>Select Language Stream</label>
+            <select id="tmdbAdminLang">
+              <option value="Malayalam">Malayalam</option>
+              <option value="English">English</option>
+              <option value="Tamil">Tamil</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Telugu">Telugu</option>
+            </select>
+          </div>
+          <button class="admin-btn admin-btn-gold" style="margin-top:1.4rem;" onclick="searchTmdbReleases()">🔍 Fetch Live TMDB Releases</button>
+        </div>
+        <div id="tmdbReleasesResult"><p style="color:#64748b;">Click "Fetch Live TMDB Releases" to explore current and upcoming blockbusters.</p></div>
+      </div>
+    </section>
+
+    <!-- 4. SHOWS TAB -->
+    <section class="admin-section" id="secShows">
+      <div class="admin-page-header">
+        <h1 class="admin-page-title">🕒 Showtime Scheduling &amp; Screen Allocation</h1>
+        <p class="admin-page-desc">Schedule movie runs across auditoriums with custom Standard and Premium ticket pricing.</p>
+      </div>
+
+      <div class="admin-panel-card">
+        <h3 style="font-size:1.05rem;color:var(--admin-gold);margin-top:0;margin-bottom:1.25rem;">Schedule New Screening</h3>
+        <div class="admin-form-grid">
+          <div class="admin-field"><label>Movie</label><select id="adminShowMovie"></select></div>
+          <div class="admin-field"><label>Cinema Hall &amp; Screen</label><select id="adminShowScreen"></select></div>
+          <div class="admin-field"><label>Date</label><input type="date" id="adminShowDate"/></div>
+          <div class="admin-field"><label>Time</label><input type="time" id="adminShowTime"/></div>
+          <div class="admin-field"><label>Standard Seat Price (₹)</label><input type="number" id="adminShowPriceStd" value="220"/></div>
+          <div class="admin-field"><label>Premium Seat Price (₹)</label><input type="number" id="adminShowPricePrem" value="380"/></div>
+        </div>
+        <button class="admin-btn admin-btn-gold" onclick="submitAdminShow()">Schedule Screening</button>
+      </div>
+
+      <div class="admin-panel-card">
+        <div class="admin-panel-head">
+          <h2 class="admin-panel-title">Active Scheduled Showtimes</h2>
+        </div>
+        <div id="adminShowsListWrap"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- 5. THEATRES & SCREENS TAB -->
+    <section class="admin-section" id="secTheatres">
+      <div class="admin-page-header">
+        <h1 class="admin-page-title">🏙️ Kerala Cinema Theatres &amp; Auditoriums</h1>
+        <p class="admin-page-desc">Configure venues across Kochi, Thiruvananthapuram, Kozhikode, Thrissur and layout capacities.</p>
+      </div>
+
+      <div class="admin-panel-card">
+        <h3 style="font-size:1.05rem;color:var(--admin-gold);margin-top:0;margin-bottom:1.25rem;">Register New Cinema Complex</h3>
+        <div class="admin-form-grid">
+          <div class="admin-field"><label>Theatre / Multiplex Name</label><input type="text" id="adminTheatreName" placeholder="e.g. Aries Plex SL Cinemas"/></div>
+          <div class="admin-field"><label>City / District</label><input type="text" id="adminTheatreCity" placeholder="e.g. Thiruvananthapuram"/></div>
+          <div class="admin-field"><label>Mall / Street Address</label><input type="text" id="adminTheatreLoc" placeholder="e.g. Thampanoor, Overbridge"/></div>
+          <div class="admin-field"><label>Default Rows (A-H)</label><input type="number" id="adminTheatreRows" value="8" min="4" max="20"/></div>
+          <div class="admin-field"><label>Seats per Row (1-10)</label><input type="number" id="adminTheatreCols" value="10" min="6" max="25"/></div>
+        </div>
+        <button class="admin-btn admin-btn-gold" onclick="submitAdminTheatre()">Register Cinema Complex</button>
+      </div>
+
+      <div class="admin-panel-card">
+        <div class="admin-panel-head">
+          <h2 class="admin-panel-title">Registered Kerala Venues</h2>
+        </div>
+        <div id="adminTheatresListWrap"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- 6. BOOKINGS TAB -->
+    <section class="admin-section" id="secBookings">
+      <div class="admin-page-header">
+        <h1 class="admin-page-title">📋 Comprehensive Booking Ledger &amp; Audit</h1>
+        <p class="admin-page-desc">Complete transaction log of all ticket reservations, customer seats, and payments.</p>
+      </div>
+
+      <div class="admin-panel-card">
+        <div id="adminAllBookingsWrap"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- 7. USERS TAB -->
+    <section class="admin-section" id="secUsers">
+      <div class="admin-page-header">
+        <h1 class="admin-page-title">👥 Registered Cinephiles &amp; Access Roles</h1>
+        <p class="admin-page-desc">Inspect customer account details, phone numbers, and membership registration dates.</p>
+      </div>
+
+      <div class="admin-panel-card">
+        <div id="adminAllUsersWrap"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MOVIE MODAL -->
+  <div class="modal-overlay" id="adminMovieFormModal">
+    <div class="modal" style="max-width:550px;background:var(--admin-bg-surface);border:1px solid var(--admin-border);">
+      <div class="modal-header">
+        <h2 class="modal-title" id="adminMovieFormTitle" style="color:var(--admin-gold);">Add New Movie</h2>
+        <div class="modal-close" onclick="closeAdminMovieForm()">✕</div>
+      </div>
+      <div id="adminMfAlert" class="form-alert error"></div>
+      
+      <div class="admin-field" style="margin-bottom:1rem;">
+        <label>Movie Title</label>
+        <input type="text" id="adminMfTitle" placeholder="e.g. Manjummel Boys"/>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div class="admin-field">
+          <label>Genre</label>
+          <input type="text" id="adminMfGenre" placeholder="Adventure, Survival"/>
+        </div>
+        <div class="admin-field">
+          <label>Language</label>
+          <select id="adminMfLang">
+            <option>Malayalam</option>
+            <option>English</option>
+            <option>Tamil</option>
+            <option>Hindi</option>
+            <option>Telugu</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div class="admin-field">
+          <label>Duration (Minutes)</label>
+          <input type="number" id="adminMfDuration" value="135"/>
+        </div>
+        <div class="admin-field">
+          <label>Rating (1.0 - 10.0)</label>
+          <input type="number" id="adminMfRating" value="8.5" step="0.1"/>
+        </div>
+      </div>
+
+      <div class="admin-field" style="margin-bottom:1rem;">
+        <label>Key Cast Members</label>
+        <input type="text" id="adminMfCast" placeholder="e.g. Soubin Shahir, Sreenath Bhasi, Balu Varghese"/>
+      </div>
+
+      <div class="admin-field" style="margin-bottom:1rem;">
+        <label>Producers / Production Banner</label>
+        <input type="text" id="adminMfProducers" placeholder="e.g. Parava Films, Chidambaram"/>
+      </div>
+
+      <div class="admin-field" style="margin-bottom:1rem;">
+        <label>Official Synopsis</label>
+        <textarea id="adminMfDesc" rows="3" placeholder="Brief story overview…"></textarea>
+      </div>
+
+      <div class="admin-field" style="margin-bottom:1.5rem;">
+        <label>Release Status</label>
+        <select id="adminMfStatus">
+          <option>Now Showing</option>
+          <option>New</option>
+          <option>Coming Soon</option>
+        </select>
+      </div>
+
+      <input type="hidden" id="adminMfEditId"/>
+      <button class="admin-btn admin-btn-gold" style="width:100%;justify-content:center;padding:0.75rem;" onclick="saveAdminMovie()">Save Release to Catalog</button>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    let currentAdmin = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!Auth.loggedIn()) {
+        window.location.href = '/admin-login.html';
+        return;
+      }
+      currentAdmin = Auth.getUser();
+      if (!currentAdmin || currentAdmin.role !== 'admin') {
+        try {
+          currentAdmin = await AuthAPI.me();
+          if (currentAdmin.role !== 'admin') {
+            Auth.clear();
+            window.location.href = '/admin-login.html';
+            return;
+          }
+          Auth.setUser(currentAdmin);
+        } catch(e) {
+          Auth.clear();
+          window.location.href = '/admin-login.html';
+          return;
+        }
+      }
+
+      document.getElementById('adminUserName').textContent = currentAdmin.name;
+      document.getElementById('adminUserInitial').textContent = currentAdmin.name.charAt(0).toUpperCase();
+
+      loadAdminMetrics();
+      loadRecentBookings();
+    });
+
+    function switchAdminTab(tabName) {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-sidebar-tab').forEach(t => t.classList.remove('active'));
+
+      const targetSec = 'sec' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+      const targetTab = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+
+      document.getElementById(targetSec)?.classList.add('active');
+      document.getElementById(targetTab)?.classList.add('active');
+
+      if (tabName === 'overview') { loadAdminMetrics(); loadRecentBookings(); }
+      if (tabName === 'movies')   { loadAdminMoviesList(); }
+      if (tabName === 'shows')    { loadAdminShowsList(); }
+      if (tabName === 'theatres') { loadAdminTheatresList(); }
+      if (tabName === 'bookings') { loadAdminAllBookings(); }
+      if (tabName === 'users')    { loadAdminAllUsers(); }
+    }
+
+    async function loadAdminMetrics() {
+      try {
+        const stats = await AdminAPI.stats();
+        document.getElementById('adminMetricsGrid').innerHTML = `
+          <div class="admin-metric-card">
+            <div class="admin-metric-title">Catalog Releases</div>
+            <div class="admin-metric-value">${stats.total_movies}</div>
+            <div class="admin-metric-sub">Active Theatrical Runs</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-title">Kerala Theatres</div>
+            <div class="admin-metric-value">${stats.total_theatres}</div>
+            <div class="admin-metric-sub">Partner Multiplexes</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-title">Registered Cinephiles</div>
+            <div class="admin-metric-value">${stats.total_users}</div>
+            <div class="admin-metric-sub">Active Customer Accounts</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-title">Gross Box Office</div>
+            <div class="admin-metric-value">₹${Number(stats.total_revenue || 0).toLocaleString()}</div>
+            <div class="admin-metric-sub">${stats.total_bookings} Confirmed Bookings</div>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminMetricsGrid').innerHTML = `<p style="color:#ef4444;">Error loading stats: ${e.message}</p>`;
+      }
+    }
+
+    async function loadRecentBookings() {
+      try {
+        const bookings = await BookingsAPI.all();
+        const recent = (bookings || []).slice(0, 5);
+        if (!recent.length) {
+          document.getElementById('adminRecentBookingsWrap').innerHTML = '<p style="color:#64748b;padding:1rem;">No bookings recorded yet.</p>';
+          return;
+        }
+        document.getElementById('adminRecentBookingsWrap').innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Booking Ref</th>
+                  <th>Customer</th>
+                  <th>Movie</th>
+                  <th>Venue &amp; Time</th>
+                  <th>Seats</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${recent.map(b => `
+                  <tr>
+                    <td><code style="color:var(--admin-gold);font-weight:700;">${b.booking_ref}</code></td>
+                    <td>${b.customer_name}<br/><span style="font-size:0.75rem;color:#64748b;">${b.customer_email}</span></td>
+                    <td><strong>${b.movie}</strong><br/><span style="font-size:0.75rem;color:#64748b;">${b.language}</span></td>
+                    <td>${b.theatre_name}<br/><span style="font-size:0.75rem;color:#64748b;">${b.show_date} · ${b.show_time.slice(0,5)}</span></td>
+                    <td>${(b.seats || []).join(', ')}</td>
+                    <td style="color:var(--admin-gold);font-weight:800;">₹${b.total_amount}</td>
+                    <td><span class="badge badge-${b.status==='Confirmed'?'success':b.status==='Cancelled'?'cancelled':'pending'}">${b.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminRecentBookingsWrap').innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    async function loadAdminMoviesList() {
+      try {
+        document.getElementById('adminMoviesListWrap').innerHTML = '<div class="spinner"></div>';
+        const movies = await MoviesAPI.getAll();
+        document.getElementById('adminMoviesListWrap').innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Poster</th>
+                  <th>Title</th>
+                  <th>Language</th>
+                  <th>Genre</th>
+                  <th>Cast &amp; Crew</th>
+                  <th>Rating</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${movies.map(m => `
+                  <tr>
+                    <td>
+                      <img src="${m.poster_url || '/assets/tickethub_logo.png'}" style="width:42px;height:58px;object-fit:cover;border-radius:4px;background:#000;" onerror="this.src='/assets/tickethub_logo.png'"/>
+                    </td>
+                    <td><strong>${m.title}</strong><br/><span style="font-size:0.75rem;color:#64748b;">${fmtDuration(m.duration_min)}</span></td>
+                    <td>${m.language}</td>
+                    <td>${m.genre}</td>
+                    <td style="max-width:200px;font-size:0.78rem;color:#94a3b8;">
+                      <div><strong>Cast:</strong> ${m.cast || '—'}</div>
+                      <div><strong>Producers:</strong> ${m.producers || '—'}</div>
+                    </td>
+                    <td style="color:var(--admin-gold);font-weight:700;">⭐ ${m.rating}</td>
+                    <td><span class="badge ${m.status==='New'?'badge-pending':'badge-success'}">${m.status}</span></td>
+                    <td>
+                      <div style="display:flex;gap:6px;">
+                        <button class="admin-btn admin-btn-ghost" style="padding:4px 8px;font-size:0.75rem;" onclick="editAdminMovie(${m.id})">Edit</button>
+                        <button class="admin-btn admin-btn-danger" style="padding:4px 8px;font-size:0.75rem;" onclick="deleteAdminMovie(${m.id}, '${escapeQuotes(m.title)}')">Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminMoviesListWrap').innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    function escapeQuotes(str) {
+      return (str || '').replace(/'/g, "\\'");
+    }
+
+    function openAdminMovieForm(movie = null) {
+      const modal = document.getElementById('adminMovieFormModal');
+      const title = document.getElementById('adminMovieFormTitle');
+      document.getElementById('adminMfAlert').classList.remove('show');
+
+      if (movie) {
+        title.textContent = 'Edit Movie: ' + movie.title;
+        document.getElementById('adminMfTitle').value     = movie.title;
+        document.getElementById('adminMfGenre').value     = movie.genre;
+        document.getElementById('adminMfLang').value      = movie.language;
+        document.getElementById('adminMfDuration').value  = movie.duration_min || movie.durationMin || 120;
+        document.getElementById('adminMfRating').value    = movie.rating || 8.0;
+        document.getElementById('adminMfCast').value      = movie.cast || '';
+        document.getElementById('adminMfProducers').value = movie.producers || '';
+        document.getElementById('adminMfDesc').value      = movie.description || '';
+        document.getElementById('adminMfStatus').value    = movie.status || 'Now Showing';
+        document.getElementById('adminMfEditId').value    = movie.id;
+      } else {
+        title.textContent = 'Add New Movie';
+        document.getElementById('adminMfTitle').value     = '';
+        document.getElementById('adminMfGenre').value     = '';
+        document.getElementById('adminMfLang').value      = 'Malayalam';
+        document.getElementById('adminMfDuration').value  = 130;
+        document.getElementById('adminMfRating').value    = 8.5;
+        document.getElementById('adminMfCast').value      = '';
+        document.getElementById('adminMfProducers').value = '';
+        document.getElementById('adminMfDesc').value      = '';
+        document.getElementById('adminMfStatus').value    = 'Now Showing';
+        document.getElementById('adminMfEditId').value    = '';
+      }
+      modal.classList.add('show');
+    }
+
+    function closeAdminMovieForm() {
+      document.getElementById('adminMovieFormModal').classList.remove('show');
+    }
+
+    async function editAdminMovie(id) {
+      try {
+        const m = await MoviesAPI.getOne(id);
+        openAdminMovieForm(m);
+      } catch(e) { showToast(e.message, 'error'); }
+    }
+
+    async function saveAdminMovie() {
+      const id        = document.getElementById('adminMfEditId').value;
+      const title     = document.getElementById('adminMfTitle').value.trim();
+      const genre     = document.getElementById('adminMfGenre').value.trim();
+      const language  = document.getElementById('adminMfLang').value;
+      const duration  = parseInt(document.getElementById('adminMfDuration').value);
+      const rating    = parseFloat(document.getElementById('adminMfRating').value);
+      const cast      = document.getElementById('adminMfCast').value.trim();
+      const producers = document.getElementById('adminMfProducers').value.trim();
+      const desc      = document.getElementById('adminMfDesc').value.trim();
+      const status    = document.getElementById('adminMfStatus').value;
+      const alertEl   = document.getElementById('adminMfAlert');
+
+      if (!title || !genre) {
+        alertEl.textContent = 'Please fill out at least title and genre.';
+        alertEl.classList.add('show');
+        return;
+      }
+
+      const payload = {
+        title, genre, language, durationMin: duration, rating,
+        cast, producers, description: desc, status
+      };
+
+      try {
+        if (id) {
+          await AdminAPI.updateMovie(id, payload);
+          showToast(`"${title}" updated successfully!`, 'success');
+        } else {
+          await AdminAPI.addMovie(payload);
+          showToast(`"${title}" added to catalog!`, 'success');
+        }
+        closeAdminMovieForm();
+        loadAdminMoviesList();
+      } catch(e) {
+        alertEl.textContent = e.message;
+        alertEl.classList.add('show');
+      }
+    }
+
+    async function deleteAdminMovie(id, title) {
+      if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+      try {
+        await AdminAPI.deleteMovie(id);
+        showToast(`"${title}" removed from catalog.`, 'success');
+        loadAdminMoviesList();
+      } catch(e) { showToast(e.message, 'error'); }
+    }
+
+    async function searchTmdbReleases() {
+      const container = document.getElementById('tmdbReleasesResult');
+      const lang = document.getElementById('tmdbAdminLang').value;
+      container.innerHTML = '<div class="spinner"></div>';
+      try {
+        const movies = await AdminAPI.discoverTmdbMovies(lang);
+        if (!movies.length) {
+          container.innerHTML = '<p style="color:#64748b;">No recent releases found on TMDB for this filter.</p>';
+          return;
+        }
+        container.innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Poster</th>
+                  <th>Title</th>
+                  <th>Release Date</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${movies.map(m => `
+                  <tr>
+                    <td><img src="${m.poster_url}" style="width:40px;height:56px;object-fit:cover;border-radius:4px;background:#000;"/></td>
+                    <td><strong>${m.title}</strong></td>
+                    <td>${m.release_date || '—'}</td>
+                    <td style="color:var(--admin-gold);font-weight:700;">⭐ ${Number(m.rating).toFixed(1)}</td>
+                    <td>
+                      <button class="admin-btn admin-btn-gold" style="padding:4px 10px;font-size:0.75rem;" onclick="importTmdbToCatalog(${m.tmdb_id})">📥 Import to Catalog</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        container.innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    async function importTmdbToCatalog(tmdbId) {
+      const lang = document.getElementById('tmdbAdminLang').value;
+      try {
+        const m = await AdminAPI.importTmdbMovie(tmdbId, lang);
+        showToast(`"${m.title}" imported successfully!`, 'success');
+      } catch(e) { showToast(e.message, 'error'); }
+    }
+
+    async function loadAdminShowsList() {
+      try {
+        document.getElementById('adminShowsListWrap').innerHTML = '<div class="spinner"></div>';
+        const [shows, movies, screens] = await Promise.all([AdminAPI.shows(), MoviesAPI.getAll(), AdminAPI.screens()]);
+
+        document.getElementById('adminShowMovie').innerHTML = movies.map(m => `
+          <option value="${m.id}">${m.title} (${m.language})</option>
+        `).join('');
+
+        document.getElementById('adminShowScreen').innerHTML = screens.map(s => `
+          <option value="${s.id}">${s.theatre_name} - ${s.name} (${s.city})</option>
+        `).join('');
+
+        if (!shows.length) {
+          document.getElementById('adminShowsListWrap').innerHTML = '<p style="color:#64748b;padding:1rem;">No showtimes currently scheduled.</p>';
+          return;
+        }
+
+        document.getElementById('adminShowsListWrap').innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Movie</th>
+                  <th>Theatre &amp; Screen</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Std Price</th>
+                  <th>Prem Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${shows.map(s => `
+                  <tr>
+                    <td><strong>${s.movie}</strong></td>
+                    <td>${s.theatre} — <span style="color:var(--admin-gold);">${s.screen}</span></td>
+                    <td>${s.show_date}</td>
+                    <td>${s.show_time.slice(0,5)}</td>
+                    <td>₹${s.price_std}</td>
+                    <td>₹${s.price_prem}</td>
+                    <td>
+                      <button class="admin-btn admin-btn-danger" style="padding:4px 8px;font-size:0.75rem;" onclick="removeAdminShow(${s.id})">Cancel Show</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminShowsListWrap').innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    async function submitAdminShow() {
+      const movieId   = document.getElementById('adminShowMovie').value;
+      const screenId  = document.getElementById('adminShowScreen').value;
+      const date      = document.getElementById('adminShowDate').value;
+      const time      = document.getElementById('adminShowTime').value;
+      const priceStd  = document.getElementById('adminShowPriceStd').value;
+      const pricePrem = document.getElementById('adminShowPricePrem').value;
+
+      if (!movieId || !screenId || !date || !time) {
+        showToast('Please specify movie, screen, date, and showtime.', 'error');
+        return;
+      }
+
+      try {
+        await AdminAPI.createShow({
+          movie_id: Number(movieId),
+          screen_id: Number(screenId),
+          show_date: date,
+          show_time: time,
+          price_std: parseFloat(priceStd),
+          price_prem: parseFloat(pricePrem)
+        });
+        showToast('Screening scheduled successfully!', 'success');
+        loadAdminShowsList();
+      } catch(e) { showToast(e.message, 'error'); }
+    }
+
+    async function removeAdminShow(id) {
+      if (!confirm('Remove this showtime from the schedule?')) return;
+      try {
+        await AdminAPI.deleteShow(id);
+        showToast('Show cancelled.', 'success');
+        loadAdminShowsList();
+      } catch(e) { showToast(e.message, 'error'); }
+    }
+
+    async function loadAdminTheatresList() {
+      try {
+        document.getElementById('adminTheatresListWrap').innerHTML = '<div class="spinner"></div>';
+        const theatres = await TheatresAPI.getAll();
+        document.getElementById('adminTheatresListWrap').innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Multiplex / Hall</th>
+                  <th>District / City</th>
+                  <th>Location</th>
+                  <th>Quick Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${theatres.map(t => `
+                  <tr>
+                    <td><code>#${t.id}</code></td>
+                    <td><strong>${t.name}</strong></td>
+                    <td><span style="color:var(--admin-gold);">${t.city}</span></td>
+                    <td style="color:#94a3b8;">${t.location}</td>
+                    <td>
+                      <a href="/booking.html?theatre=${t.id}" target="_blank" class="admin-btn admin-btn-ghost" style="padding:4px 8px;font-size:0.75rem;">Inspect Live Shows ↗</a>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminTheatresListWrap').innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    async function submitAdminTheatre() {
+      const name = document.getElementById('adminTheatreName').value.trim();
+      const city = document.getElementById('adminTheatreCity').value.trim();
+      const loc  = document.getElementById('adminTheatreLoc').value.trim();
+      const rows = parseInt(document.getElementById('adminTheatreRows').value) || 8;
+      const cols = parseInt(document.getElementById('adminTheatreCols').value) || 10;
+
+      if (!name || !city || !loc) {
+        showToast('Please fill out theatre name, city, and address.', 'error');
+        return;
+      }
+
+      try {
+        await AdminAPI.createTheatre({ name, city, location: loc, rows, cols });
+        showToast(`"${name}" registered successfully!`, 'success');
+        document.getElementById('adminTheatreName').value = '';
+        document.getElementById('adminTheatreLoc').value = '';
+        loadAdminTheatresList();
+      } catch(e) { showToast(e.message, 'error'); }
+    }
+
+    async function loadAdminAllBookings() {
+      try {
+        document.getElementById('adminAllBookingsWrap').innerHTML = '<div class="spinner"></div>';
+        const bookings = await BookingsAPI.all();
+        if (!bookings.length) {
+          document.getElementById('adminAllBookingsWrap').innerHTML = '<p style="color:#64748b;padding:1rem;">No customer bookings recorded yet.</p>';
+          return;
+        }
+        document.getElementById('adminAllBookingsWrap').innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Booking Ref</th>
+                  <th>Customer</th>
+                  <th>Movie</th>
+                  <th>Theatre &amp; City</th>
+                  <th>Screen</th>
+                  <th>Show Time</th>
+                  <th>Seats</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bookings.map(b => `
+                  <tr>
+                    <td><code style="color:var(--admin-gold);font-weight:700;">${b.booking_ref}</code></td>
+                    <td>${b.customer_name}<br/><span style="font-size:0.75rem;color:#64748b;">${b.customer_email}</span></td>
+                    <td><strong>${b.movie}</strong><br/><span style="font-size:0.75rem;color:#64748b;">${b.language}</span></td>
+                    <td>${b.theatre_name}<br/><span style="font-size:0.75rem;color:#64748b;">${b.city}</span></td>
+                    <td>${b.screen_name}</td>
+                    <td>${b.show_date}<br/><span style="font-size:0.75rem;color:#64748b;">${b.show_time.slice(0,5)}</span></td>
+                    <td>${(b.seats || []).join(', ')}</td>
+                    <td style="color:var(--admin-gold);font-weight:800;">₹${b.total_amount}</td>
+                    <td><span class="badge badge-${b.status==='Confirmed'?'success':b.status==='Cancelled'?'cancelled':'pending'}">${b.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminAllBookingsWrap').innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    async function loadAdminAllUsers() {
+      try {
+        document.getElementById('adminAllUsersWrap').innerHTML = '<div class="spinner"></div>';
+        const users = await AdminAPI.users();
+        document.getElementById('adminAllUsersWrap').innerHTML = `
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Member Since</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${users.map(u => `
+                  <tr>
+                    <td><strong>${u.name}</strong></td>
+                    <td>${u.email}</td>
+                    <td>${u.phone || '—'}</td>
+                    <td><span class="badge ${u.role==='admin'?'badge-pending':'badge-success'}">${u.role}</span></td>
+                    <td style="font-size:0.8rem;color:#64748b;">${new Date(u.created_at).toLocaleDateString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch(e) {
+        document.getElementById('adminAllUsersWrap').innerHTML = `<p style="color:#ef4444;">${e.message}</p>`;
+      }
+    }
+
+    function adminLogout() {
+      Auth.clear();
+      window.location.href = '/admin-login.html';
+    }
+  </script>
+</body>
+</html>

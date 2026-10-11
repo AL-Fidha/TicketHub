@@ -353,10 +353,36 @@ public class TicketHubApplication {
 
     private Movie movie(String title, String genre, Movie.Language lang,
                         int dur, double rating, Long tmdbId, String posterPath, String desc, Movie.Status status) {
+        String cast = switch (title) {
+            case "Bramayugam" -> "Mammootty, Arjun Ashokan, Sidharth Bharathan, Amalda Liz";
+            case "The Goat Life (Aadujeevitham)" -> "Prithviraj Sukumaran, Jimmy Jean-Louis, KR Gokul, Amala Paul";
+            case "Manjummel Boys" -> "Soubin Shahir, Sreenath Bhasi, Balu Varghese, Ganapathi";
+            case "Premalu" -> "Naslen K. Gafoor, Mamitha Baiju, Sangeeth Prathap, Shyam Mohan";
+            case "Dune: Part Two" -> "Timothée Chalamet, Zendaya, Rebecca Ferguson, Javier Bardem";
+            case "Oppenheimer" -> "Cillian Murphy, Emily Blunt, Matt Damon, Robert Downey Jr.";
+            case "Deadpool & Wolverine" -> "Ryan Reynolds, Hugh Jackman, Emma Corrin, Morena Baccarin";
+            case "Leo" -> "Vijay, Sanjay Dutt, Trisha Krishnan, Arjun Sarja";
+            case "Jailer" -> "Rajinikanth, Mohanlal, Shiva Rajkumar, Ramya Krishnan";
+            case "Stree 2" -> "Shraddha Kapoor, Rajkummar Rao, Pankaj Tripathi, Abhishek Banerjee";
+            case "12th Fail" -> "Vikrant Massey, Medha Shankr, Anant V Joshi, Anshumaan Pushkar";
+            default -> "Ensemble Cast, Lead Actors";
+        };
+        String producers = switch (title) {
+            case "Bramayugam" -> "Chakravarthy Ramachandra, S. Sashikanth (Night Shift Studios)";
+            case "The Goat Life (Aadujeevitham)" -> "Blessy, Jimmy Jean-Louis, Steven Adams (Visual Romance)";
+            case "Manjummel Boys" -> "Babu Shahir, Soubin Shahir, Shawn Antony (Parava Films)";
+            case "Premalu" -> "Fahadh Faasil, Dileesh Pothan, Syam Pushkaran (Bhavana Studios)";
+            case "Dune: Part Two" -> "Mary Parent, Cale Boyter, Denis Villeneuve, Tanya Lapointe (Legendary Pictures)";
+            case "Oppenheimer" -> "Emma Thomas, Charles Roven, Christopher Nolan (Syncopy)";
+            case "Leo" -> "S. S. Lalit Kumar, Jagadish Palanisamy (Seven Screen Studio)";
+            default -> "TicketHub Premiere Studios & Productions";
+        };
+
         return Movie.builder()
             .title(title).genre(genre).language(lang)
             .durationMin(dur).rating(rating)
             .tmdbId(tmdbId).posterPath(posterPath).description(desc).status(status)
+            .cast(cast).producers(producers)
             .build();
     }
 }

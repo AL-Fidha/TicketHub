@@ -1,32 +1,34 @@
 /* =============================================
-   TICKET HUB - Global Styles
+   TICKET HUB - Luxora & CinePass Master Styles
    ============================================= */
 
 :root {
-  --primary: #f5c518;
-  --primary-dark: #d4a010;
-  --primary-light: #fbe06b;
-  --primary-glow: rgba(245, 197, 24, 0.45);
-  --accent-red: #e50914;
+  --primary: #c9a96e;           /* Luxora Warm Champagne Gold */
+  --primary-dark: #a88548;      /* Deep Gold */
+  --primary-light: #e5cb9b;     /* Shimmering Soft Gold */
+  --primary-glow: rgba(201, 169, 110, 0.38);
+  --accent-red: #e50914;        /* CinePass Vibrant CTA Crimson */
+  --accent-red-hover: #ff2a36;
   --accent-red-glow: rgba(229, 9, 20, 0.45);
-  --bg-dark: #070709;
-  --bg-card: #0f1015;
-  --bg-card2: #161821;
-  --bg-nav: rgba(7, 7, 9, 0.95);
-  --text-primary: #ffffff;
-  --text-secondary: #d1d5db;
-  --text-muted: #8892a0;
-  --accent-gold: #f5c518;
-  --accent-gold-glow: rgba(245, 197, 24, 0.35);
+  --bg-dark: #0a0a0c;           /* Luxora Deep Noir */
+  --bg-dark-alt: #121318;
+  --bg-card: #15161d;           /* Velvet charcoal container */
+  --bg-card2: #1c1e27;          /* Elevated surface card */
+  --bg-nav: rgba(10, 10, 12, 0.94);
+  --text-primary: #f8f6f0;      /* Luxora Ivory White */
+  --text-secondary: #c2c6d4;    /* Muted Slate White */
+  --text-muted: #83889b;        /* Subtle Grey */
+  --accent-gold: #c9a96e;
+  --accent-gold-glow: rgba(201, 169, 110, 0.35);
   --accent-green: #10b981;
   --accent-blue: #38bdf8;
-  --border: rgba(245, 197, 24, 0.12);
-  --border-hover: rgba(245, 197, 24, 0.32);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
-  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.65);
-  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --border: rgba(201, 169, 110, 0.16);
+  --border-hover: rgba(201, 169, 110, 0.4);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.7);
+  --font-display: "Aptos", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --radius: 12px;
-  --radius-lg: 18px;
+  --radius-lg: 20px;
   --radius-sm: 8px;
   --transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1425,63 +1427,72 @@ ul { list-style: none; }
 .modal-close:hover { background: rgba(229,9,20,0.2); }
 
 /* =============================================
-   TICKET DESIGN (SPIDER-MAN APP REDESIGN)
+   TICKET DESIGN (THE ODYSSEY - COMPACT CINEMA PASS)
    ============================================= */
+.ticket-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
 .ticket {
-  background: linear-gradient(180deg, #d83a34 0%, #ba2025 100%);
-  border-radius: 36px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(229, 9, 20, 0.45);
-  max-width: 400px;
+  background: #000000;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 320px;
   margin: 0 auto;
   color: #fff;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(201, 169, 110, 0.2);
+  overflow: hidden;
 }
 
-.ticket-header-brand {
+/* Top IMAX Scalloped / Notched Header */
+.ticket-top-scallop {
+  position: relative;
+  background: #000000;
+  padding: 10px 14px 4px;
   display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.2rem 1.6rem 0.8rem;
-  background: rgba(0, 0, 0, 0.15);
 }
 
-.ticket-brand-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.scallop-notch {
+  width: 18px;
+  height: 10px;
+  background: #1c1e27;
+  border-radius: 0 0 10px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
 }
 
-.ticket-brand-badge img {
-  height: 24px;
-  width: auto;
-}
-
-.ticket-admit-badge {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+.ticket-cast-credits {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.2);
+  color: #a0a6b8;
+  text-align: center;
   padding: 4px 10px;
-  border-radius: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Central Movie Poster Showcase */
 .ticket-poster-container {
-  padding: 0 1.4rem;
-  margin-bottom: 0.8rem;
+  padding: 6px 14px;
 }
 
 .ticket-poster-card {
   width: 100%;
-  height: 230px;
-  border-radius: 24px;
+  height: 240px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
   position: relative;
-  background: #000;
+  background: #0d0e14;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ticket-poster-card img {
@@ -1491,132 +1502,161 @@ ul { list-style: none; }
   object-position: center top;
 }
 
-.ticket-movie-title {
-  font-family: var(--font-display);
-  font-size: 1.35rem;
+.ticket-imax-banner {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 2;
+  font-size: 0.68rem;
   font-weight: 900;
-  text-align: center;
+  letter-spacing: 0.25em;
   color: #fff;
-  margin-top: 0.2rem;
-  letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
 }
 
-.ticket-subline {
+.ticket-imax-banner span {
+  color: #e50914;
+}
+
+/* Film Title & Directed / Produced Info */
+.ticket-title-block {
   text-align: center;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1rem;
+  padding: 6px 14px 8px;
 }
 
-.ticket-info-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 0.9rem 1.4rem;
-  margin: 0 1.4rem 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.ticket-strip-col {
-  text-align: center;
-  flex: 1;
-}
-
-.ticket-strip-col:not(:last-child) {
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.ticket-strip-label {
-  font-size: 0.65rem;
-  font-weight: 800;
+.ticket-director-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.7);
+  color: #8c93a8;
   margin-bottom: 2px;
 }
 
-.ticket-strip-val {
-  font-size: 1.15rem;
+.ticket-movie-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: #ffffff;
+  line-height: 1.15;
 }
 
-.ticket-extra-details {
+.ticket-show-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #e50914;
+  letter-spacing: 0.15em;
+  margin-top: 2px;
+}
+
+/* Middle Perforated Section with Round Notches (Like The Odyssey) */
+.ticket-odyssey-middle {
+  position: relative;
+  background: #000;
+  padding: 10px 16px;
   display: flex;
   justify-content: space-between;
-  padding: 0 2rem;
-  margin-bottom: 1.2rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.88);
+  align-items: center;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 }
 
-.ticket-stub-divider {
-  position: relative;
-  height: 24px;
-}
-
-.ticket-stub-divider::before,
-.ticket-stub-divider::after {
+.ticket-odyssey-middle::before,
+.ticket-odyssey-middle::after {
   content: '';
   position: absolute;
-  top: 0;
-  width: 32px;
-  height: 24px;
-  background: var(--bg-card2);
-  border-radius: 0 16px 16px 0;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  background: #1c1e27;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
 }
 
-.ticket-stub-divider::before {
-  left: 0;
-  border-radius: 0 16px 16px 0;
+.ticket-odyssey-middle::before {
+  left: -11px;
 }
 
-.ticket-stub-divider::after {
-  right: 0;
-  border-radius: 16px 0 0 16px;
+.ticket-odyssey-middle::after {
+  right: -11px;
 }
 
-.ticket-stub-line {
-  position: absolute;
-  top: 11px;
-  left: 36px;
-  right: 36px;
-  border-top: 2px dashed rgba(255, 255, 255, 0.35);
+.ticket-odyssey-time {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  padding-left: 6px;
 }
 
-.ticket-barcode-section {
-  padding: 1.2rem 2rem 1.6rem;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.15);
+.ticket-divider-vertical {
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 0 10px;
 }
 
-.barcode-svg-lines {
-  background: #ffffff;
-  padding: 8px 16px;
-  border-radius: 10px;
-  display: inline-flex;
-  gap: 3px;
-  align-items: flex-end;
-  height: 52px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+.ticket-odyssey-venue {
+  flex: 1;
+  text-align: left;
+  padding-right: 6px;
 }
 
-.barcode-svg-lines .b {
-  background: #111;
-  width: 3px;
-  border-radius: 1px;
-}
-
-.ticket-booking-ref-text {
-  font-family: monospace;
-  font-size: 0.8rem;
+.ticket-odyssey-date {
+  font-size: 0.82rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.85);
-  margin-top: 8px;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.ticket-odyssey-theatre {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+.ticket-odyssey-screen {
+  font-size: 0.65rem;
+  color: #9ba1b6;
+}
+
+/* Bottom Barcode Stub Box */
+.ticket-barcode-box {
+  margin: 12px 14px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  background: #000;
+}
+
+.ticket-barcode-num {
+  font-family: monospace;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.ticket-barcode-bars {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  align-items: flex-end;
+  height: 48px;
+}
+
+.ticket-barcode-bars .bar {
+  background: #ffffff;
+  border-radius: 1px;
 }
 
 /* =============================================
@@ -2627,5 +2667,157 @@ body {
   color: #8c93a8;
   margin-top: 2px;
 }
+
+/* =============================================
+   MOVIETIME & CINEPASS BILLBOARD HERO
+   ============================================= */
+.hero-billboard {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #08090d;
+}
+
+.hero-billboard-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 25%;
+  background-repeat: no-repeat;
+  filter: blur(28px) brightness(0.65);
+  transform: scale(1.1);
+  opacity: 0.35;
+  transition: opacity 0.6s ease-in-out, background-image 0.6s ease-in-out;
+  z-index: 1;
+}
+
+.hero-billboard-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #08090d 30%, rgba(8, 9, 13, 0.75) 65%, rgba(8, 9, 13, 0.95) 100%),
+              radial-gradient(ellipse at 70% 30%, rgba(201, 169, 110, 0.12) 0%, transparent 60%);
+  z-index: 2;
+}
+
+.hero-billboard-content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.hero-billboard-text {
+  max-width: 620px;
+}
+
+.cinepass-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #e2e8f0;
+}
+
+.cinepass-tag.rating {
+  background: rgba(201, 169, 110, 0.15);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.cinepass-tag.cert {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(201, 169, 110, 0.3);
+  color: #cbd5e1;
+}
+
+.hero-billboard-rail-wrap {
+  background: rgba(21, 22, 29, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+
+.hero-thumbnail-rail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.hero-rail-thumb {
+  position: relative;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #000;
+}
+
+.hero-rail-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.hero-rail-thumb:hover img {
+  transform: scale(1.08);
+}
+
+.hero-rail-thumb.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 16px rgba(201, 169, 110, 0.45);
+  transform: translateY(-2px);
+}
+
+.rail-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.95) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8px;
+}
+
+.rail-thumb-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rail-thumb-rating {
+  font-size: 0.65rem;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+@media (max-width: 992px) {
+  .hero-billboard-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 3rem 1.5rem;
+  }
+}
+
 
 

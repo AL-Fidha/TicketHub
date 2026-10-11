@@ -54,10 +54,40 @@
     <!-- LEFT -->
     <div class="booking-main">
 
-      <!-- Step 1: Movie -->
+      <!-- Step 1: Movie or Theatre Selection -->
       <div id="step1" class="booking-step">
-        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;">🎬 Choose a Movie</h2>
-        <div id="moviePicker" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;"><div class="spinner"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem;">
+          <h2 style="font-size:1.2rem;font-weight:700;margin:0;" id="step1Title">🎬 Choose a Movie</h2>
+          <div style="display:inline-flex;background:var(--bg-card2);border:1px solid var(--border);border-radius:30px;padding:3px;gap:4px;">
+            <button id="modeMovieBtn" class="filter-chip active" style="margin:0;padding:6px 14px;font-size:0.8rem;border-radius:24px;" onclick="switchBrowseMode('movie')">🎬 By Movie</button>
+            <button id="modeTheatreBtn" class="filter-chip" style="margin:0;padding:6px 14px;font-size:0.8rem;border-radius:24px;" onclick="switchBrowseMode('theatre')">🏙️ By Theatre</button>
+          </div>
+        </div>
+
+        <!-- Movie View -->
+        <div id="movieBrowseView">
+          <div id="moviePicker" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;"><div class="spinner"></div></div>
+        </div>
+
+        <!-- Theatre First View -->
+        <div id="theatreBrowseView" style="display:none;">
+          <p style="color:var(--text-secondary);font-size:.85rem;margin-bottom:1rem;">Select any Kerala cinema hall below to inspect all movies screening there today &amp; upcoming dates.</p>
+          <div class="city-tabs" id="theatreBrowseCityTabs" style="margin-bottom:1rem;"></div>
+          <div id="theatreFirstList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;"><div class="spinner"></div></div>
+          
+          <!-- Shows under selected theatre -->
+          <div id="theatreSelectedSection" style="display:none;margin-top:2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+              <div>
+                <h3 id="selectedTheatreHeading" style="font-size:1.15rem;font-weight:700;color:var(--primary);">PVR Cinemas</h3>
+                <p id="selectedTheatreSub" style="color:var(--text-muted);font-size:0.82rem;">📍 Kochi</p>
+              </div>
+              <button onclick="closeTheatreSelection()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">✕</button>
+            </div>
+            <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.75rem;">Select Movie &amp; Time at this Cinema</div>
+            <div id="theatreShowsList"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Step 2: Theatre & Showtime -->
@@ -194,11 +224,200 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Pre-select from URL
     const params = new URLSearchParams(window.location.search);
-    if (params.get('movie')) { const mv = movies.find(m => m.id == params.get('movie')); if (mv) selectMovieObj(mv); }
+    if (params.get('theatre')) {
+      switchBrowseMode('theatre');
+      loadTheatresBrowse(params.get('theatre'));
+    } else if (params.get('movie')) {
+      const mv = movies.find(m => m.id == params.get('movie'));
+      if (mv) selectMovieObj(mv);
+    }
   } catch(e) {
     document.getElementById('moviePicker').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
   }
 });
+
+let currentBrowseMode = 'movie';
+let allTheatresCache = [];
+let browseTheatreCity = 'all';
+
+function switchBrowseMode(mode) {
+  currentBrowseMode = mode;
+  const movieBtn = document.getElementById('modeMovieBtn');
+  const theatreBtn = document.getElementById('modeTheatreBtn');
+  const movieView = document.getElementById('movieBrowseView');
+  const theatreView = document.getElementById('theatreBrowseView');
+  const title = document.getElementById('step1Title');
+
+  if (mode === 'movie') {
+    movieBtn.classList.add('active');
+    theatreBtn.classList.remove('active');
+    movieView.style.display = 'block';
+    theatreView.style.display = 'none';
+    title.textContent = '🎬 Choose a Movie';
+  } else {
+    theatreBtn.classList.add('active');
+    movieBtn.classList.remove('active');
+    movieView.style.display = 'none';
+    theatreView.style.display = 'block';
+    title.textContent = '🏙️ Choose a Cinema Theatre';
+    if (!allTheatresCache.length) {
+      loadTheatresBrowse();
+    }
+  }
+}
+
+async function loadTheatresBrowse(preselectTheatreId = null) {
+  try {
+    document.getElementById('theatreFirstList').innerHTML = '<div class="spinner"></div>';
+    allTheatresCache = await TheatresAPI.getAll();
+    renderTheatreBrowseCityTabs();
+    renderTheatreFirstCards();
+    if (preselectTheatreId) {
+      const targetT = allTheatresCache.find(t => t.id == preselectTheatreId);
+      if (targetT) selectTheatreFirst(targetT.id, targetT.name, targetT.city, targetT.location);
+    }
+  } catch(e) {
+    document.getElementById('theatreFirstList').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
+  }
+}
+
+function renderTheatreBrowseCityTabs() {
+  const cities = ['all', ...new Set(allTheatresCache.map(t => t.city))];
+  document.getElementById('theatreBrowseCityTabs').innerHTML = cities.map(c => `
+    <button class="city-tab${c === browseTheatreCity ? ' active' : ''}" onclick="filterTheatreBrowseCity('${c}')">${c === 'all' ? 'All Kerala' : c}</button>
+  `).join('');
+}
+
+function filterTheatreBrowseCity(city) {
+  browseTheatreCity = city;
+  renderTheatreBrowseCityTabs();
+  renderTheatreFirstCards();
+}
+
+function renderTheatreFirstCards() {
+  const filtered = browseTheatreCity === 'all' ? allTheatresCache : allTheatresCache.filter(t => t.city === browseTheatreCity);
+  document.getElementById('theatreFirstList').innerHTML = filtered.map(t => `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;transition:all .25s ease;"
+         onmouseover="this.style.borderColor='var(--primary)';this.style.transform='translateY(-2px)'"
+         onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'"
+         onclick="selectTheatreFirst(${t.id}, '${escapeQuote(t.name)}', '${escapeQuote(t.city)}', '${escapeQuote(t.location)}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <h4 style="font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:0.35rem;">${t.name}</h4>
+        <span style="font-size:0.75rem;padding:2px 8px;border-radius:12px;background:rgba(201,169,110,0.15);color:var(--primary);">${t.city}</span>
+      </div>
+      <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">📍 ${t.location}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.6rem;border-top:1px solid var(--border);">
+        <span style="font-size:0.78rem;color:var(--primary);font-weight:600;">Explore Movies &amp; Shows →</span>
+        <span style="font-size:0.75rem;color:var(--text-muted);">2-4 Screens</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeQuote(str) {
+  return (str || '').replace(/'/g, "\\'");
+}
+
+async function selectTheatreFirst(theatreId, theatreName, theatreCity, theatreLocation) {
+  const section = document.getElementById('theatreSelectedSection');
+  section.style.display = 'block';
+  document.getElementById('selectedTheatreHeading').textContent = theatreName;
+  document.getElementById('selectedTheatreSub').textContent = `📍 ${theatreLocation}, ${theatreCity}`;
+  document.getElementById('theatreShowsList').innerHTML = '<div class="spinner"></div>';
+  section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  try {
+    const shows = await TheatresAPI.getShows(theatreId);
+    if (!shows || !shows.length) {
+      document.getElementById('theatreShowsList').innerHTML = '<p style="color:var(--text-muted);padding:1rem;">No active shows listed for this theatre at present.</p>';
+      return;
+    }
+
+    // Group shows by movie
+    const movieMap = {};
+    shows.forEach(s => {
+      if (!movieMap[s.movie_id]) {
+        movieMap[s.movie_id] = {
+          id: s.movie_id,
+          title: s.movie_title,
+          genre: s.movie_genre,
+          language: s.movie_language,
+          rating: s.movie_rating,
+          poster_url: s.poster_url,
+          duration_min: s.duration_min,
+          shows: []
+        };
+      }
+      movieMap[s.movie_id].shows.push(s);
+    });
+
+    document.getElementById('theatreShowsList').innerHTML = Object.values(movieMap).map(m => `
+      <div style="display:flex;gap:1.25rem;padding:1.25rem 0;border-bottom:1px solid var(--border);align-items:flex-start;">
+        <img src="${m.poster_url || ''}" style="width:75px;height:105px;object-fit:cover;border-radius:6px;background:var(--bg-dark);" onerror="this.src='/assets/tickethub_logo.png'" alt="${m.title}"/>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.25rem;">
+            <h4 style="font-size:1.05rem;font-weight:700;margin:0;">${m.title}</h4>
+            <span style="font-size:0.75rem;padding:2px 6px;border-radius:4px;background:var(--bg-card2);color:var(--primary);border:1px solid var(--border);">${m.language}</span>
+            <span style="font-size:0.78rem;color:var(--accent-gold);">★ ${m.rating || '8.5'}</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">${m.genre} · ${fmtDuration(m.duration_min)}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${m.shows.map(s => {
+              return `<button class="show-chip" style="margin:0;" onclick="selectShowFromTheatreView(${s.show_id}, ${JSON.stringify(m).replace(/"/g, '&quot;')}, '${escapeQuote(theatreName)}', '${escapeQuote(theatreLocation)}', '${escapeQuote(theatreCity)}')">
+                ${s.show_time.slice(0,5)}
+                <small>${s.screen_name} · ${s.show_date}</small>
+              </button>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('theatreShowsList').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
+  }
+}
+
+function closeTheatreSelection() {
+  document.getElementById('theatreSelectedSection').style.display = 'none';
+}
+
+async function selectShowFromTheatreView(showId, movieObj, theatreName, theatreLocation, theatreCity) {
+  // Populate bk
+  bk.movie = movieObj;
+  bk.show = {
+    show_id: showId,
+    theatre_name: theatreName,
+    location: theatreLocation,
+    city: theatreCity
+  };
+
+  // Update summary movie & venue
+  const poster = movieObj.poster_url;
+  if (poster) {
+    document.getElementById('sumPoster').innerHTML = `<img src="${poster}" style="width:70px;height:95px;object-fit:cover;border-radius:8px;" alt="${movieObj.title}"/>`;
+  }
+  document.getElementById('sumMovieTitle').textContent = movieObj.title;
+  document.getElementById('sumGenre').textContent = (movieObj.genre || '').split(',')[0].trim();
+  document.getElementById('sumLang').textContent  = movieObj.language;
+
+  // Fetch show details
+  try {
+    const showDetails = await ShowsAPI.getOne(showId);
+    bk.show = showDetails;
+    bk.date = showDetails.show_date;
+    document.getElementById('sumDate').textContent = showDetails.show_date;
+    document.getElementById('sumTime').textContent = showDetails.show_time.slice(0,5);
+    document.getElementById('sumTheatre').textContent = theatreName;
+    document.getElementById('sumScreen').textContent = showDetails.screen_name;
+    document.getElementById('premPrice').textContent = Number(showDetails.price_prem).toFixed(0);
+    document.getElementById('stdPrice').textContent  = Number(showDetails.price_std).toFixed(0);
+
+    goStep(3);
+    loadSeats(showId);
+  } catch(e) {
+    showToast(e.message, 'error');
+  }
+}
 
 // ── Step 1: select movie ──────────────────────
 async function selectMovie(id) {
@@ -473,68 +692,59 @@ async function confirmBooking() {
 
 function showTicketModal(ref, total) {
   const time = bk.show.show_time.slice(0,5);
-  const bars = [14,20,12,18,22,10,16,20,14,18,12,22,10,16,18,20,12,16,22,14];
+  const bars = [16,28,14,32,24,18,36,20,30,14,26,38,18,22,34,16,28,38,14,26,30,18,34,22,16];
   const poster = bk.movie.poster_url || bk.movie.posterUrl || bk.movie.posterPath || '/assets/tickethub_logo.png';
-  const firstSeat = bk.seats[0] || 'A1';
-  const rowLabel = firstSeat.charAt(0);
-  const seatNum = firstSeat.slice(1);
-  const personCount = bk.seats.length;
+  const cast = bk.movie.cast || 'STARRING ENSEMBLE CAST';
+  const director = bk.movie.producers || 'A FILM BY CHRISTOPHER NOLAN';
 
   document.getElementById('ticketOut').innerHTML = `
-    <div class="ticket">
-      <div class="ticket-header-brand">
-        <div class="ticket-brand-badge">
-          <img src="/assets/tickethub_logo.png" alt="TicketHub"/>
+    <div class="ticket-wrapper">
+      <div class="ticket">
+        <div class="ticket-top-scallop">
+          <div class="scallop-notch"></div>
+          <div class="scallop-notch"></div>
+          <div class="scallop-notch"></div>
+          <div class="scallop-notch"></div>
+          <div class="scallop-notch"></div>
+          <div class="scallop-notch"></div>
         </div>
-        <div class="ticket-admit-badge">Ticket for ${personCount} person${personCount>1?'s':''}</div>
-      </div>
 
-      <div class="ticket-poster-container">
-        <div class="ticket-poster-card">
-          <img src="${poster}" alt="${bk.movie.title}" onerror="this.src='/assets/tickethub_logo.png'"/>
+        <div class="ticket-cast-credits">${cast}</div>
+
+        <div class="ticket-poster-container">
+          <div class="ticket-poster-card">
+            <div class="ticket-imax-banner">EVERY FRAME IN <span>IMAX</span></div>
+            <img src="${poster}" alt="${bk.movie.title}" onerror="this.src='/assets/tickethub_logo.png'"/>
+          </div>
         </div>
-      </div>
 
-      <div class="ticket-movie-title">${bk.movie.title}</div>
-      <div class="ticket-subline">${bk.movie.language} · ${bk.movie.genre.split(',')[0].trim()} · ${bk.show.screen_name}</div>
-
-      <div class="ticket-info-strip">
-        <div class="ticket-strip-col">
-          <div class="ticket-strip-label">SALON</div>
-          <div class="ticket-strip-val">0${bk.show.screen_id || 1}</div>
+        <div class="ticket-title-block">
+          <div class="ticket-director-tag">${director}</div>
+          <div class="ticket-movie-title">${bk.movie.title}</div>
+          <div class="ticket-show-tag">★ SEATS: ${bk.seats.join(', ')} ★</div>
         </div>
-        <div class="ticket-strip-col">
-          <div class="ticket-strip-label">ROW</div>
-          <div class="ticket-strip-val">${rowLabel}</div>
-        </div>
-        <div class="ticket-strip-col">
-          <div class="ticket-strip-label">SEATS</div>
-          <div class="ticket-strip-val" style="font-size:${bk.seats.length > 2 ? '0.85rem' : '1.15rem'};">${bk.seats.join(',')}</div>
-        </div>
-      </div>
 
-      <div class="ticket-extra-details">
-        <div>📅 <strong>${bk.date}</strong> &nbsp;·&nbsp; ⏰ <strong>${time}</strong></div>
-        <div>💰 <strong>₹${total}</strong></div>
-      </div>
-      <div style="text-align:center;font-size:0.75rem;color:rgba(255,255,255,0.75);margin-bottom:0.8rem;">
-        📍 ${bk.show.theatre_name} (${bk.show.city})
-      </div>
-
-      <div class="ticket-stub-divider">
-        <div class="ticket-stub-line"></div>
-      </div>
-
-      <div class="ticket-barcode-section">
-        <div class="barcode-svg-lines">
-          ${bars.map(h => `<div class="b" style="height:${h}px;"></div>`).join('')}
+        <div class="ticket-odyssey-middle">
+          <div class="ticket-odyssey-time">${time}</div>
+          <div class="ticket-divider-vertical"></div>
+          <div class="ticket-odyssey-venue">
+            <div class="ticket-odyssey-date">${bk.date}</div>
+            <div class="ticket-odyssey-theatre">${bk.show.theatre_name}</div>
+            <div class="ticket-odyssey-screen">${bk.show.screen_name} · ${bk.show.city} (₹${total})</div>
+          </div>
         </div>
-        <div class="ticket-booking-ref-text">REF: ${ref}</div>
+
+        <div class="ticket-barcode-box">
+          <div class="ticket-barcode-num">${ref}</div>
+          <div class="ticket-barcode-bars">
+            ${bars.map(h => `<div class="bar" style="width:${h%3===0?'3px':'2px'};height:${h}px;"></div>`).join('')}
+          </div>
+        </div>
       </div>
     </div>`;
 
   document.getElementById('ticketModal').classList.add('show');
-  showToast('🎉 Booking confirmed! Enjoy the movie!', 'success');
+  showToast('🎉 Booking confirmed! Enjoy your movie!', 'success');
 }
 
 // ── Step navigation ───────────────────────────

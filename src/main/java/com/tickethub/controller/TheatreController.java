@@ -28,11 +28,36 @@ public class TheatreController {
         return ResponseEntity.ok(theatreRepo.findAllCities());
     }
 
+    private final com.tickethub.repository.ShowRepository showRepo;
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id) {
         return theatreRepo.findById(id)
             .<ResponseEntity<?>>map(theatre -> ResponseEntity.ok(toMap(theatre)))
             .orElse(ResponseEntity.status(404).body(Map.of("error", "Theatre not found.")));
+    }
+
+    @GetMapping("/{id}/shows")
+    public ResponseEntity<?> getShowsByTheatre(@PathVariable Long id) {
+        var shows = showRepo.findByTheatreId(id);
+        var list = shows.stream().map(s -> {
+            Map<String, Object> map = new java.util.LinkedHashMap<>();
+            map.put("show_id", s.getId());
+            map.put("show_date", s.getShowDate().toString());
+            map.put("show_time", s.getShowTime().toString());
+            map.put("price_std", s.getPriceStd());
+            map.put("price_prem", s.getPricePrem());
+            map.put("screen_name", s.getScreen().getName());
+            map.put("movie_id", s.getMovie().getId());
+            map.put("movie_title", s.getMovie().getTitle());
+            map.put("movie_genre", s.getMovie().getGenre());
+            map.put("movie_language", s.getMovie().getLanguage().name());
+            map.put("movie_rating", s.getMovie().getRating());
+            map.put("poster_url", s.getMovie().getPosterUrl());
+            map.put("duration_min", s.getMovie().getDurationMin());
+            return map;
+        }).toList();
+        return ResponseEntity.ok(list);
     }
 
     private Map<String, Object> toMap(Theatre theatre) {

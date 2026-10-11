@@ -156,8 +156,8 @@
 
       Auth.setToken(res.token);
       Auth.setUser(user);
-      showToast('Welcome Administrator! Launching Admin Panel…', 'success');
-      setTimeout(() => window.location.href = '/dashboard.html#manageMovies', 700);
+      showToast('Welcome Administrator! Launching Executive Admin Portal…', 'success');
+      setTimeout(() => window.location.href = '/admin.html', 700);
     } catch(e) {
       alertEl.textContent = e.message || 'Authentication failed. Please verify admin credentials.';
       alertEl.classList.add('show');

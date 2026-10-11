@@ -87,6 +87,7 @@ const TheatresAPI = {
   getAll:   (params = {}) => apiFetch('/theatres?' + new URLSearchParams(params)),
   getCities:()            => apiFetch('/theatres/cities'),
   getOne:   (id)          => apiFetch(`/theatres/${id}`),
+  getShows: (id)          => apiFetch(`/theatres/${id}/shows`),
 };
 
 // ── SEATS ─────────────────────────────────────
