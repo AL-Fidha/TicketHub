@@ -78,12 +78,14 @@ public class BookingService {
         return Map.of("booking_ref", ref, "total", total);
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getMyBookings(Long userId) {
         return bookingRepo.findByUserId(userId).stream()
             .map(this::toMap)
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getByRef(String ref) {
         Booking b = bookingRepo.findByBookingRef(ref)
             .orElseThrow(() -> new RuntimeException("Booking not found."));
@@ -105,6 +107,7 @@ public class BookingService {
         bookingRepo.save(b);
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getAllBookings() {
         return bookingRepo.findAllWithDetails().stream()
             .map(this::toMap)
