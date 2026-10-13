@@ -332,6 +332,7 @@ async function selectTheatreFirst(theatreId, theatreName, theatreCity, theatreLo
       document.getElementById('theatreShowsList').innerHTML = '<p style="color:var(--text-muted);padding:1rem;">No active shows listed for this theatre at present.</p>';
       return;
     }
+    window.theatreShowsById = Object.fromEntries(shows.map(show => [show.show_id, show]));
 
     // Group shows by movie
     const movieMap = {};
@@ -382,10 +383,15 @@ function closeTheatreSelection() {
 }
 
 async function selectShowFromTheatreView(showId, movieObj, theatreName, theatreLocation, theatreCity) {
-  // Populate bk
+  const showDetails = window.theatreShowsById?.[showId];
+  if (!showDetails) {
+    showToast('This show is no longer available. Please choose another showtime.', 'error');
+    return;
+  }
+
   bk.movie = movieObj;
   bk.show = {
-    show_id: showId,
+    ...showDetails,
     theatre_name: theatreName,
     location: theatreLocation,
     city: theatreCity
@@ -400,23 +406,17 @@ async function selectShowFromTheatreView(showId, movieObj, theatreName, theatreL
   document.getElementById('sumGenre').textContent = (movieObj.genre || '').split(',')[0].trim();
   document.getElementById('sumLang').textContent  = movieObj.language;
 
-  // Fetch show details
-  try {
-    const showDetails = await ShowsAPI.getOne(showId);
-    bk.show = showDetails;
-    bk.date = showDetails.show_date;
-    document.getElementById('sumDate').textContent = showDetails.show_date;
-    document.getElementById('sumTime').textContent = showDetails.show_time.slice(0,5);
-    document.getElementById('sumTheatre').textContent = theatreName;
-    document.getElementById('sumScreen').textContent = showDetails.screen_name;
-    document.getElementById('premPrice').textContent = Number(showDetails.price_prem).toFixed(0);
-    document.getElementById('stdPrice').textContent  = Number(showDetails.price_std).toFixed(0);
+  bk.date = showDetails.show_date;
+  bk.seats = [];
+  document.getElementById('sumDate').textContent = showDetails.show_date;
+  document.getElementById('sumTime').textContent = showDetails.show_time.slice(0,5);
+  document.getElementById('sumTheatre').textContent = theatreName;
+  document.getElementById('sumScreen').textContent = showDetails.screen_name;
+  document.getElementById('premPrice').textContent = Number(showDetails.price_prem).toFixed(0);
+  document.getElementById('stdPrice').textContent = Number(showDetails.price_std).toFixed(0);
 
-    goStep(3);
-    loadSeats(showId);
-  } catch(e) {
-    showToast(e.message, 'error');
-  }
+  goStep(3);
+  loadSeats();
 }
 
 // ── Step 1: select movie ──────────────────────
