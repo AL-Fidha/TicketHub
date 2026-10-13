@@ -312,37 +312,50 @@ public class TicketHubApplication {
                 log.info("40 screens seeded for existing theatres.");
             }
 
-            // ── 4. Shows — every movie plays at every Kerala theatre ──────
+            // ── 4. Shows — every movie plays at every Kerala theatre for today + upcoming days ──────
             List<Movie> movies = movieRepo.findAll();
             List<Theatre> allTheatres = theatreRepo.findAll();
             if (!allTheatres.isEmpty() && !movies.isEmpty()) {
+                List<Screen> allScreens = screenRepo.findAll();
+                java.util.Map<Long, List<Screen>> screensByTheatre = new java.util.LinkedHashMap<>();
+                for (Screen screen : allScreens) {
+                    screensByTheatre.computeIfAbsent(screen.getTheatre().getId(), k -> new java.util.ArrayList<>()).add(screen);
+                }
+
                 List<Show> existingShows = showRepo.findAllWithDetails();
                 java.util.Set<String> showKeys = new java.util.HashSet<>();
-                java.util.Set<String> movieTheatrePairs = new java.util.HashSet<>();
                 for (Show existing : existingShows) {
                     showKeys.add(existing.getMovie().getId() + "|" + existing.getScreen().getId() + "|"
                         + existing.getShowDate() + "|" + existing.getShowTime());
-                    movieTheatrePairs.add(existing.getMovie().getId() + "|" + existing.getScreen().getTheatre().getId());
                 }
 
-                java.util.Map<Long, Screen> firstScreenByTheatre = new java.util.LinkedHashMap<>();
-                for (Screen screen : screenRepo.findAll()) {
-                    firstScreenByTheatre.putIfAbsent(screen.getTheatre().getId(), screen);
-                }
+                LocalTime[] times = {
+                    LocalTime.of(10, 30),
+                    LocalTime.of(14, 0),
+                    LocalTime.of(18, 30),
+                    LocalTime.of(21, 30)
+                };
 
-                LocalTime[] times = { LocalTime.of(14, 0), LocalTime.of(18, 30), LocalTime.of(21, 15) };
                 java.util.List<Show> batch = new java.util.ArrayList<>();
+                LocalDate today = LocalDate.now();
+
                 for (Movie movie : movies) {
                     for (Theatre theatre : allTheatres) {
-                        Screen screen = firstScreenByTheatre.get(theatre.getId());
-                        if (screen == null) continue;
-                        String pair = movie.getId() + "|" + theatre.getId();
-                        if (movieTheatrePairs.contains(pair)) continue;
-                        for (int d = 0; d < 5; d++) {
-                            LocalDate date = LocalDate.now().plusDays(d);
-                            for (LocalTime time : times) {
+                        List<Screen> tScreens = screensByTheatre.get(theatre.getId());
+                        if (tScreens == null || tScreens.isEmpty()) continue;
+                        Screen screen = tScreens.get((int) (movie.getId() % tScreens.size()));
+
+                        for (int d = 0; d < 7; d++) {
+                            LocalDate date = today.plusDays(d);
+                            // Schedule 2 distinct showtimes per movie per theatre
+                            int t1 = (int) ((movie.getId() + d) % times.length);
+                            int t2 = (int) ((movie.getId() + d + 2) % times.length);
+                            LocalTime[] chosenTimes = { times[t1], times[t2] };
+
+                            for (LocalTime time : chosenTimes) {
                                 String key = movie.getId() + "|" + screen.getId() + "|" + date + "|" + time;
                                 if (showKeys.contains(key)) continue;
+
                                 batch.add(Show.builder()
                                     .movie(movie)
                                     .screen(screen)
@@ -354,14 +367,13 @@ public class TicketHubApplication {
                                 showKeys.add(key);
                             }
                         }
-                        movieTheatrePairs.add(pair);
                     }
                 }
                 if (!batch.isEmpty()) {
                     showRepo.saveAll(batch);
-                    log.info("{} shows added so every movie plays at every theatre.", batch.size());
+                    log.info("{} shows added across all Kerala theatres for today and upcoming 7 days.", batch.size());
                 } else {
-                    log.info("All movies already have showtimes at every theatre.");
+                    log.info("Upcoming shows already exist across all theatres.");
                 }
             }
         };

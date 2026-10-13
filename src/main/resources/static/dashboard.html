@@ -9,11 +9,12 @@
 <body>
 <nav class="navbar">
   <a href="/index.html" class="nav-brand">
-    <img src="/assets/tickethub_logo.png" alt="TicketHub Logo" class="nav-brand-img"/>
+    <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Logo" class="nav-brand-img"/>
   </a>
   <ul class="nav-links">
     <li><a href="/index.html">Home</a></li>
     <li><a href="/movies.html">Movies</a></li>
+    <li><a href="/theatres.html">Theatres</a></li>
     <li><a href="/booking.html">Book Tickets</a></li>
     <li><a href="/dashboard.html" class="active">My Bookings</a></li>
   </ul>
@@ -78,7 +79,6 @@
             <h1 class="dash-title">My Bookings</h1>
             <p class="dash-subtitle">View, search, print, or manage your cinema reservations.</p>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="exportBookingsCSV()">📄 Export Statement (CSV)</button>
         </div>
 
         <!-- Filter & Search Bar -->
@@ -566,36 +566,6 @@ function filterMyBookings() {
     return matchesSearch && matchesStatus;
   });
   renderBookingCards(filtered, 'myBookingsList');
-}
-
-function exportBookingsCSV() {
-  if (!myCachedBookings || !myCachedBookings.length) {
-    showToast('No booking history to export.', 'error');
-    return;
-  }
-  const headers = ['Booking Reference', 'Movie', 'Language', 'Theatre', 'City', 'Screen', 'Show Date', 'Show Time', 'Seats', 'Total (INR)', 'Status'];
-  const rows = myCachedBookings.map(b => [
-    `"${b.booking_ref}"`,
-    `"${b.movie}"`,
-    `"${b.language || 'Malayalam'}"`,
-    `"${b.theatre_name}"`,
-    `"${b.city}"`,
-    `"${b.screen_name}"`,
-    `"${b.show_date}"`,
-    `"${b.show_time.slice(0,5)}"`,
-    `"${(b.seats || []).join(';')}"`,
-    b.total_amount,
-    `"${b.status}"`
-  ]);
-  const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement('a');
-  link.setAttribute('href', encodedUri);
-  link.setAttribute('download', `TicketHub_Bookings_${currentUser.name.replace(/\s+/g,'_')}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  showToast('Booking statement exported to CSV!', 'success');
 }
 
 function selectAvatar(emoji, el) {

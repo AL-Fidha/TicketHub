@@ -39,7 +39,16 @@ public class TheatreController {
     @GetMapping("/{id}/shows")
     public ResponseEntity<?> getShowsByTheatre(@PathVariable Long id) {
         var shows = showRepo.findByTheatreId(id);
-        var list = shows.stream().map(s -> {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        java.time.LocalTime now = java.time.LocalTime.now();
+
+        var list = shows.stream()
+            .filter(s -> {
+                if (s.getShowDate().isBefore(today)) return false;
+                if (s.getShowDate().isEqual(today) && s.getShowTime().isBefore(now)) return false;
+                return true;
+            })
+            .map(s -> {
             Map<String, Object> map = new java.util.LinkedHashMap<>();
             map.put("show_id", s.getId());
             map.put("show_date", s.getShowDate().toString());

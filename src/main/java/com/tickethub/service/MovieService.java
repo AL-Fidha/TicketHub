@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +42,16 @@ public class MovieService {
     public List<Map<String, Object>> getShows(Long movieId, String date, Long theatreId) {
         LocalDate localDate = (date != null && !date.isBlank()) ? LocalDate.parse(date) : null;
         List<Show> shows = showRepo.findByMovieFiltered(movieId, localDate, theatreId);
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
 
-        return shows.stream().map(s -> {
+        return shows.stream()
+            .filter(s -> {
+                if (s.getShowDate().isBefore(today)) return false;
+                if (s.getShowDate().isEqual(today) && s.getShowTime().isBefore(now)) return false;
+                return true;
+            })
+            .map(s -> {
             long booked = bsRepo.countBookedSeatsByShowId(s.getId());
             int total   = s.getScreen().getTotalSeats();
             Map<String, Object> map = new java.util.LinkedHashMap<>();

@@ -19,11 +19,12 @@
 <body>
 <nav class="navbar">
   <a href="/index.html" class="nav-brand">
-    <img src="/assets/tickethub_logo.png" alt="TicketHub Logo" class="nav-brand-img"/>
+    <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Logo" class="nav-brand-img"/>
   </a>
   <ul class="nav-links">
     <li><a href="/index.html">Home</a></li>
     <li><a href="/movies.html">Movies</a></li>
+    <li><a href="/theatres.html">Theatres</a></li>
     <li><a href="/booking.html" class="active">Book Tickets</a></li>
     <li><a href="/dashboard.html">My Bookings</a></li>
   </ul>
@@ -363,12 +364,16 @@ async function selectTheatreFirst(theatreId, theatreName, theatreCity, theatreLo
           </div>
           <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">${m.genre} · ${fmtDuration(m.duration_min)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;">
-            ${m.shows.map(s => {
+            ${m.shows.filter(s => {
+              if (!s.show_date || !s.show_time) return false;
+              const dt = new Date(`${s.show_date}T${s.show_time.slice(0,5)}`);
+              return dt > new Date();
+            }).map(s => {
               return `<button class="show-chip" style="margin:0;" onclick="selectShowFromTheatreView(${s.show_id}, ${JSON.stringify(m).replace(/"/g, '&quot;')}, '${escapeQuote(theatreName)}', '${escapeQuote(theatreLocation)}', '${escapeQuote(theatreCity)}')">
                 ${s.show_time.slice(0,5)}
                 <small>${s.screen_name} · ${s.show_date}</small>
               </button>`;
-            }).join('')}
+            }).join('') || '<span style="font-size:0.78rem;color:var(--text-muted);">No upcoming shows today</span>'}
           </div>
         </div>
       </div>
@@ -496,12 +501,21 @@ function renderTheatres() {
     return;
   }
 
-  document.getElementById('theatreList').innerHTML = entries.map(([tid, t]) => `
+  document.getElementById('theatreList').innerHTML = entries.map(([tid, t]) => {
+    const activeShows = t.shows.filter(s => {
+      if (!s.show_date || !s.show_time) return false;
+      const showDateTime = new Date(`${s.show_date}T${s.show_time.slice(0,5)}`);
+      return showDateTime > new Date();
+    });
+
+    if (!activeShows.length) return '';
+
+    return `
     <div class="theatre-card" id="tc_${tid}">
       <div class="theatre-name">${t.name}</div>
       <div class="theatre-loc">📍 ${t.location}, ${t.city}</div>
       <div class="theatre-shows">
-        ${t.shows.map(s => {
+        ${activeShows.map(s => {
           const avail = s.total_seats - s.seats_booked;
           const full  = avail <= 0;
           const time  = s.show_time.slice(0,5);
@@ -511,7 +525,8 @@ function renderTheatres() {
           </button>`;
         }).join('')}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('') || '<p style="color:var(--text-muted);text-align:center;padding:2rem;">All screenings for this date have concluded. Please pick an upcoming date.</p>';
 }
 
 function selectShowById(showId) {
