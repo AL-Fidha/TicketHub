@@ -3,30 +3,38 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ticket Hub – Premier Movie Ticket Booking</title>
+  <title>Ticket Hub – Kerala's Premier Movie Ticket Booking</title>
   <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body>
 
-<!-- CINEMATIC INTRO SPLASH & LOGO ANIMATION -->
+<!-- CINEMATIC INTRO SPLASH & LOGO ANIMATION (LUXORA THEME) -->
 <div id="cinemaIntro" class="cinema-intro-overlay">
   <button class="cinema-intro-skip" id="skipIntroBtn">Skip Intro ✕</button>
   <div class="cinema-intro-spotlight"></div>
   <div class="cinema-intro-bg-glow"></div>
   <div class="cinema-intro-content">
-    <img src="/assets/tickethub_logo.png" alt="TicketHub Admit One Logo" class="cinema-intro-ticket-logo"/>
-    <div class="cinema-intro-tagline">Kerala's Premier Cinema Experience</div>
-    <div class="cinema-intro-admit">★ ADMIT ONE ★</div>
+    <div class="cinema-intro-ticket-logo-wrap">
+      <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Admit One Logo" class="cinema-intro-ticket-logo"/>
+    </div>
+    <div class="cinema-intro-brand-name">Ticket Hub</div>
+    <div class="cinema-intro-tagline">✦ KERALA'S PREMIER CINEMATIC DESTINATIONS ✦</div>
+    <div class="cinema-intro-admit">ADMIT ONE · RESERVED SEATING · 20 MULTIPLEXES</div>
+    <div class="cinema-intro-progress">
+      <div class="cinema-intro-progress-bar"></div>
+    </div>
   </div>
 </div>
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <a href="/index.html" class="nav-brand">
-    <img src="/assets/tickethub_logo.png" alt="TicketHub Logo" class="nav-brand-img"/>
+    <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Logo" class="nav-brand-img"/>
   </a>
   <ul class="nav-links">
     <li><a href="/index.html" class="active">Home</a></li>
     <li><a href="/movies.html">Movies</a></li>
+    <li><a href="/theatres.html">Theatres</a></li>
     <li><a href="/booking.html">Book Tickets</a></li>
     <li><a href="/dashboard.html">My Bookings</a></li>
   </ul>
@@ -35,65 +43,113 @@
 </nav>
 
 <div class="page-wrapper">
-  <!-- MOVIETIME & CINEPASS INSPIRED BILLBOARD HERO -->
-  <section class="hero hero-billboard" id="heroBillboardSection">
-    <div class="hero-billboard-backdrop" id="heroBackdrop"></div>
-    <div class="hero-billboard-overlay"></div>
+  <!-- LUXORA ARCHITECTURAL CINEMA HERO -->
+  <section class="hero-luxora" id="heroBillboardSection">
+    <div class="hero-luxora-backdrop" id="heroBackdrop"></div>
+    <div class="hero-luxora-ambient"></div>
     
-    <div class="hero-content hero-billboard-content">
-      <div class="hero-text hero-billboard-text" id="heroBillboardDetails">
-        <div class="hero-badge" id="heroFeaturedBadge">⭐ FEATURED BLOCKBUSTER PREMIERE</div>
-        <h1 class="hero-title" id="heroFeaturedBannerTitle">Experience cinema<br/>the way it was<br/><span class="highlight">meant to be seen.</span></h1>
+    <div class="hero-luxora-content">
+      <div class="hero-luxora-text">
+        <div class="hero-luxora-badge">✦ KERALA'S PREMIER CINEMA CURATION ✦</div>
+        <h1 class="hero-luxora-title">Cinematic Spaces That <span class="highlight">Inspire Passion.</span></h1>
         
-        <div class="hero-billboard-tags" id="heroFeaturedBannerTags" style="display:flex;gap:10px;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
-          <span class="cinepass-tag" id="hbLangTag">Malayalam</span>
-          <span class="cinepass-tag" id="hbGenreTag">Adventure, Thriller</span>
-          <span class="cinepass-tag rating" id="hbRatingTag">★ 8.6</span>
-          <span class="cinepass-tag cert">IMAX 4K Laser</span>
-          <span class="cinepass-tag cert">Dolby Atmos</span>
-        </div>
-
-        <p class="hero-desc" id="heroFeaturedBannerDesc" style="max-width:540px;line-height:1.7;color:#e2e8f0;margin-bottom:2rem;">
-          Discover the biggest blockbusters across Malayalam, English, Tamil, and Hindi. Choose your cinema screen, lock your seats instantly, and receive verified digital tickets.
+        <p class="hero-luxora-desc" id="heroFeaturedBannerDesc">
+          Experience 27 blockbusters across 20 premier multiplexes in Kerala. Choose your luxury screen, reserve seats in real time with zero collision, and receive verified digital cinema passes.
         </p>
 
-        <div class="hero-actions">
-          <a href="/booking.html" class="btn btn-primary btn-lg" id="heroBookNowBtn" style="gap:8px;">🎟️ &nbsp; Book Seats Now</a>
-          <a href="/movies.html" class="btn btn-secondary btn-lg">🎬 &nbsp; All Releases</a>
+        <div class="hero-luxora-actions">
+          <a href="/booking.html" class="btn btn-primary btn-lg" id="heroBookNowBtn">🎟️ &nbsp; Book Seats Now</a>
+          <a href="/theatres.html" class="btn btn-secondary btn-lg">🏙️ &nbsp; Explore 20 Theatres</a>
+          <a href="/movies.html" class="btn btn-ghost btn-lg">🎬 &nbsp; All Releases</a>
         </div>
 
-        <div class="hero-cinema-badges" style="margin-top:1.5rem;">
-          <div class="cinema-badge-item"><span>🔊</span> Dolby Atmos 7.1</div>
-          <div class="cinema-badge-item"><span>💎</span> 4K Laser Projection</div>
-          <div class="cinema-badge-item"><span>⚡</span> Live Seat Availability</div>
-          <div class="cinema-badge-item"><span>🎟️</span> Instant E-Ticket QR</div>
+        <div class="hero-luxora-stats">
+          <div class="stat-item-luxora">
+            <div class="num">20+</div>
+            <div class="label">Multiplexes</div>
+          </div>
+          <div class="stat-item-luxora">
+            <div class="num">27</div>
+            <div class="label">Releases</div>
+          </div>
+          <div class="stat-item-luxora">
+            <div class="num">7,500+</div>
+            <div class="label">Daily Shows</div>
+          </div>
+          <div class="stat-item-luxora">
+            <div class="num">Dolby</div>
+            <div class="label">Atmos 7.1</div>
+          </div>
         </div>
       </div>
 
-      <!-- Thumbnail Carousel Rail inspired by Movietime & CinePass -->
-      <div class="hero-billboard-rail-wrap">
-        <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-gold);margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;">
-          <span>Trending Blockbusters</span>
-          <span style="font-size:0.7rem;color:var(--text-muted);">Click to preview</span>
+      <!-- 3D FEATURED PREMIERE SHOWCASE CARD -->
+      <div class="luxora-hero-showcase" id="heroShowcaseCard">
+        <div class="luxora-showcase-poster-wrap">
+          <img src="/assets/tickethub_ticket_patch.png" alt="Featured Movie" class="luxora-showcase-poster" id="showcasePoster"/>
+          <div class="luxora-showcase-badge-top">
+            <span class="luxora-pill-tag" id="showcaseLangTag">Malayalam</span>
+            <span class="luxora-pill-tag" id="showcaseGenreTag">Adventure</span>
+          </div>
+          <div class="luxora-showcase-rating" id="showcaseRatingTag">★ 8.6</div>
         </div>
-        <div class="hero-thumbnail-rail" id="heroThumbnailRail">
-          <!-- Filled dynamically -->
+
+        <div>
+          <h2 class="luxora-showcase-title" id="showcaseTitle">Featured Premiere</h2>
+          <div class="luxora-showcase-meta">
+            <span id="showcaseDuration">⏱ 2h 15m</span>
+            <span>•</span>
+            <span id="showcaseCert">U/A Certified</span>
+          </div>
+          
+          <div class="luxora-showcase-specs">
+            <span class="spec-badge">IMAX 4K Laser</span>
+            <span class="spec-badge">Dolby Atmos</span>
+            <span class="spec-badge">VIP Recliners</span>
+            <span class="spec-badge">Live Availability</span>
+          </div>
+
+          <div class="luxora-showcase-nav">
+            <a href="/booking.html" class="btn btn-primary" id="showcaseBookBtn" style="flex:1;">Reserve Seats 🎟️</a>
+            <div style="display:flex;gap:6px;">
+              <button class="luxora-nav-btn" onclick="prevShowcaseMovie()" title="Previous Movie">❮</button>
+              <button class="luxora-nav-btn" onclick="nextShowcaseMovie()" title="Next Movie">❯</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- CINEMA DESTINATIONS BAR -->
+  <div class="destinations-strip">
+    <div class="destinations-strip-inner">
+      <div class="destinations-label">
+        <span>🏛️</span> Kerala Cinema Hubs:
+      </div>
+      <div class="destinations-pills">
+        <a href="/theatres.html" class="destination-chip">All Kerala (20 Multiplexes)</a>
+        <a href="/theatres.html" class="destination-chip">Kochi / Ernakulam (5)</a>
+        <a href="/theatres.html" class="destination-chip">Thiruvananthapuram (5)</a>
+        <a href="/theatres.html" class="destination-chip">Kozhikode (4)</a>
+        <a href="/theatres.html" class="destination-chip">Thrissur (3)</a>
+        <a href="/theatres.html" class="destination-chip">Kollam (2)</a>
+        <a href="/theatres.html" class="destination-chip">Kottayam (1)</a>
+      </div>
+    </div>
+  </div>
+
   <!-- NOW SHOWING WITH LANGUAGE TABS -->
-  <div style="background:linear-gradient(180deg,transparent,var(--bg-card));padding:1rem 0 3rem;">
+  <div style="background:linear-gradient(180deg,var(--bg-dark),#11100e 50%,var(--bg-dark));padding:3.5rem 0 4.5rem;">
     <section class="section">
-      <div class="section-header" style="text-align:center;margin-bottom:2rem;">
-        <div class="section-label">Now In Cinemas</div>
+      <div class="section-header" style="text-align:center;margin-bottom:2.2rem;">
+        <div class="section-label">Curated Cinema Catalogue</div>
         <h2 class="section-title">Blockbusters on the Big Screen</h2>
         <p class="section-desc">Experience top-rated films across multiple languages in state-of-the-art Kerala theatres.</p>
       </div>
 
       <!-- Quick Language Filter -->
-      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:2.5rem;" id="homeLangTabs">
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:3rem;" id="homeLangTabs">
         <button class="filter-chip active" onclick="filterHomeByLang('all', this)">All Releases</button>
         <button class="filter-chip" onclick="filterHomeByLang('Malayalam', this)">Malayalam</button>
         <button class="filter-chip" onclick="filterHomeByLang('English', this)">English</button>
@@ -101,67 +157,113 @@
         <button class="filter-chip" onclick="filterHomeByLang('Hindi', this)">Hindi</button>
       </div>
 
-      <div id="homeMoviesGrid" class="movies-grid"></div>
-      <div style="text-align:center;margin-top:3rem;">
+      <div id="homeMoviesGrid" class="luxora-movies-grid"></div>
+
+      <div style="text-align:center;margin-top:3.5rem;">
         <a href="/movies.html" class="btn btn-secondary btn-lg">Explore Full Cinema Catalog &nbsp;→</a>
       </div>
     </section>
   </div>
 
-  <!-- FEATURES -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-label">The Ticket Hub Difference</div>
-      <h2 class="section-title">Built For The Ultimate Movie Fan</h2>
+  <!-- LUXORA THE TICKET HUB DIFFERENCE -->
+  <section class="section" style="padding-top:2rem;">
+    <div class="section-header" style="text-align:center;margin-bottom:3rem;">
+      <div class="section-label">The Ticket Hub Standard</div>
+      <h2 class="section-title">Architected for Film Connoisseurs</h2>
+      <p class="section-desc">Combining luxury cinema venues with state-of-the-art concurrent booking infrastructure.</p>
     </div>
     <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon fi-red">🪑</div><h3 class="feature-title">Real-Time Seat Locking</h3><p class="feature-desc">Concurrent booking prevention ensures no two moviegoers can reserve the same seat simultaneously.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-blue">🔐</div><h3 class="feature-title">Secure Student & Customer Accounts</h3><p class="feature-desc">JWT session management with encrypted bcrypt passwords keep your personal reservations safe.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-green">🎟️</div><h3 class="feature-title">Instant Digital E-Tickets</h3><p class="feature-desc">Verified unique alphanumeric reference and barcode generated instantly upon booking confirmation.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-gold">🏙️</div><h3 class="feature-title">Top Kerala Theatres</h3><p class="feature-desc">Browse screenings across Kochi, Thiruvananthapuram, Kozhikode, Thrissur, Kollam, and more.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-purple">🎬</div><h3 class="feature-title">Exact High-Res Artwork</h3><p class="feature-desc">Verified official cinematic posters and full synopses so you never mistake one release for another.</p></div>
-      <div class="feature-card"><div class="feature-icon fi-teal">🛡️</div><h3 class="feature-title">Dedicated Admin Portal</h3><p class="feature-desc">Complete administrative control over movies, screens, showtimes, and booking records.</p></div>
+      <div class="feature-card">
+        <div class="feature-icon fi-gold">🏛️</div>
+        <h3 class="feature-title">20 Iconic Kerala Multiplexes</h3>
+        <p class="feature-desc">Screenings across PVR Lulu, Aries Plex, Shenoys, Ragam, Apsara, Crown, and premier theatres across the state.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-teal">🪑</div>
+        <h3 class="feature-title">Real-Time Seat Locking</h3>
+        <p class="feature-desc">Concurrent booking prevention engine ensures zero double-booking collisions for popular premiere releases.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-purple">🔊</div>
+        <h3 class="feature-title">Dolby Atmos & 4K Laser</h3>
+        <p class="feature-desc">Calibrated screen profiles allow you to identify Dolby Atmos 7.1 audio and Barco 4K RGB Laser projection venues.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-green">🎟️</div>
+        <h3 class="feature-title">Instant Digital E-Tickets</h3>
+        <p class="feature-desc">Verified unique alphanumeric reference code and printable admit-one cinema pass issued upon confirmation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">🔐</div>
+        <h3 class="feature-title">Secure Customer Accounts</h3>
+        <p class="feature-desc">JWT tokenized session management with encrypted bcrypt passwords keeps your personal reservations protected.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-red">🛡️</div>
+        <h3 class="feature-title">Dedicated Admin Operations</h3>
+        <p class="feature-desc">Autonomous administrative control center over movie assets, screens, 7,500+ showtimes, and booking records.</p>
+      </div>
     </div>
   </section>
 
   <!-- HOW IT WORKS -->
-  <div style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:3rem 0;">
     <section class="section">
-      <div class="section-header">
-        <div class="section-label">Booking Flow</div>
+      <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+        <div class="section-label">Effortless Reservation</div>
         <h2 class="section-title">Book in 4 Simple Steps</h2>
       </div>
       <div class="steps-row">
-        <div class="step-item"><div class="step-num">🔑</div><h4 class="step-title">1. Sign In</h4><p class="step-desc">Log into your customer profile to access reserved seat maps.</p></div>
-        <div class="step-item"><div class="step-num">🎬</div><h4 class="step-title">2. Choose Film</h4><p class="step-desc">Select your desired movie, preferred date, and Kerala theatre.</p></div>
-        <div class="step-item"><div class="step-num">🪑</div><h4 class="step-title">3. Pick Seats</h4><p class="step-desc">Choose Standard (₹220) or Premium (₹380) spots on the interactive screen map.</p></div>
-        <div class="step-item"><div class="step-num">🎟️</div><h4 class="step-title">4. Get Ticket</h4><p class="step-desc">Receive your digital cinema pass instantly ready for entry or printing.</p></div>
+        <div class="step-item"><div class="step-num">🔑</div><h4 class="step-title">1. Sign In</h4><p class="step-desc">Log into your profile to access interactive seat maps.</p></div>
+        <div class="step-item"><div class="step-num">🎬</div><h4 class="step-title">2. Choose Film & Theatre</h4><p class="step-desc">Select your movie and preferred Kerala cinema screen.</p></div>
+        <div class="step-item"><div class="step-num">🪑</div><h4 class="step-title">3. Pick Seats</h4><p class="step-desc">Choose Standard (₹220) or Premium (₹380) spots in real time.</p></div>
+        <div class="step-item"><div class="step-num">🎟️</div><h4 class="step-title">4. Get Cinema Pass</h4><p class="step-desc">Receive your verified digital pass instantly ready for entry.</p></div>
       </div>
     </section>
   </div>
 
   <!-- CTA -->
-  <section class="section" style="text-align:center;">
-    <div class="cinema-callout">
-      <div style="font-size:3.5rem;margin-bottom:1rem;">🍿</div>
-      <h2>Ready for movie night?</h2>
-      <p style="color:var(--text-secondary);max-width:550px;margin:0 auto 1.5rem;">Pick your favorite seats today and experience cinema the way it was meant to be experienced.</p>
-      <a href="/movies.html" class="btn btn-primary btn-lg">Browse Showtimes Now</a>
+  <section class="section" style="text-align:center;padding:5rem 2rem;">
+    <div class="cinema-callout" style="border:1px solid var(--border);background:linear-gradient(135deg,rgba(28,25,22,0.8),rgba(17,16,14,0.9));">
+      <div style="font-size:3rem;margin-bottom:1rem;">🍿</div>
+      <h2 style="font-family:var(--font-display);font-size:2.5rem;color:#fff;margin-bottom:0.75rem;">Ready for movie night?</h2>
+      <p style="color:var(--text-secondary);max-width:550px;margin:0 auto 1.75rem;line-height:1.7;">Pick your favorite seats today and experience cinema in Kerala's finest theatres.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="/booking.html" class="btn btn-primary btn-lg">Book Tickets Now</a>
+        <a href="/theatres.html" class="btn btn-secondary btn-lg">Browse Kerala Theatres</a>
+      </div>
     </div>
   </section>
 </div>
 
+<!-- FOOTER -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="nav-brand" style="margin-bottom:0.75rem;">
-        <img src="/assets/tickethub_logo.png" alt="TicketHub Logo" class="nav-brand-img"/>
+        <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Logo" class="nav-brand-img"/>
       </div>
-      <p>Movie ticket booking platform powered by Spring Boot, MySQL, and modern JavaScript.</p>
+      <p>Kerala's premier movie ticket booking platform powered by Spring Boot, MySQL, and modern JavaScript.</p>
     </div>
-    <div class="footer-col"><h4>Navigate</h4><a href="/index.html">Home</a><a href="/movies.html">Movies</a><a href="/booking.html">Book Tickets</a><a href="/dashboard.html">My Bookings</a></div>
-    <div class="footer-col"><h4>Portals</h4><a href="/login.html">Customer Sign In</a><a href="/login.html">Create Account</a><a href="/admin-login.html" style="color:var(--accent-gold);">🛡️ Admin Portal</a></div>
-    <div class="footer-col"><h4>Academic Info</h4><a href="#">Department of CSE</a><a href="#">Micro Project 2026</a></div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="/index.html">Home</a>
+      <a href="/movies.html">Movies</a>
+      <a href="/theatres.html">Theatres</a>
+      <a href="/booking.html">Book Tickets</a>
+      <a href="/dashboard.html">My Bookings</a>
+    </div>
+    <div class="footer-col">
+      <h4>Portals</h4>
+      <a href="/login.html">Customer Sign In</a>
+      <a href="/login.html">Create Account</a>
+      <a href="/admin-login.html" style="color:var(--accent-gold);">🛡️ Admin Portal</a>
+    </div>
+    <div class="footer-col">
+      <h4>Academic Info</h4>
+      <a href="#">Department of CSE</a>
+      <a href="#">Micro Project 2026</a>
+    </div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 Ticket Hub — College of Engineering, Muttathara, Thiruvananthapuram</span>
@@ -173,8 +275,8 @@
 <script src="/js/api.js"></script>
 <script>
 let homeMovies = [];
-let currentBillboardIndex = 0;
-let billboardInterval = null;
+let currentShowcaseIndex = 0;
+let showcaseInterval = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   updateNav();
@@ -184,7 +286,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     homeMovies = await MoviesAPI.getAll();
 
     if (homeMovies.length > 0) {
-      initBillboardHero(homeMovies);
+      initShowcaseCarousel(homeMovies);
     }
 
     renderHomeGrid(homeMovies.slice(0, 8));
@@ -194,74 +296,73 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-function initBillboardHero(movies) {
-  const topMovies = movies.slice(0, 6);
-  const rail = document.getElementById('heroThumbnailRail');
-  
-  rail.innerHTML = topMovies.map((m, idx) => `
-    <div class="hero-rail-thumb${idx === 0 ? ' active' : ''}" id="railThumb_${idx}" onclick="selectBillboardMovie(${idx})">
-      <img src="${m.poster_url || ''}" alt="${m.title}" onerror="this.src='/assets/tickethub_logo.png'"/>
-      <div class="rail-thumb-overlay">
-        <span class="rail-thumb-title">${m.title}</span>
-        <span class="rail-thumb-rating">★ ${m.rating}</span>
-      </div>
-    </div>
-  `).join('');
-
-  setBillboardMovie(0);
-
-  // Auto-rotate every 6 seconds with smooth cinematic transition
-  billboardInterval = setInterval(() => {
-    currentBillboardIndex = (currentBillboardIndex + 1) % topMovies.length;
-    setBillboardMovie(currentBillboardIndex);
-  }, 6000);
+function initShowcaseCarousel(movies) {
+  setShowcaseMovie(0);
+  startShowcaseTimer();
 }
 
-function selectBillboardMovie(idx) {
-  if (billboardInterval) clearInterval(billboardInterval);
-  currentBillboardIndex = idx;
-  setBillboardMovie(idx);
-  // Restart timer
-  billboardInterval = setInterval(() => {
-    const topMovies = homeMovies.slice(0, 6);
-    currentBillboardIndex = (currentBillboardIndex + 1) % topMovies.length;
-    setBillboardMovie(currentBillboardIndex);
-  }, 6000);
+function startShowcaseTimer() {
+  if (showcaseInterval) clearInterval(showcaseInterval);
+  showcaseInterval = setInterval(() => {
+    if (!homeMovies.length) return;
+    currentShowcaseIndex = (currentShowcaseIndex + 1) % Math.min(homeMovies.length, 6);
+    setShowcaseMovie(currentShowcaseIndex);
+  }, 5000);
 }
 
-function setBillboardMovie(idx) {
+function nextShowcaseMovie() {
+  if (!homeMovies.length) return;
+  currentShowcaseIndex = (currentShowcaseIndex + 1) % Math.min(homeMovies.length, 6);
+  setShowcaseMovie(currentShowcaseIndex);
+  startShowcaseTimer();
+}
+
+function prevShowcaseMovie() {
+  if (!homeMovies.length) return;
+  const count = Math.min(homeMovies.length, 6);
+  currentShowcaseIndex = (currentShowcaseIndex - 1 + count) % count;
+  setShowcaseMovie(currentShowcaseIndex);
+  startShowcaseTimer();
+}
+
+function setShowcaseMovie(idx) {
   const m = homeMovies[idx];
   if (!m) return;
 
   const backdrop = document.getElementById('heroBackdrop');
-  const title = document.getElementById('heroFeaturedBannerTitle');
-  const desc = document.getElementById('heroFeaturedBannerDesc');
-  const langTag = document.getElementById('hbLangTag');
-  const genreTag = document.getElementById('hbGenreTag');
-  const ratingTag = document.getElementById('hbRatingTag');
-  const bookBtn = document.getElementById('heroBookNowBtn');
-  const badge = document.getElementById('heroFeaturedBadge');
+  const poster = document.getElementById('showcasePoster');
+  const title = document.getElementById('showcaseTitle');
+  const langTag = document.getElementById('showcaseLangTag');
+  const genreTag = document.getElementById('showcaseGenreTag');
+  const ratingTag = document.getElementById('showcaseRatingTag');
+  const duration = document.getElementById('showcaseDuration');
+  const cert = document.getElementById('showcaseCert');
+  const bookBtn = document.getElementById('showcaseBookBtn');
 
-  // Trigger smooth fade
-  backdrop.style.opacity = '0';
-  setTimeout(() => {
-    backdrop.style.backgroundImage = `url('${m.poster_url || '/assets/brand_banner.png'}')`;
-    backdrop.style.opacity = '0.35';
-  }, 250);
+  // Smooth fade for backdrop and poster
+  if (backdrop) {
+    backdrop.style.opacity = '0.1';
+    setTimeout(() => {
+      backdrop.style.backgroundImage = `url('${m.poster_url || '/assets/tickethub_ticket_patch.png'}')`;
+      backdrop.style.opacity = '0.35';
+    }, 200);
+  }
+
+  if (poster) {
+    poster.style.opacity = '0.4';
+    setTimeout(() => {
+      poster.src = m.poster_url || '/assets/tickethub_ticket_patch.png';
+      poster.style.opacity = '1';
+    }, 180);
+  }
 
   title.textContent = m.title;
-  desc.textContent = m.description || 'Experience the cinematic spectacle on the grand screen with premium Dolby Atmos sound.';
   langTag.textContent = m.language;
-  genreTag.textContent = m.genre.split(',')[0].trim();
-  ratingTag.textContent = `★ ${m.rating}`;
+  genreTag.textContent = (m.genre || 'Action').split(',')[0].trim();
+  ratingTag.textContent = `★ ${m.rating || '8.5'}`;
+  duration.textContent = `⏱ ${fmtDuration(m.duration_min || m.durationMin)}`;
+  cert.textContent = `${m.status || 'Now Showing'} · 4K`;
   bookBtn.href = `/booking.html?movie=${m.id}`;
-  badge.textContent = `⭐ FEATURED ${m.language.toUpperCase()} PREMIERE`;
-
-  // Update active thumbnail
-  document.querySelectorAll('.hero-rail-thumb').forEach((t, i) => {
-    if (i === idx) t.classList.add('active');
-    else t.classList.remove('active');
-  });
 }
 
 function renderHomeGrid(movies) {
@@ -271,45 +372,33 @@ function renderHomeGrid(movies) {
     return;
   }
   grid.innerHTML = movies.map(m => {
-    const descExcerpt = m.description ? (m.description.slice(0, 110) + '…') : 'Experience the cinematic spectacle on the grand screen with premium Dolby Atmos sound.';
+    const poster = m.poster_url || '/assets/tickethub_ticket_patch.png';
+    const mainGenre = (m.genre || 'Action').split(',')[0].trim();
+    const cast = m.cast ? m.cast.slice(0, 48) + '…' : 'Cast: Featured Cinema Ensemble';
     return `
-    <div class="movie-card" onclick="window.location.href='/booking.html?movie=${m.id}'">
-      <div class="movie-info">
-        <div>
-          <div class="movie-card-header">
-            <span class="movie-brand-mark" title="TicketHub">TH</span>
-            <span class="movie-tagline">${m.genre.split(',')[0].trim()} PREMIERE</span>
-            ${m.status === 'New' ? '<span class="movie-badge">NEW</span>' : ''}
-          </div>
-          <div class="movie-title">${m.title}</div>
-          <div class="movie-meta">
-            <span class="movie-lang">${m.language}</span>
-            <span class="movie-duration">⏱ ${fmtDuration(m.duration_min || m.durationMin)}</span>
-            <span class="movie-genre">${m.genre}</span>
-            <span class="movie-rating">⭐ ${m.rating}</span>
-          </div>
-          <p style="font-size:0.86rem;color:#a0a6b8;line-height:1.55;max-width:540px;margin-bottom:1.2rem;">${descExcerpt}</p>
-        </div>
-        <div class="movie-actions">
-          <button class="btn-wc-play" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">▶ BOOK TICKETS</button>
-          <button class="btn-wc-download" onclick="event.stopPropagation();window.location.href='/movies.html'">EXPLORE</button>
+    <div class="luxora-movie-card" onclick="window.location.href='/booking.html?movie=${m.id}'">
+      <div class="luxora-poster-box">
+        <img src="${poster}" alt="${m.title}" class="luxora-poster-img" onerror="this.src='/assets/tickethub_ticket_patch.png'"/>
+        <div class="luxora-poster-top-bar">
+          <span class="luxora-format-badge">4K LASER</span>
+          <span class="luxora-rating-badge">★ ${m.rating || '8.5'}</span>
         </div>
       </div>
-      <div class="movie-poster">
-        ${posterImg(m)}
-        <div class="movie-poster-overlay">
-          <div class="poster-top-bar">
-            <span class="poster-top-title">${m.title}</span>
-            <span class="movie-rating">⭐ ${m.rating}</span>
+      <div class="luxora-card-details">
+        <div>
+          <h3 class="luxora-card-title">${m.title}</h3>
+          <div class="luxora-card-meta">
+            <span class="lang-pill">${m.language}</span>
+            <span>•</span>
+            <span>${mainGenre}</span>
+            <span>•</span>
+            <span>⏱ ${fmtDuration(m.duration_min || m.durationMin)}</span>
           </div>
-          <div class="poster-bottom-bar">
-            <button class="btn-watch-trailer" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">▶ BOOK NOW</button>
-            <div class="poster-actions-icons">
-              <div class="poster-icon-btn" title="Save" onclick="event.stopPropagation();showToast('Saved to watchlist!','success')">🔖</div>
-              <div class="poster-icon-btn" title="Share" onclick="event.stopPropagation();navigator.clipboard?.writeText(window.location.href);showToast('Link copied!','success')">🔗</div>
-            </div>
-          </div>
+          <p class="luxora-card-cast">${cast}</p>
         </div>
+        <button class="btn-luxora-book" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">
+          Reserve Seats 🎟️
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -321,7 +410,7 @@ function filterHomeByLang(lang, btn) {
   if (lang === 'all') {
     renderHomeGrid(homeMovies.slice(0, 8));
   } else {
-    const filtered = homeMovies.filter(m => m.language.toLowerCase() === lang.toLowerCase());
+    const filtered = homeMovies.filter(m => (m.language || '').toLowerCase() === lang.toLowerCase());
     renderHomeGrid(filtered);
   }
 }

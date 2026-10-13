@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kerala Theatres & Screens – Ticket Hub</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Logo" class="nav-brand-img"/>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/index.html">Home</a></li>
+    <li><a href="/movies.html">Movies</a></li>
+    <li><a href="/theatres.html" class="active">Theatres</a></li>
+    <li><a href="/booking.html">Book Tickets</a></li>
+    <li><a href="/dashboard.html">My Bookings</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions"></div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="page-hero">
+    <div class="hero-badge" style="margin-bottom:0.75rem;">PARTNER CINEMA MULTIPLEXES</div>
+    <h1 class="page-hero-title">Experience Films at Premier Kerala Theatres</h1>
+    <p class="section-desc" style="max-width:620px;margin:0 auto 1.5rem;">Select your preferred cinema venue to see all active movies, screen technologies (4K Laser, Dolby Atmos), and live showtimes.</p>
+  </div>
+
+  <section class="section" style="padding-top:2rem;">
+    <!-- City Tabs -->
+    <div class="city-tabs" id="theatreCityTabs" style="justify-content:center;margin-bottom:2rem;">
+      <div class="spinner" style="width:24px;height:24px;margin:0;"></div>
+    </div>
+
+    <!-- Theatres List -->
+    <div id="theatresContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1.5rem;">
+      <div class="spinner"></div>
+    </div>
+  </section>
+</div>
+
+<!-- Modal for Selected Theatre Movies & Shows -->
+<div class="modal-overlay" id="theatreShowsModal">
+  <div class="modal" style="max-width:700px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="tModalTitle" style="color:var(--primary);font-size:1.35rem;">Theatre Shows</h2>
+        <p id="tModalSub" style="color:var(--text-muted);font-size:0.85rem;margin:4px 0 0;">📍 Location</p>
+      </div>
+      <div class="modal-close" onclick="closeTheatreModal()">✕</div>
+    </div>
+    <div id="tModalBody" style="margin-top:1rem;">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-brand" style="margin-bottom:0.75rem;">
+        <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Logo" class="nav-brand-img"/>
+      </div>
+      <p>Kerala's premier movie ticket booking platform.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><a href="/index.html">Home</a><a href="/movies.html">Movies</a><a href="/theatres.html">Theatres</a><a href="/booking.html">Book Tickets</a><a href="/dashboard.html">My Bookings</a></div>
+    <div class="footer-col"><h4>Portals</h4><a href="/login.html">Sign In</a><a href="/admin-login.html" style="color:var(--accent-gold);">🛡️ Admin Portal</a></div>
+    <div class="footer-col"><h4>Academic Info</h4><a href="#">Department of CSE</a><a href="#">Micro Project 2026</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Ticket Hub — College of Engineering, Muttathara</span>
+    <span>Abhinav S · Abhirami M K · Adhithya R M · AL-Fidha S R</span>
+  </div>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/api.js"></script>
+<script>
+let allTheatres = [];
+let selectedCity = 'all';
+
+document.addEventListener('DOMContentLoaded', async () => {
+  updateNav();
+  try {
+    allTheatres = await TheatresAPI.getAll();
+    renderCityTabs();
+    renderTheatres();
+  } catch(e) {
+    document.getElementById('theatresContainer').innerHTML = `<p style="color:var(--text-muted);text-align:center;grid-column:1/-1;">⚠️ ${e.message}</p>`;
+  }
+});
+
+function renderCityTabs() {
+  const cities = ['all', ...new Set(allTheatres.map(t => t.city))];
+  document.getElementById('theatreCityTabs').innerHTML = cities.map(c => `
+    <button class="city-tab${c===selectedCity?' active':''}" onclick="filterCity('${c}')">${c==='all'?'All Kerala':c}</button>
+  `).join('');
+}
+
+function filterCity(city) {
+  selectedCity = city;
+  renderCityTabs();
+  renderTheatres();
+}
+
+function renderTheatres() {
+  const filtered = selectedCity === 'all' ? allTheatres : allTheatres.filter(t => t.city === selectedCity);
+  document.getElementById('theatresContainer').innerHTML = filtered.map(t => `
+    <div class="luxora-service-card" style="padding:1.75rem;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-lg);transition:var(--transition);"
+         onmouseover="this.style.borderColor='var(--border-hover)';this.style.transform='translateY(-4px)'"
+         onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;">
+          <span style="font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--primary);padding:3px 10px;background:rgba(201,169,110,0.12);border-radius:100px;border:1px solid var(--border);">${t.city}</span>
+          <span style="font-size:0.8rem;color:var(--text-muted);">2-4 Screens</span>
+        </div>
+        <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:#fff;">${t.name}</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">📍 ${t.location}</p>
+        
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <span class="cinepass-tag cert" style="font-size:0.7rem;">Dolby Atmos 7.1</span>
+          <span class="cinepass-tag cert" style="font-size:0.7rem;">4K RGB Laser</span>
+          <span class="cinepass-tag cert" style="font-size:0.7rem;">Recliner Rows</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openTheatreShows(${t.id}, '${t.name.replace(/'/g, "\\'")}', '${t.location.replace(/'/g, "\\'")}', '${t.city.replace(/'/g, "\\')}')">View Movies &amp; Shows</button>
+        <a href="/booking.html?theatre=${t.id}" class="btn btn-primary btn-sm" style="flex:1;text-align:center;">Book Seats →</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function openTheatreShows(theatreId, name, loc, city) {
+  document.getElementById('tModalTitle').textContent = name;
+  document.getElementById('tModalSub').textContent = `📍 ${loc}, ${city}`;
+  document.getElementById('tModalBody').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('theatreShowsModal').classList.add('show');
+
+  try {
+    const shows = await TheatresAPI.getShows(theatreId);
+    if (!shows || !shows.length) {
+      document.getElementById('tModalBody').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No screenings scheduled at this venue currently.</p>';
+      return;
+    }
+
+    // Group by movie
+    const movieMap = {};
+    shows.forEach(s => {
+      if (!movieMap[s.movie_id]) {
+        movieMap[s.movie_id] = {
+          id: s.movie_id,
+          title: s.movie_title,
+          genre: s.movie_genre,
+          language: s.movie_language,
+          rating: s.movie_rating,
+          poster_url: s.poster_url,
+          duration_min: s.duration_min,
+          shows: []
+        };
+      }
+      movieMap[s.movie_id].shows.push(s);
+    });
+
+    document.getElementById('tModalBody').innerHTML = Object.values(movieMap).map(m => `
+      <div style="display:flex;gap:1.25rem;padding:1.25rem 0;border-bottom:1px solid var(--border);align-items:flex-start;">
+        <img src="${m.poster_url || '/assets/tickethub_ticket_patch.png'}" style="width:75px;height:105px;object-fit:cover;border-radius:8px;background:#000;" onerror="this.src='/assets/tickethub_ticket_patch.png'"/>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.25rem;">
+            <h4 style="font-size:1.1rem;font-weight:700;margin:0;color:#fff;">${m.title}</h4>
+            <span style="font-size:0.75rem;padding:2px 8px;border-radius:4px;background:rgba(201,169,110,0.15);color:var(--primary);">${m.language}</span>
+            <span style="font-size:0.8rem;color:var(--primary);font-weight:700;">★ ${m.rating || '8.5'}</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">${m.genre} · ${fmtDuration(m.duration_min)}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${m.shows.filter(s => {
+              if (!s.show_date || !s.show_time) return false;
+              const dt = new Date(`${s.show_date}T${s.show_time.slice(0,5)}`);
+              return dt > new Date();
+            }).map(s => `
+              <a href="/booking.html?theatre=${theatreId}" class="show-chip" style="margin:0;text-decoration:none;">
+                ${s.show_time.slice(0,5)}
+                <small>${s.screen_name} · ${s.show_date}</small>
+              </a>
+            `).join('') || '<span style="font-size:0.78rem;color:var(--text-muted);">No upcoming shows today</span>'}
+          </div>
+        </div>
+      </div>
+    `).join('') + `
+      <div style="margin-top:1.5rem;text-align:center;">
+        <a href="/booking.html?theatre=${theatreId}" class="btn btn-primary btn-full">Book Seats for ${name} →</a>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('tModalBody').innerHTML = `<p style="color:var(--text-muted);">⚠️ ${e.message}</p>`;
+  }
+}
+
+function closeTheatreModal() {
+  document.getElementById('theatreShowsModal').classList.remove('show');
+}
+</script>
+</body>
+</html>
