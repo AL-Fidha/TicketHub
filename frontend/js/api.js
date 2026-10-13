@@ -6,7 +6,7 @@
 
 let API_BASE = '/api';
 if (typeof window !== 'undefined') {
-  if (window.location.protocol === 'file:' || ['5500', '3000', '5000', '8000'].includes(window.location.port)) {
+  if (window.location.protocol === 'file:' || (window.location.port !== '8081' && window.location.port !== '8080')) {
     API_BASE = window.__API_BASE__ || 'http://localhost:8081/api';
   }
 }
