@@ -185,7 +185,7 @@ function initCinemaIntro() {
   };
   const skipBtn = document.getElementById('skipIntroBtn');
   if (skipBtn) skipBtn.addEventListener('click', hideIntro);
-  setTimeout(hideIntro, 1800);
+  setTimeout(hideIntro, 2500);
 }
 
 // ── POSTER helper (Real TMDB / Image URLs) ─────

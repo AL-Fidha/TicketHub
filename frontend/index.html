@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<!-- CINEMATIC INTRO SPLASH & LOGO ANIMATION (LUXORA THEME) -->
+<!-- CINEMATIC INTRO SPLASH & LOGO ANIMATION (ALL ABOUT TICKETHUB) -->
 <div id="cinemaIntro" class="cinema-intro-overlay">
   <button class="cinema-intro-skip" id="skipIntroBtn">Skip Intro ✕</button>
   <div class="cinema-intro-spotlight"></div>
@@ -18,8 +18,16 @@
       <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Admit One Logo" class="cinema-intro-ticket-logo"/>
     </div>
     <div class="cinema-intro-brand-name">Ticket Hub</div>
-    <div class="cinema-intro-tagline">✦ KERALA'S PREMIER CINEMATIC DESTINATIONS ✦</div>
-    <div class="cinema-intro-admit">ADMIT ONE · RESERVED SEATING · 20 MULTIPLEXES</div>
+    <div class="cinema-intro-tagline">✦ KERALA'S PREMIER CINEMA TICKET RESERVATIONS ✦</div>
+    <p style="font-size:0.85rem;color:#c8c2b4;max-width:440px;margin:0 auto;line-height:1.5;">
+      Your direct gateway to 20 iconic multiplexes across Kerala. Live synchronized seat locking, Dolby Atmos sound, and instant digital passes.
+    </p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:0.4rem;">
+      <span style="font-size:0.72rem;padding:3px 10px;border-radius:100px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.3);color:var(--primary-light);">⚡ Zero Collision Locking</span>
+      <span style="font-size:0.72rem;padding:3px 10px;border-radius:100px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.3);color:var(--primary-light);">🏛️ 20 Kerala Multiplexes</span>
+      <span style="font-size:0.72rem;padding:3px 10px;border-radius:100px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.3);color:var(--primary-light);">🎟️ Verified Instant E-Pass</span>
+    </div>
+    <div class="cinema-intro-admit" style="margin-top:0.4rem;">★ ADMIT ONE · RESERVED SEATING ★</div>
     <div class="cinema-intro-progress">
       <div class="cinema-intro-progress-bar"></div>
     </div>
@@ -49,12 +57,13 @@
     <div class="hero-luxora-ambient"></div>
     
     <div class="hero-luxora-content">
+      <!-- LEFT: TICKETHUB INTRODUCTION -->
       <div class="hero-luxora-text">
-        <div class="hero-luxora-badge">✦ KERALA'S PREMIER CINEMA CURATION ✦</div>
-        <h1 class="hero-luxora-title">Cinematic Spaces That <span class="highlight">Inspire Passion.</span></h1>
+        <div class="hero-luxora-badge">✦ KERALA'S OFFICIAL CINEMA CONCIERGE ✦</div>
+        <h1 class="hero-luxora-title">Experience Cinema With <span class="highlight">Ticket Hub.</span></h1>
         
-        <p class="hero-luxora-desc" id="heroFeaturedBannerDesc">
-          Experience 27 blockbusters across 20 premier multiplexes in Kerala. Choose your luxury screen, reserve seats in real time with zero collision, and receive verified digital cinema passes.
+        <p class="hero-luxora-desc">
+          Kerala's dedicated cinematic ticketing portal. Discover 27 blockbusters across 20 state-of-the-art multiplexes with Dolby Atmos 7.1 sound, Barco 4K Laser projection, and real-time synchronized seat locking.
         </p>
 
         <div class="hero-luxora-actions">
@@ -83,37 +92,46 @@
         </div>
       </div>
 
-      <!-- 3D FEATURED PREMIERE SHOWCASE CARD -->
-      <div class="luxora-hero-showcase" id="heroShowcaseCard">
-        <div class="luxora-showcase-poster-wrap">
-          <img src="/assets/tickethub_ticket_patch.png" alt="Featured Movie" class="luxora-showcase-poster" id="showcasePoster"/>
-          <div class="luxora-showcase-badge-top">
-            <span class="luxora-pill-tag" id="showcaseLangTag">Malayalam</span>
-            <span class="luxora-pill-tag" id="showcaseGenreTag">Adventure</span>
-          </div>
-          <div class="luxora-showcase-rating" id="showcaseRatingTag">★ 8.6</div>
-        </div>
+      <!-- RIGHT: MOVIE-RELATED ANIMATION STAGE (NO PREVIEW CARDS) -->
+      <div class="cinema-motion-stage">
+        <!-- Ambient Stage Glow & Light Cone -->
+        <div class="cinema-stage-glow"></div>
+        <div class="projector-beam"></div>
 
-        <div>
-          <h2 class="luxora-showcase-title" id="showcaseTitle">Featured Premiere</h2>
-          <div class="luxora-showcase-meta">
-            <span id="showcaseDuration">⏱ 2h 15m</span>
-            <span>•</span>
-            <span id="showcaseCert">U/A Certified</span>
-          </div>
+        <!-- Dual Spinning Film Reels -->
+        <div class="cinema-film-reel reel-top" title="35mm Film Spool"></div>
+        <div class="cinema-film-reel reel-bottom" title="35mm Film Takeup"></div>
+
+        <!-- Floating Cinema Badges -->
+        <div class="floating-cinema-tag tag-pos-1">🎞️ 35mm Cinema Reel</div>
+        <div class="floating-cinema-tag tag-pos-2">🔊 Dolby Atmos 7.1</div>
+
+        <!-- Center 3D Floating TicketHub Emblem Card -->
+        <div class="cinema-ticket-hero-card">
+          <img src="/assets/tickethub_ticket_patch.png" alt="TicketHub Embroidered Emblem" class="cinema-ticket-hero-img"/>
           
-          <div class="luxora-showcase-specs">
-            <span class="spec-badge">IMAX 4K Laser</span>
-            <span class="spec-badge">Dolby Atmos</span>
-            <span class="spec-badge">VIP Recliners</span>
-            <span class="spec-badge">Live Availability</span>
+          <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:0.25rem;">
+            Ticket Hub
+          </div>
+          <div style="font-size:0.75rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary);font-weight:700;">
+            ✦ ADMIT ONE · PREMIER SEATING ✦
           </div>
 
-          <div class="luxora-showcase-nav">
-            <a href="/booking.html" class="btn btn-primary" id="showcaseBookBtn" style="flex:1;">Reserve Seats 🎟️</a>
-            <div style="display:flex;gap:6px;">
-              <button class="luxora-nav-btn" onclick="prevShowcaseMovie()" title="Previous Movie">❮</button>
-              <button class="luxora-nav-btn" onclick="nextShowcaseMovie()" title="Next Movie">❯</button>
+          <div class="cinema-stage-details">
+            <div class="clapper-badge">
+              <span class="clapper-icon">🎬</span>
+              <span>SCENE 01 · 24 FPS</span>
+            </div>
+            
+            <div class="atmos-equalizer" title="Dolby Atmos Live Acoustic Output">
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
             </div>
           </div>
         </div>
@@ -139,7 +157,45 @@
     </div>
   </div>
 
-  <!-- NOW SHOWING WITH LANGUAGE TABS -->
+  <!-- CREATIVE CONTINUOUS 35MM FILM REEL STRIP (RIGHT ABOVE MOVIE CATALOGUES) -->
+  <section class="film-reel-strip-section" id="filmReelStripSection">
+    <div class="film-reel-meta-header">
+      <div class="film-reel-label-group">
+        <svg class="film-reel-icon-spin" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" stroke="#c9a96e" stroke-width="6" fill="none"/>
+          <circle cx="50" cy="50" r="14" stroke="#c9a96e" stroke-width="4" fill="#14120f"/>
+          <circle cx="50" cy="50" r="5" fill="#c9a96e"/>
+          <line x1="50" y1="6" x2="50" y2="36" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="50" y1="64" x2="50" y2="94" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="6" y1="50" x2="36" y2="50" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="64" y1="50" x2="94" y2="50" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="19" y1="19" x2="40" y2="40" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="60" y1="60" x2="81" y2="81" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="81" y1="19" x2="60" y2="40" stroke="#c9a96e" stroke-width="4"/>
+          <line x1="40" y1="60" x2="19" y2="81" stroke="#c9a96e" stroke-width="4"/>
+        </svg>
+        <div>
+          <span class="film-reel-heading">✦ Continuous 35mm Cinema Reel ✦</span>
+        </div>
+      </div>
+      <span class="film-reel-sub">Rolling Across 20 Kerala Multiplexes · Hover to Pause Frame</span>
+    </div>
+
+    <!-- Sprocket holes top -->
+    <div class="film-sprocket-track"></div>
+
+    <!-- Scrolling film frame marquee -->
+    <div class="film-marquee-viewport">
+      <div class="film-marquee-track" id="filmMarqueeTrack">
+        <!-- Dynamically injected film frames -->
+      </div>
+    </div>
+
+    <!-- Sprocket holes bottom -->
+    <div class="film-sprocket-track"></div>
+  </section>
+
+  <!-- NOW SHOWING WITH LANGUAGE TABS (RESIZED ATTRACTIVE 4-COLUMN CATALOG) -->
   <div style="background:linear-gradient(180deg,var(--bg-dark),#11100e 50%,var(--bg-dark));padding:3.5rem 0 4.5rem;">
     <section class="section">
       <div class="section-header" style="text-align:center;margin-bottom:2.2rem;">
@@ -149,7 +205,7 @@
       </div>
 
       <!-- Quick Language Filter -->
-      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:3rem;" id="homeLangTabs">
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:2.5rem;" id="homeLangTabs">
         <button class="filter-chip active" onclick="filterHomeByLang('all', this)">All Releases</button>
         <button class="filter-chip" onclick="filterHomeByLang('Malayalam', this)">Malayalam</button>
         <button class="filter-chip" onclick="filterHomeByLang('English', this)">English</button>
@@ -157,6 +213,7 @@
         <button class="filter-chip" onclick="filterHomeByLang('Hindi', this)">Hindi</button>
       </div>
 
+      <!-- Resized 4-Column Movie Grid -->
       <div id="homeMoviesGrid" class="luxora-movies-grid"></div>
 
       <div style="text-align:center;margin-top:3.5rem;">
@@ -275,8 +332,6 @@
 <script src="/js/api.js"></script>
 <script>
 let homeMovies = [];
-let currentShowcaseIndex = 0;
-let showcaseInterval = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   updateNav();
@@ -286,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     homeMovies = await MoviesAPI.getAll();
 
     if (homeMovies.length > 0) {
-      initShowcaseCarousel(homeMovies);
+      initFilmReel(homeMovies);
     }
 
     renderHomeGrid(homeMovies.slice(0, 8));
@@ -296,73 +351,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-function initShowcaseCarousel(movies) {
-  setShowcaseMovie(0);
-  startShowcaseTimer();
-}
+function initFilmReel(movies) {
+  const track = document.getElementById('filmMarqueeTrack');
+  if (!track || !movies.length) return;
 
-function startShowcaseTimer() {
-  if (showcaseInterval) clearInterval(showcaseInterval);
-  showcaseInterval = setInterval(() => {
-    if (!homeMovies.length) return;
-    currentShowcaseIndex = (currentShowcaseIndex + 1) % Math.min(homeMovies.length, 6);
-    setShowcaseMovie(currentShowcaseIndex);
-  }, 5000);
-}
+  // Take top 10 movies and duplicate them twice for seamless infinite scrolling
+  const sample = movies.slice(0, 10);
+  const loopList = [...sample, ...sample];
 
-function nextShowcaseMovie() {
-  if (!homeMovies.length) return;
-  currentShowcaseIndex = (currentShowcaseIndex + 1) % Math.min(homeMovies.length, 6);
-  setShowcaseMovie(currentShowcaseIndex);
-  startShowcaseTimer();
-}
-
-function prevShowcaseMovie() {
-  if (!homeMovies.length) return;
-  const count = Math.min(homeMovies.length, 6);
-  currentShowcaseIndex = (currentShowcaseIndex - 1 + count) % count;
-  setShowcaseMovie(currentShowcaseIndex);
-  startShowcaseTimer();
-}
-
-function setShowcaseMovie(idx) {
-  const m = homeMovies[idx];
-  if (!m) return;
-
-  const backdrop = document.getElementById('heroBackdrop');
-  const poster = document.getElementById('showcasePoster');
-  const title = document.getElementById('showcaseTitle');
-  const langTag = document.getElementById('showcaseLangTag');
-  const genreTag = document.getElementById('showcaseGenreTag');
-  const ratingTag = document.getElementById('showcaseRatingTag');
-  const duration = document.getElementById('showcaseDuration');
-  const cert = document.getElementById('showcaseCert');
-  const bookBtn = document.getElementById('showcaseBookBtn');
-
-  // Smooth fade for backdrop and poster
-  if (backdrop) {
-    backdrop.style.opacity = '0.1';
-    setTimeout(() => {
-      backdrop.style.backgroundImage = `url('${m.poster_url || '/assets/tickethub_ticket_patch.png'}')`;
-      backdrop.style.opacity = '0.35';
-    }, 200);
-  }
-
-  if (poster) {
-    poster.style.opacity = '0.4';
-    setTimeout(() => {
-      poster.src = m.poster_url || '/assets/tickethub_ticket_patch.png';
-      poster.style.opacity = '1';
-    }, 180);
-  }
-
-  title.textContent = m.title;
-  langTag.textContent = m.language;
-  genreTag.textContent = (m.genre || 'Action').split(',')[0].trim();
-  ratingTag.textContent = `★ ${m.rating || '8.5'}`;
-  duration.textContent = `⏱ ${fmtDuration(m.duration_min || m.durationMin)}`;
-  cert.textContent = `${m.status || 'Now Showing'} · 4K`;
-  bookBtn.href = `/booking.html?movie=${m.id}`;
+  track.innerHTML = loopList.map(m => {
+    const poster = m.poster_url || '/assets/tickethub_ticket_patch.png';
+    const mainGenre = (m.genre || 'Action').split(',')[0].trim();
+    return `
+      <div class="film-frame-cell" onclick="window.location.href='/booking.html?movie=${m.id}'" title="${m.title}">
+        <img src="${poster}" alt="${m.title}" class="film-frame-img" onerror="this.src='/assets/tickethub_ticket_patch.png'"/>
+        <div class="film-frame-overlay">
+          <div class="film-frame-title">${m.title}</div>
+          <div class="film-frame-tag">★ ${m.rating || '8.5'} · ${m.language}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderHomeGrid(movies) {
@@ -374,7 +383,7 @@ function renderHomeGrid(movies) {
   grid.innerHTML = movies.map(m => {
     const poster = m.poster_url || '/assets/tickethub_ticket_patch.png';
     const mainGenre = (m.genre || 'Action').split(',')[0].trim();
-    const cast = m.cast ? m.cast.slice(0, 48) + '…' : 'Cast: Featured Cinema Ensemble';
+    const cast = m.cast ? m.cast.slice(0, 44) + '…' : 'Cast: Featured Cinema Ensemble';
     return `
     <div class="luxora-movie-card" onclick="window.location.href='/booking.html?movie=${m.id}'">
       <div class="luxora-poster-box">
