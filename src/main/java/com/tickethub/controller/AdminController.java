@@ -17,6 +17,7 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService adminService;
+    private final com.tickethub.service.MovieService movieService;
 
     @GetMapping("/stats")
     public ResponseEntity<?> stats() {
@@ -82,6 +83,18 @@ public class AdminController {
             return ResponseEntity.ok(Map.of("message", "Show deleted."));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/movies/{id}")
+    public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
+        try {
+            movieService.delete(id);
+            return ResponseEntity.ok(Map.of("message", "Movie deleted successfully."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Unable to delete movie: " + e.getMessage()));
         }
     }
 

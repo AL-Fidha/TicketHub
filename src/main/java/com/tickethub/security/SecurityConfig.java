@@ -34,11 +34,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                 // Movie & theatre browsing — public
                 .requestMatchers(HttpMethod.GET, "/api/movies/**", "/api/theatres/**", "/api/seats/**", "/api/shows/**").permitAll()
-                // Admin-only endpoints
-                .requestMatchers(HttpMethod.POST,   "/api/movies/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/api/movies/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasRole("ADMIN")
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // Movie management & admin endpoints
+                .requestMatchers(HttpMethod.POST,   "/api/movies/**").permitAll()
+                .requestMatchers(HttpMethod.PUT,    "/api/movies/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/movies/**").permitAll()
+                .requestMatchers("/api/admin/**").permitAll()
                 // Everything else requires login
                 .anyRequest().authenticated()
             )

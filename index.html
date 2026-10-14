@@ -310,6 +310,18 @@
 <script>
 let homeMovies = [];
 
+function initCinemaIntro() {
+  const intro = document.getElementById('cinemaIntro');
+  if (!intro) return;
+  const skipBtn = document.getElementById('skipIntroBtn');
+  const dismiss = () => {
+    intro.classList.add('fade-out');
+    setTimeout(() => { intro.style.display = 'none'; }, 850);
+  };
+  if (skipBtn) skipBtn.addEventListener('click', dismiss);
+  setTimeout(dismiss, 2200);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   updateNav();
   initCinemaIntro();

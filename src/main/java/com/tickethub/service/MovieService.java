@@ -13,6 +13,9 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.EntityManager;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class MovieService {
@@ -21,6 +24,7 @@ public class MovieService {
     private final ShowRepository       showRepo;
     private final BookingSeatRepository bsRepo;
     private final TmdbService          tmdb;
+    private final EntityManager        em;
 
     public List<Movie> getAll(String language, String genre, String search) {
         Movie.Language lang = null;
@@ -99,8 +103,32 @@ public class MovieService {
         return movieRepo.save(existing);
     }
 
+    @Transactional
     public void delete(Long id) {
-        movieRepo.deleteById(id);
+        if (!movieRepo.existsById(id)) {
+            throw new IllegalArgumentException("Movie not found with id: " + id);
+        }
+        try {
+            // 1. Delete booking_seats for all shows belonging to this movie
+            em.createNativeQuery(
+                "DELETE FROM booking_seats WHERE show_id IN (SELECT id FROM shows WHERE movie_id = :movieId)"
+            ).setParameter("movieId", id).executeUpdate();
+
+            // 2. Delete bookings for all shows belonging to this movie
+            em.createNativeQuery(
+                "DELETE FROM bookings WHERE show_id IN (SELECT id FROM shows WHERE movie_id = :movieId)"
+            ).setParameter("movieId", id).executeUpdate();
+
+            // 3. Delete shows belonging to this movie
+            em.createNativeQuery(
+                "DELETE FROM shows WHERE movie_id = :movieId"
+            ).setParameter("movieId", id).executeUpdate();
+
+            // 4. Finally delete the movie
+            movieRepo.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete movie: " + e.getMessage(), e);
+        }
     }
 
     private void attachPoster(Movie m) {
