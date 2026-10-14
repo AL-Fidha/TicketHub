@@ -659,7 +659,7 @@ async function loadAdminMovies() {
               <td><span class="badge ${m.status==='New'?'badge-pending':'badge-success'}">${m.status}</span></td>
               <td style="white-space:nowrap;">
                 <button class="btn btn-ghost btn-sm" onclick="editMovie(${m.id})">Edit</button>
-                <button class="btn btn-sm" style="background:rgba(229,9,20,.1);color:#ff6b6b;border:1px solid rgba(229,9,20,.2);margin-left:4px;" onclick="deleteMovie(${m.id},'${m.title.replace(/'/g,"\\'")})">Delete</button>
+                <button class="btn btn-sm" style="background:rgba(229,9,20,.1);color:#ff6b6b;border:1px solid rgba(229,9,20,.2);margin-left:4px;" onclick="deleteMovie(${m.id}, ${JSON.stringify(m.title)})">Delete</button>
               </td>
             </tr>`).join('')}
           </tbody>

@@ -129,6 +129,7 @@ const AdminAPI = {
   addTheatre: data => apiFetch('/admin/theatres', { method: 'POST', body: JSON.stringify(data) }),
   addShow: data => apiFetch('/admin/shows', { method: 'POST', body: JSON.stringify(data) }),
   deleteShow: id => apiFetch(`/admin/shows/${id}`, { method: 'DELETE' }),
+  deleteMovie: id => apiFetch(`/movies/${id}`, { method: 'DELETE' }),
   discoverTmdbMovies: language => apiFetch(`/admin/tmdb/movies?language=${encodeURIComponent(language)}`),
   importTmdbMovie: (tmdbId, language) => apiFetch(`/admin/tmdb/movies/${tmdbId}?language=${encodeURIComponent(language)}`, { method: 'POST' }),
 };

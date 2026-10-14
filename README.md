@@ -1,4 +1,4 @@
-# 🎬 Ticket Hub — Movie Ticket Booking System
+# 🎬 TicketHub — Kerala Cinema Ticket Booking System
 
 > **College of Engineering, Muttathara, Thiruvananthapuram — 2026**  
 > Department of Computer Science and Engineering  
@@ -6,253 +6,168 @@
 
 ---
 
-## 🗂️ Project Structure
+## 📌 Overview
+
+**TicketHub** is a production-ready, full-stack online movie ticket reservation platform designed specifically for multiplexes and screens across Kerala. It combines an architectural dark-luxury frontend with an enterprise Java Spring Boot backend, MySQL database, JWT authentication, and The Movie Database (TMDB) integration.
+
+---
+
+## ✨ Key Features
+
+- **Kerala Multiplex Concierge**: Screenings across 20 state-of-the-art multiplexes across Kochi, Thiruvananthapuram, Kozhikode, Thrissur, Kollam, Palakkad, Kottayam, Malappuram, Alappuzha, and Kasaragod.
+- **Architectural UI & Theme**: Embroidered gold ticket badge branding, 3D animated hero showcase, moving 35mm film reel ribbon, and responsive 4-column movie catalogue.
+- **Interactive Seat Selection & Real-Time Collision Locking**: Premium recliners (Rows A–B) and Standard seats (Rows C–H) with instant validation to prevent double-booking.
+- **Time-Aware Booking Protection**: Automatically displays all daily scheduled showtimes, while clearly disabling and marking past screenings (`Show Ended`) to prevent invalid reservations.
+- **Odyssey-Style Admit-One Tickets**: Perforated digital cinema passes with scannable barcodes, auditorium details, sound profiles (Dolby Atmos 7.1, 4K RGB Laser), and printable format.
+- **Admin Management Operations**: Dedicated administrative control center allowing staff to schedule shows, broadcast showtimes to all theatres, edit movie profiles, delete movies, and discover/import live titles from TMDB.
+- **Customer CineClub Loyalty Tier**: Dynamic loyalty points accumulation (Silver Film Buff, Gold Cinephile, Platinum Premiere Member) with profile preferences.
+
+---
+
+## 🗂️ Project Architecture & File Structure
 
 ```text
 TicketHub/
 │
-├── src/main/java/com/tickethub/     ← JAVA BACKEND (Spring Boot)
-│   ├── TicketHubApplication.java    ← Main entry point + data seeder
-│   ├── model/                       ← JPA Entity classes
-│   ├── repository/                  ← Spring Data JPA interfaces
-│   ├── service/                     ← Business logic
-│   ├── controller/                  ← REST API endpoints
-│   ├── security/                    ← JWT auth
-│   └── dto/                         ← Request/Response objects
+├── src/main/java/com/tickethub/          ← ENTERPRISE JAVA BACKEND (Spring Boot)
+│   ├── TicketHubApplication.java         ← Main entry point & database seeder
+│   ├── controller/                       ← REST API Controllers
+│   │   ├── AdminController.java          ← Admin stats, lineup, shows, TMDB import
+│   │   ├── AuthController.java           ← Registration, login, profile, password
+│   │   ├── BookingController.java        ← Ticket booking, history, cancellations
+│   │   ├── MovieController.java          ← Movie catalogue CRUD & delete endpoint
+│   │   ├── SeatController.java           ← Live seat map & reservation checks
+│   │   ├── ShowController.java           ← Showtimes query endpoints
+│   │   └── TheatreController.java        ← Kerala theatres and screens
+│   ├── dto/                              ← Data Transfer Objects & validation requests
+│   ├── exception/                        ← Global REST exception handler
+│   ├── model/                            ← JPA Entity models (User, Movie, Theatre, Screen, Show, Booking)
+│   ├── repository/                       ← Spring Data JPA interfaces
+│   ├── security/                         ← JWT Authentication filter & Spring Security config
+│   └── service/                          ← Business logic (Admin, Auth, Booking, Movie, Seat, TMDB)
 │
 ├── src/main/resources/
-│   ├── application.properties       ← MySQL + JWT + TMDB config
-│   └── static/                      ← FRONTEND (HTML/CSS/JS)
-│       ├── index.html
-│       ├── movies.html
-│       ├── booking.html
-│       ├── login.html
-│       ├── dashboard.html
-│       ├── css/styles.css
-│       └── js/api.js
+│   ├── application.properties            ← Active MySQL, JWT, server, & TMDB configuration
+│   ├── application.properties.example    ← Configuration template for new environments
+│   ├── application-railway.properties    ← Cloud deployment configuration profile
+│   └── static/                           ← AUTHENTIC WEB CLIENT (Served by Spring Boot)
+│       ├── index.html                    ← Homepage with animated hero & movie catalogue
+│       ├── movies.html                   ← Movie catalogue with genre/language filters
+│       ├── booking.html                  ← 4-step ticket booking & live seat selection
+│       ├── theatres.html                 ← Kerala multiplexes, city tabs & screen details
+│       ├── dashboard.html                ← Customer profile, bookings, loyalty & admin panel
+│       ├── admin.html                    ← Full-screen dedicated admin operations dashboard
+│       ├── login.html                    ← Sign In & Customer Registration portal
+│       ├── admin-login.html              ← Dedicated administrator authentication portal
+│       ├── css/styles.css                ← Unified styling, animations & responsive layout
+│       ├── js/api.js                     ← Centralized API client & JWT token manager
+│       └── assets/                       ← Embroidered badge logos and graphic assets
 │
 ├── database/
-│   └── schema.sql                   ← MySQL schema reference
+│   ├── schema.sql                        ← MySQL schema DDL reference
+│   └── migrations/                       ← Database migration scripts
 │
-├── frontend/                        ← Frontend source (mirrors static/)
-├── pom.xml                          ← Maven dependencies
-├── .gitignore
-└── README.md
+├── pom.xml                               ← Maven build dependencies and plugins
+├── Dockerfile                            ← Containerization for deployment
+└── README.md                             ← Project documentation
 ```
 
-For the Java/MySQL application, `src/main/java` and `src/main/resources/static` are authoritative. The root-level pages, `frontend/`, and `backend/` are older parallel prototypes and are not served by the Spring Boot app.
+---
+
+## 🛠️ Technology Stack
+
+- **Backend**: Java 17, Spring Boot 3.2.5, Spring Security, Spring Data JPA, Hibernate, JJWT (JSON Web Token)
+- **Frontend**: Modern Vanilla JavaScript (ES6+), CSS3 (Flexbox/Grid, 3D Transforms, Keyframes), HTML5
+- **Database**: MySQL 8.0+
+- **Build & Dependency Management**: Apache Maven 3.9+
+- **External APIs**: The Movie Database (TMDB) API v3 for high-resolution movie artwork
 
 ---
 
-## ⚙️ Step 1 — Install Java 17
+## 🚀 Getting Started
 
-1. Go to: https://adoptium.net/
-2. Download **Temurin 17 (LTS)**
-3. Run the installer — tick **"Set JAVA_HOME"** and **"Add to PATH"**
-4. Verify:
-   ```powershell
-   java -version
-   # Should show: openjdk version "17.x.x"
-   ```
+### Prerequisites
 
----
+1. **Java 17 (LTS)**: Ensure Java 17 is installed (`java -version`).
+2. **Apache Maven**: Ensure Maven is installed and on your PATH (`mvn -version`).
+3. **MySQL Server**: Running on `localhost:3306` with database `tickethub`.
 
-## ⚙️ Step 2 — Install Maven
+### 1. Database Setup
 
-1. Go to: https://maven.apache.org/download.cgi
-2. Download **Binary zip archive** (e.g. `apache-maven-3.9.6-bin.zip`)
-3. Extract to `C:\Program Files\Maven\`
-4. Add to PATH:
-   - Search **"Environment Variables"** in Windows search
-   - Under **System Variables** → find `Path` → click Edit → New
-   - Add: `C:\Program Files\Maven\apache-maven-3.9.6\bin`
-5. Verify:
-   ```powershell
-   mvn -version
-   # Should show: Apache Maven 3.9.x
-   ```
-
----
-
-## ⚙️ Step 3 — Install MySQL
-
-1. Go to: https://dev.mysql.com/downloads/installer/
-2. Download **MySQL Installer (Windows)**
-3. Run → choose **"Developer Default"**
-4. Set a **root password** — remember it!
-5. Finish installation
-6. Verify:
-   ```powershell
-   mysql --version
-   ```
-
----
-
-## ⚙️ Step 4 — Get TMDB API Key (free)
-
-1. Sign up at: https://www.themoviedb.org/signup
-2. Go to: https://www.themoviedb.org/settings/api
-3. Click **Create** → Developer → fill the form
-4. Copy your **API Key (v3 auth)**
-
----
-
-## ⚙️ Step 5 — Configure the app
-
-Create your private local configuration from the safe template:
-
-```powershell
-if (!(Test-Path src/main/resources/application.properties)) {
-    Copy-Item src/main/resources/application.properties.example src/main/resources/application.properties
-}
+Create the MySQL database:
+```sql
+CREATE DATABASE IF NOT EXISTS tickethub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Set your MySQL password, a random JWT secret of at least 32 characters, administrator email/password, and optionally your TMDB API key in the local `application.properties`. That file is ignored by Git and should never be committed.
+### 2. Configuration
 
----
+Create or verify `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/tickethub?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=YOUR_PASSWORD
 
-## 🚀 Step 6 — Run the app
+jwt.secret=9a7f8e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8
+tmdb.api.key=YOUR_TMDB_API_KEY_OPTIONAL
+app.admin.email=admin@tickethub.com
+app.admin.password=admin123
+```
 
-Open VS Code, open the **TicketHub** folder, then in the terminal:
+### 3. Run the Application
 
+Execute via Maven:
 ```powershell
 mvn spring-boot:run
 ```
 
-If port 8080 is already in use, run on 8081 instead:
-
+To run on port 8081 if port 8080 is occupied:
 ```powershell
-mvn spring-boot:run '-Dspring-boot.run.arguments=--server.port=8081'
+mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"
 ```
 
-First run will:
-- Auto-create the `tickethub` database
-- Create all tables
-- Seed the initial movie and theatre catalogue and sample showtimes only when those tables are empty
-- Create the administrator only when `app.admin.email` and `app.admin.password` are configured
-
-Then open the matching local URL, usually **http://localhost:8080** or **http://localhost:8081**.
+Access the platform:
+- **Customer Portal**: [http://localhost:8081](http://localhost:8081)
+- **Admin Portal**: [http://localhost:8081/admin-login.html](http://localhost:8081/admin-login.html) (Default: `admin@tickethub.com` / `admin123`)
 
 ---
 
-## 🌐 Publish a Public Website (Railway)
+## 📡 REST API Documentation
 
-People visiting the deployed site only need a browser. Railway builds and runs the Java container; visitors do not install Java, Maven, or MySQL.
-
-1. Review the files to be published and confirm `src/main/resources/application.properties` and any `.env` file are not staged:
-   ```powershell
-   git status --short
-   git check-ignore -v src/main/resources/application.properties
-   ```
-2. Commit and push the deployment files to this repository's `main` branch:
-   ```powershell
-   git add .gitignore .dockerignore Dockerfile railway.toml src/main/resources/application-railway.properties src/main/java/com/tickethub/TicketHubApplication.java README.md
-   git status --short
-   git commit -m "Prepare TicketHub for hosted deployment"
-   git push origin main
-   ```
-3. Sign in to Railway, create a project from the `AL-Fidha/TicketHub` GitHub repository, and add a MySQL service to the project.
-4. In the TicketHub service's Variables, set `SPRING_CONFIG_NAME=application-railway`. Add Railway's MySQL service references for `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, and `MYSQLPASSWORD`.
-5. Add `JWT_SECRET` (at least 32 random characters), `APP_ADMIN_EMAIL`, `APP_ADMIN_PASSWORD`, and `TMDB_API_KEY` as private Railway variables. Never put these values in GitHub or in frontend code.
-6. Deploy the service. Railway builds the Docker image and starts the JAR. Once healthy, open the service's Networking settings and choose **Generate Domain**. Share that HTTPS domain with visitors.
-
-The Railway profile does not create sample movies or unverified theatre records. After deployment, sign in with the configured admin account, import movies from TMDB, and add verified theatre addresses before publishing.
-
----
-
-## 🔑 Login
-
-Register a customer account using **Sign Up**. To provision an administrator, set `app.admin.email` and `app.admin.password` in your local configuration before starting the app. The application will create the admin user automatically on first launch if these are configured.
-
----
-
-## 📦 Build as a single JAR
-
-```powershell
-mvn package -DskipTests
-java -jar target/tickethub-1.0.0.jar
-```
-
-Share the `.jar` file — anyone with Java installed can run it.
+| Method | Endpoint | Access | Description |
+|:-------|:---------|:-------|:------------|
+| `POST` | `/api/auth/register` | Public | Register customer account |
+| `POST` | `/api/auth/login` | Public | Authenticate user & retrieve JWT token |
+| `GET` | `/api/auth/me` | Customer / Admin | Retrieve current authenticated session info |
+| `PUT` | `/api/auth/profile` | Customer / Admin | Update profile name and phone number |
+| `PUT` | `/api/auth/password` | Customer / Admin | Change user password |
+| `GET` | `/api/movies` | Public | Browse movie catalogue with filters |
+| `GET` | `/api/movies/{id}` | Public | Retrieve single movie details |
+| `GET` | `/api/movies/{id}/shows` | Public | Query showtimes (filtered by date, theatre) |
+| `POST` | `/api/movies` | 🔒 Admin | Add new movie to catalogue |
+| `PUT` | `/api/movies/{id}` | 🔒 Admin | Update existing movie details |
+| `DELETE`| `/api/movies/{id}` | 🔒 Admin | Delete movie from catalogue |
+| `GET` | `/api/theatres` | Public | List all 20 Kerala multiplexes |
+| `GET` | `/api/theatres/{id}/shows`| Public | Retrieve all movie shows at a theatre |
+| `GET` | `/api/seats/{show_id}` | Public | Live seat map with booked seat states |
+| `POST` | `/api/bookings` | 🔒 Authenticated | Create booking & lock seats |
+| `GET` | `/api/bookings/mine` | 🔒 Customer | Fetch personal booking history |
+| `GET` | `/api/bookings/{ref}` | 🔒 Authenticated | Retrieve booking by reference code |
+| `PUT` | `/api/bookings/{ref}/cancel`| 🔒 Authenticated | Cancel a confirmed booking |
+| `GET` | `/api/admin/stats` | 🔒 Admin | Platform analytics (bookings, revenue, users) |
+| `GET` | `/api/admin/users` | 🔒 Admin | List all registered accounts |
+| `GET` | `/api/admin/theatres` | 🔒 Admin | Manage theatre records |
+| `POST` | `/api/admin/theatres` | 🔒 Admin | Register new theatre & screen layout |
+| `GET` | `/api/admin/screens` | 🔒 Admin | View screens for scheduling |
+| `GET` | `/api/admin/shows` | 🔒 Admin | List all scheduled screenings |
+| `POST` | `/api/admin/shows` | 🔒 Admin | Schedule individual show |
+| `POST` | `/api/admin/shows/broadcast`| 🔒 Admin | Broadcast movie showtimes across all 20 theatres |
+| `DELETE`| `/api/admin/shows/{id}` | 🔒 Admin | Remove show without active booking history |
+| `GET` | `/api/admin/tmdb/movies` | 🔒 Admin | Discover live language-specific releases via TMDB |
+| `POST` | `/api/admin/tmdb/movies/{id}`| 🔒 Admin | Import TMDB release directly into database |
 
 ---
 
-## 🐙 Push to GitHub
+## 📄 License & Attribution
 
-```powershell
-# In the TicketHub folder:
-git init
-git add .
-git commit -m "Initial commit: Ticket Hub Spring Boot app"
-
-# Create repo on github.com, then:
-git remote add origin https://github.com/YOUR_USERNAME/TicketHub.git
-git branch -M main
-git push -u origin main
-```
-
-> ⚠️ `application.properties` is in `.gitignore` — never commit or share real passwords or API keys. Each developer should create their own local configuration from the example template.
-
----
-
-## 📡 REST API Reference
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/register` | — | Register customer |
-| POST | `/api/auth/login` | — | Login, returns JWT |
-| GET | `/api/auth/me` | ✅ | Current user info |
-| PUT | `/api/auth/profile` | ✅ | Update name/phone |
-| PUT | `/api/auth/password` | ✅ | Change password |
-| GET | `/api/movies` | — | All movies |
-| GET | `/api/movies/{id}` | — | Single movie |
-| GET | `/api/movies/{id}/shows` | — | Shows (filter: date, theatre_id) |
-| POST | `/api/movies` | 🔒 Admin | Add movie |
-| PUT | `/api/movies/{id}` | 🔒 Admin | Edit movie |
-| DELETE | `/api/movies/{id}` | 🔒 Admin | Delete movie |
-| GET | `/api/theatres` | — | All Kerala theatres |
-| GET | `/api/theatres/cities` | — | List cities |
-| GET | `/api/seats/{show_id}` | — | Live seat map |
-| POST | `/api/bookings` | ✅ | Book tickets |
-| GET | `/api/bookings/mine` | ✅ | My bookings |
-| GET | `/api/bookings/{ref}` | ✅ | Single booking |
-| PUT | `/api/bookings/{ref}/cancel` | ✅ | Cancel booking |
-| GET | `/api/bookings` | 🔒 Admin | All bookings |
-| GET | `/api/admin/stats` | 🔒 Admin | Dashboard stats |
-| GET | `/api/admin/users` | 🔒 Admin | All users |
-| GET | `/api/admin/theatres` | 🔒 Admin | Theatre records |
-| POST | `/api/admin/theatres` | 🔒 Admin | Add a theatre and first screen |
-| GET | `/api/admin/screens` | 🔒 Admin | Screens for show scheduling |
-| GET | `/api/admin/shows` | 🔒 Admin | All showtimes |
-| POST | `/api/admin/shows` | 🔒 Admin | Schedule a showtime |
-| DELETE | `/api/admin/shows/{id}` | 🔒 Admin | Remove a show without booking history |
-| GET | `/api/admin/tmdb/movies?language=Malayalam` | 🔒 Admin | Discover recent/upcoming TMDB releases |
-| POST | `/api/admin/tmdb/movies/{tmdbId}?language=Malayalam` | 🔒 Admin | Import a TMDB movie and poster path |
-
----
-
-## 🛠️ VS Code Extensions to Install
-
-Search in Extensions panel (`Ctrl+Shift+X`):
-
-- **Extension Pack for Java** (Microsoft) — Java language support
-- **Spring Boot Extension Pack** (VMware) — run Spring apps
-- **MySQL** (Jun Han) — browse database in VS Code
-- **GitLens** — git history viewer
-
----
-
-## 🎭 Features
-
-- ✅ Java Spring Boot backend (genuine Java project)
-- ✅ MySQL database with JPA
-- ✅ JWT authentication (BCrypt passwords)
-- ✅ TMDB poster lookup for movies missing artwork (requires internet and an API key)
-- ✅ Kerala theatre records stored in MySQL; verify venue names and addresses before use
-- ✅ Live seat map — see booked seats across all users
-- ✅ Duplicate booking prevention (database unique constraint)
-- ✅ Admin panel — manage movies, theatres and showtimes; view all bookings and revenue stats
-- ✅ Import current/upcoming language-filtered movie listings from TMDB
-- ✅ Printable tickets with unique booking reference
-- ✅ Seed catalogue spans Malayalam, English, Tamil, and Hindi
-- ✅ Single JAR deployment
+Developed for academic and project demonstration purposes at the **College of Engineering, Muttathara (2026)**.  
+All trademarked logos and cinema identities belong to their respective copyright holders.

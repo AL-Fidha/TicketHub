@@ -60,7 +60,13 @@ public class MovieController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        movieService.delete(id);
-        return ResponseEntity.ok(Map.of("message", "Movie deleted."));
+        try {
+            movieService.delete(id);
+            return ResponseEntity.ok(Map.of("message", "Movie deleted successfully."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Unable to delete movie: " + e.getMessage()));
+        }
     }
 }
