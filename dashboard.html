@@ -484,14 +484,17 @@ async function loadOverview() {
 
 function renderBookingCards(bookings, containerId) {
   const cont = document.getElementById(containerId);
-  if (!bookings.length) {
+  if (!bookings || !bookings.length) {
     cont.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
       <div style="font-size:2rem;margin-bottom:.5rem;">🎭</div>
       <p>No bookings yet. <a href="/movies.html" style="color:var(--primary-light);">Book your first movie →</a></p></div>`;
     return;
   }
   cont.innerHTML = `<div style="display:flex;flex-direction:column;gap:1rem;">` +
-    bookings.map(b => `
+    bookings.map(b => {
+      const seatsArr = Array.isArray(b.seats) ? b.seats : (typeof b.seats === 'string' ? b.seats.split(',').map(s=>s.trim()).filter(Boolean) : []);
+      const timeStr = b.show_time ? String(b.show_time).slice(0, 5) : 'Standard';
+      return `
       <div class="booking-card">
         <div class="bc-poster">
           ${b.poster_url
@@ -501,10 +504,10 @@ function renderBookingCards(bookings, containerId) {
         </div>
         <div>
           <div class="bc-title">${b.movie}</div>
-          <div class="bc-meta">📅 ${b.show_date} &nbsp;·&nbsp; 🕐 ${b.show_time.slice(0,5)}</div>
-          <div class="bc-meta">🏛️ ${b.theatre_name}, ${b.city}</div>
-          <div class="bc-meta">🎞️ ${b.screen_name}</div>
-          <div class="bc-seats">${b.seats.map(s=>`<span class="seat-tag">${s}</span>`).join('')}</div>
+          <div class="bc-meta">📅 ${b.show_date || 'Date N/A'} &nbsp;·&nbsp; 🕐 ${timeStr}</div>
+          <div class="bc-meta">🏛️ ${b.theatre_name || 'Cinema Hall'}, ${b.city || 'Kerala'}</div>
+          <div class="bc-meta">🎞️ ${b.screen_name || 'Screen 1'}</div>
+          <div class="bc-seats">${seatsArr.length ? seatsArr.map(s=>`<span class="seat-tag">${s}</span>`).join('') : '<span class="seat-tag">General</span>'}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;">
           <span class="badge badge-${b.status==='Confirmed'?'success':b.status==='Cancelled'?'cancelled':'pending'}">${b.status}</span>
@@ -513,7 +516,8 @@ function renderBookingCards(bookings, containerId) {
           <button class="btn btn-ghost btn-sm" onclick="viewTicket('${b.booking_ref}')">View Ticket</button>
           ${b.status==='Confirmed'?`<button class="btn btn-sm" style="background:rgba(229,9,20,.1);color:#ff6b6b;border:1px solid rgba(229,9,20,.2);" onclick="cancelBooking('${b.booking_ref}')">Cancel</button>`:''}
         </div>
-      </div>`).join('') + '</div>';
+      </div>`;
+    }).join('') + '</div>';
 }
 
 function showSection(name) {
@@ -826,16 +830,16 @@ async function viewTicket(ref) {
           <div class="ticket-title-block">
             <div class="ticket-director-tag">${director}</div>
             <div class="ticket-movie-title">${b.movie}</div>
-            <div class="ticket-show-tag">★ SEATS: ${b.seats ? b.seats.join(', ') : 'GENERAL'} ★</div>
+            <div class="ticket-show-tag">★ SEATS: ${(Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || 'GENERAL'))} ★</div>
           </div>
 
           <div class="ticket-odyssey-middle">
-            <div class="ticket-odyssey-time">${b.show_time.slice(0,5)}</div>
+            <div class="ticket-odyssey-time">${b.show_time ? String(b.show_time).slice(0,5) : '18:30'}</div>
             <div class="ticket-divider-vertical"></div>
             <div class="ticket-odyssey-venue">
-              <div class="ticket-odyssey-date">${b.show_date}</div>
-              <div class="ticket-odyssey-theatre">${b.theatre_name}</div>
-              <div class="ticket-odyssey-screen">${b.screen_name} · ${b.city || ''} (₹${b.total_amount})</div>
+              <div class="ticket-odyssey-date">${b.show_date || ''}</div>
+              <div class="ticket-odyssey-theatre">${b.theatre_name || 'TicketHub Cinema'}</div>
+              <div class="ticket-odyssey-screen">${b.screen_name || 'Screen 1'} · ${b.city || 'Kerala'} (₹${b.total_amount || 0})</div>
             </div>
           </div>
 
