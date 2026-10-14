@@ -235,15 +235,44 @@ async function toggleTheatresView() {
   }
 }
 
+const KERALA_THEATRES_FALLBACK = [
+  { id: 1, name: "PVR Cinemas - LuLu Mall", city: "Kochi", location: "LuLu Mall, NH Bypass, Edapally" },
+  { id: 2, name: "INOX - Oberon Mall", city: "Kochi", location: "Oberon Mall, NH 66, Edapally" },
+  { id: 3, name: "Cinepolis - Centre Square Mall", city: "Kochi", location: "Centre Square Mall, MG Road" },
+  { id: 4, name: "PVR - Gold Souk Grande Mall", city: "Kochi", location: "Gold Souk Grande Mall, Kalamassery" },
+  { id: 5, name: "Carnival Cinemas - Kochi", city: "Kochi", location: "Vyttila Hub, Vyttila" },
+  { id: 6, name: "INOX - Trivandrum", city: "Thiruvananthapuram", location: "Bhavani Centre, Pattom" },
+  { id: 7, name: "PVR - Trivandrum", city: "Thiruvananthapuram", location: "Oberon Mall, Kowdiar" },
+  { id: 8, name: "Carnival Cinemas - East Fort", city: "Thiruvananthapuram", location: "East Fort, Thiruvananthapuram" },
+  { id: 9, name: "Miraj Cinemas - Kozhikode", city: "Kozhikode", location: "Focus Mall, Mavoor Road" },
+  { id: 10, name: "PVR - Kozhikode", city: "Kozhikode", location: "HiLite Mall, NH 66, Kozhikode" },
+  { id: 11, name: "Cinepolis - Calicut", city: "Kozhikode", location: "City Centre Mall, Mavoor Road" },
+  { id: 12, name: "Carnival Cinemas - Thrissur", city: "Thrissur", location: "Sobha City Mall, Thrissur" },
+  { id: 13, name: "INOX - Thrissur", city: "Thrissur", location: "Pearl Shopping Mall, Thrissur" },
+  { id: 14, name: "PVR - Kollam", city: "Kollam", location: "KSRTC Complex, Kollam" },
+  { id: 15, name: "Carnival Cinemas - Kannur", city: "Kannur", location: "Focus Mall, Kannur" },
+  { id: 16, name: "Gold Theater - Palakkad", city: "Palakkad", location: "GB Road, Palakkad" },
+  { id: 17, name: "Cinepolis - Kottayam", city: "Kottayam", location: "Meenachil Tower, Baker Junction" },
+  { id: 18, name: "PVR - Malappuram", city: "Malappuram", location: "Eureka Junction, Malappuram" },
+  { id: 19, name: "SRM Cinemas - Alappuzha", city: "Alappuzha", location: "Mullakkal, Alappuzha" },
+  { id: 20, name: "Miraj Cinemas - Kasaragod", city: "Kasaragod", location: "City Mall, Kasaragod" }
+];
+
 async function loadKeralaTheatres() {
+  allTheatres = [...KERALA_THEATRES_FALLBACK];
+  theatresDataLoaded = true;
+  renderTheatreCityTabs();
+  renderTheatresList();
+
   try {
-    document.getElementById('theatresGrid').innerHTML = '<div class="spinner"></div>';
-    allTheatres = await TheatresAPI.getAll();
-    theatresDataLoaded = true;
-    renderTheatreCityTabs();
-    renderTheatresList();
+    const data = await TheatresAPI.getAll();
+    if (Array.isArray(data) && data.length > 0) {
+      allTheatres = data;
+      renderTheatreCityTabs();
+      renderTheatresList();
+    }
   } catch(e) {
-    document.getElementById('theatresGrid').innerHTML = `<p style="color:var(--text-muted);padding:1rem;">⚠️ ${e.message}</p>`;
+    console.warn('Theatres fallback list active:', e);
   }
 }
 

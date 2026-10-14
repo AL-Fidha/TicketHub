@@ -1905,6 +1905,19 @@ ul { list-style: none; }
 .show-chip small { display: block; font-size: 0.68rem; color: var(--accent-green); font-weight: 400; }
 .show-chip.housefull { border-color: rgba(255,255,255,0.06); color: var(--text-muted); cursor: not-allowed; }
 .show-chip.housefull small { color: #ff6b6b; }
+.show-chip.past, .show-chip.unavailable {
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  color: #646b7d !important;
+  cursor: not-allowed !important;
+  opacity: 0.55 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.show-chip.past small, .show-chip.unavailable small {
+  color: #8c93a8 !important;
+  font-weight: 500 !important;
+}
 
 /* City filter tabs */
 .city-tabs {
@@ -2776,19 +2789,135 @@ body {
 
 .hero-luxora-content {
   position: relative;
-  z-index: 3;
+  z-index: 2;
   width: 100%;
   max-width: 1260px;
   margin: 0 auto;
-  padding: 4.5rem 2rem;
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 3.5rem;
-  align-items: center;
+  padding: 3.5rem 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .hero-luxora-text {
-  max-width: 620px;
+  max-width: 820px;
+  width: 100%;
+}
+
+.hero-luxora-wide {
+  max-width: 950px;
+}
+
+.hero-title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+/* =============================================
+   INLINE TICKETHUB ANIMATED BADGE (BESIDE TITLE)
+   ============================================= */
+.hero-inline-logo-animation {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  perspective: 600px;
+  animation: heroInlineFloat 4s ease-in-out infinite alternate;
+}
+
+.hero-inline-glow {
+  position: absolute;
+  inset: -12px;
+  background: radial-gradient(circle, rgba(201, 169, 110, 0.45) 0%, rgba(168, 133, 72, 0.1) 60%, transparent 80%);
+  border-radius: 50%;
+  filter: blur(14px);
+  animation: logoGlowPulse 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.hero-inline-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(201, 169, 110, 0.4);
+  animation: logoStitchRingSpin 18s linear infinite;
+  pointer-events: none;
+}
+
+.hero-inline-badge {
+  position: relative;
+  width: 130px;
+  height: 82px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #181512, #0d0c0a);
+  border: 1.5px solid rgba(201, 169, 110, 0.6);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px rgba(201, 169, 110, 0.25);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.hero-inline-logo-animation:hover .hero-inline-badge {
+  transform: scale(1.08) rotate(-2deg);
+  border-color: #f8f6f0;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 30px rgba(201, 169, 110, 0.5);
+}
+
+.hero-inline-patch-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+}
+
+.hero-inline-shimmer {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 60%
+  );
+  animation: inlineShimmerSweep 5s infinite;
+  pointer-events: none;
+}
+
+.hero-inline-tag {
+  margin-top: 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--primary-light);
+  background: rgba(201, 169, 110, 0.14);
+  padding: 2px 8px;
+  border-radius: 100px;
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+@keyframes heroInlineFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(1deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes inlineShimmerSweep {
+  0% { transform: translate(-30%, -30%); }
+  25%, 100% { transform: translate(30%, 30%); }
 }
 
 .hero-luxora-badge {
@@ -2810,11 +2939,10 @@ body {
 
 .hero-luxora-title {
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 5vw, 4rem);
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.12;
   color: #fff;
-  margin-bottom: 1.2rem;
   letter-spacing: -0.01em;
 }
 
@@ -2830,7 +2958,7 @@ body {
   color: var(--text-secondary);
   line-height: 1.75;
   margin-bottom: 2rem;
-  max-width: 520px;
+  max-width: 680px;
 }
 
 .hero-luxora-actions {
@@ -2862,21 +2990,6 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: 4px;
-}
-
-/* =============================================
-   HERO RIGHT: DEDICATED TICKETHUB LOGO ANIMATION
-   (Centered on the Embroidered Ticket Logo)
-   ============================================= */
-.hero-logo-showcase {
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-  min-height: 440px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .hero-logo-stage-glow {

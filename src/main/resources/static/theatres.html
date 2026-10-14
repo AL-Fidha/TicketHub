@@ -211,16 +211,28 @@ async function openTheatreShows(theatreId, name, loc, city) {
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">${m.genre} · ${fmtDuration(m.duration_min)}</p>
           <div style="display:flex;flex-wrap:wrap;gap:8px;">
-            ${m.shows.filter(s => {
-              if (!s.show_date || !s.show_time) return false;
-              const dt = new Date(`${s.show_date}T${s.show_time.slice(0,5)}`);
-              return dt > new Date();
-            }).map(s => `
-              <a href="/booking.html?theatre=${theatreId}" class="show-chip" style="margin:0;text-decoration:none;">
-                ${s.show_time.slice(0,5)}
-                <small>${s.screen_name} · ${s.show_date}</small>
-              </a>
-            `).join('') || '<span style="font-size:0.78rem;color:var(--text-muted);">No upcoming shows today</span>'}
+            ${m.shows.map(s => {
+              const time = s.show_time ? String(s.show_time).slice(0,5) : '--:--';
+              let isPast = false;
+              if (s.show_date && s.show_time) {
+                const dt = new Date(`${s.show_date}T${String(s.show_time).slice(0,5)}`);
+                isPast = dt <= new Date();
+              }
+              const statusClass = isPast ? 'past unavailable' : '';
+              const statusText = isPast ? 'Show Ended' : (s.screen_name + ' · ' + s.show_date);
+
+              if (isPast) {
+                return `<button class="show-chip past unavailable" style="margin:0;" disabled title="This screening time has already passed">
+                  ${time}
+                  <small>${statusText}</small>
+                </button>`;
+              }
+              return `
+              <a href="/booking.html?theatre=${theatreId}" class="show-chip" style="margin:0;text-decoration:none;" title="${time}">
+                ${time}
+                <small>${statusText}</small>
+              </a>`;
+            }).join('') || '<span style="font-size:0.78rem;color:var(--text-muted);">No shows scheduled</span>'}
           </div>
         </div>
       </div>

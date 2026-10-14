@@ -394,16 +394,21 @@ async function selectTheatreFirst(theatreId, theatreName, theatreCity, theatreLo
           </div>
           <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">${m.genre} · ${fmtDuration(m.duration_min)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;">
-            ${m.shows.filter(s => {
-              if (!s.show_date || !s.show_time) return false;
-              const dt = new Date(`${s.show_date}T${s.show_time.slice(0,5)}`);
-              return dt > new Date();
-            }).map(s => {
-              return `<button class="show-chip" style="margin:0;" onclick="selectShowFromTheatreView(${s.show_id}, ${JSON.stringify(m).replace(/"/g, '&quot;')}, '${escapeQuote(theatreName)}', '${escapeQuote(theatreLocation)}', '${escapeQuote(theatreCity)}')">
-                ${s.show_time.slice(0,5)}
-                <small>${s.screen_name} · ${s.show_date}</small>
+            ${m.shows.map(s => {
+              const time = s.show_time ? String(s.show_time).slice(0,5) : '--:--';
+              let isPast = false;
+              if (s.show_date && s.show_time) {
+                const dt = new Date(`${s.show_date}T${String(s.show_time).slice(0,5)}`);
+                isPast = dt <= new Date();
+              }
+              const statusClass = isPast ? 'past unavailable' : '';
+              const statusText = isPast ? 'Show Ended' : (s.screen_name + ' · ' + s.show_date);
+
+              return `<button class="show-chip ${statusClass}" style="margin:0;" onclick="${isPast ? '' : `selectShowFromTheatreView(${s.show_id}, ${JSON.stringify(m).replace(/"/g, '&quot;')}, '${escapeQuote(theatreName)}', '${escapeQuote(theatreLocation)}', '${escapeQuote(theatreCity)}')`}" ${isPast ? 'disabled' : ''} title="${isPast ? 'This screening time has already passed' : time}">
+                ${time}
+                <small>${statusText}</small>
               </button>`;
-            }).join('') || '<span style="font-size:0.78rem;color:var(--text-muted);">No upcoming shows today</span>'}
+            }).join('') || '<span style="font-size:0.78rem;color:var(--text-muted);">No shows scheduled</span>'}
           </div>
         </div>
       </div>
@@ -532,31 +537,36 @@ function renderTheatres() {
   }
 
   document.getElementById('theatreList').innerHTML = entries.map(([tid, t]) => {
-    const activeShows = t.shows.filter(s => {
-      if (!s.show_date || !s.show_time) return false;
-      const showDateTime = new Date(`${s.show_date}T${s.show_time.slice(0,5)}`);
-      return showDateTime > new Date();
-    });
-
-    if (!activeShows.length) return '';
+    if (!t.shows.length) return '';
 
     return `
     <div class="theatre-card" id="tc_${tid}">
       <div class="theatre-name">${t.name}</div>
       <div class="theatre-loc">📍 ${t.location}, ${t.city}</div>
       <div class="theatre-shows">
-        ${activeShows.map(s => {
+        ${t.shows.map(s => {
           const avail = s.total_seats - s.seats_booked;
-          const full  = avail <= 0;
-          const time  = s.show_time.slice(0,5);
-          return `<button class="show-chip${full?' housefull':''}" onclick="${full?'':(`selectShowById(${s.show_id})`)}" ${full?'disabled':''}>
+          const isHousefull  = avail <= 0;
+          const time  = s.show_time ? String(s.show_time).slice(0,5) : '--:--';
+          
+          let isPast = false;
+          if (s.show_date && s.show_time) {
+            const showDateTime = new Date(`${s.show_date}T${String(s.show_time).slice(0,5)}`);
+            isPast = showDateTime <= new Date();
+          }
+
+          const isUnavailable = isPast || isHousefull;
+          const statusClass = isPast ? 'past unavailable' : (isHousefull ? 'housefull' : '');
+          const statusText = isPast ? 'Show Ended' : (isHousefull ? 'Housefull' : avail + ' seats left');
+
+          return `<button class="show-chip ${statusClass}" onclick="${isUnavailable ? '' : (`selectShowById(${s.show_id})`)}" ${isUnavailable ? 'disabled' : ''} title="${isPast ? 'This screening time has already passed and is unavailable for booking' : (isHousefull ? 'Housefull' : time)}">
             ${time}
-            <small>${full ? 'Housefull' : avail + ' seats left'}</small>
+            <small>${statusText}</small>
           </button>`;
         }).join('')}
       </div>
     </div>`;
-  }).join('') || '<p style="color:var(--text-muted);text-align:center;padding:2rem;">All screenings for this date have concluded. Please pick an upcoming date.</p>';
+  }).join('') || '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No screenings found for this date. Please pick another date.</p>';
 }
 
 function selectShowById(showId) {
