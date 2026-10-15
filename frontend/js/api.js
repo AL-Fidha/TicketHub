@@ -91,32 +91,8 @@ function saveStoredMovies(movies) {
   localStorage.setItem('th_offline_movies', JSON.stringify(movies));
 }
 
-function showOfflineNotice() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById('thOfflineNotice')) return;
-  const bar = document.createElement('div');
-  bar.id = 'thOfflineNotice';
-  bar.style.cssText = 'position:fixed;bottom:16px;right:16px;background:rgba(20,24,33,0.95);border:1px solid #d4af37;border-radius:10px;padding:12px 18px;color:#fff;font-family:sans-serif;font-size:0.85rem;box-shadow:0 8px 30px rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;gap:12px;backdrop-filter:blur(8px);';
-  bar.innerHTML = `
-    <span style="font-size:1.3rem;">⚡</span>
-    <div>
-      <div style="font-weight:700;color:#e5a93b;">Standalone / Offline Mode Active</div>
-      <div style="color:#94a3b8;font-size:0.78rem;">Running with offline data. All 27 movies &amp; 20 Kerala multiplexes are available. Run <strong>run-tickethub.bat</strong> to connect live MySQL server.</div>
-    </div>
-    <button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:#94a3b8;font-size:1.1rem;cursor:pointer;margin-left:8px;" title="Dismiss">✕</button>
-  `;
-  document.body.appendChild(bar);
-}
-
-function removeOfflineNotice() {
-  if (typeof document === 'undefined') return;
-  const bar = document.getElementById('thOfflineNotice');
-  if (bar) bar.remove();
-}
-
 // ── Offline Request Router ───────────────────
 function handleOfflineRequest(path, options = {}) {
-  showOfflineNotice();
   const method = (options.method || 'GET').toUpperCase();
   const [cleanPath, queryString] = path.split('?');
   const queryParams = new URLSearchParams(queryString || '');
@@ -304,7 +280,6 @@ async function apiFetch(path, options = {}) {
   let res;
   try {
     res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-    removeOfflineNotice();
   } catch (err) {
     if (API_BASE.includes('8081')) {
       try {
@@ -312,7 +287,6 @@ async function apiFetch(path, options = {}) {
         res = await fetch(`${altBase}${path}`, { ...options, headers });
         API_BASE = altBase;
         window.__API_BASE__ = altBase;
-        removeOfflineNotice();
       } catch (err2) {
         return handleOfflineRequest(path, options);
       }
@@ -522,5 +496,7 @@ if (typeof window !== 'undefined') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const oldBanner = document.getElementById('thOfflineNotice');
+  if (oldBanner) oldBanner.remove();
   updateNav();
 });

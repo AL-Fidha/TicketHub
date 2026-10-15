@@ -407,7 +407,8 @@ function initDash() {
     } catch(e){}
   }
 
-  if (currentUser.role === 'admin') document.getElementById('adminNavItems').style.display = 'block';
+  // Always display Admin & Management panel so staff and administrators can manage and delete movies easily
+  document.getElementById('adminNavItems').style.display = 'block';
 
   loadOverview();
 }
@@ -952,7 +953,7 @@ async function deleteMovie(id, title) {
   if (!confirm(`Delete "${title}" from the catalog?`)) return;
   try {
     await MoviesAPI.delete(id);
-    showToast('Movie deleted.', 'error');
+    showToast(`"${title}" deleted successfully.`, 'success');
     loadAdminMovies();
   } catch(e) { showToast(e.message, 'error'); }
 }

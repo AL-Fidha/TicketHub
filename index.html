@@ -393,13 +393,30 @@ function renderHomeGrid(movies) {
             <span>⏱ ${fmtDuration(m.duration_min || m.durationMin)}</span>
           </div>
           <p class="luxora-card-cast">${cast}</p>
+        <div style="display:flex;gap:8px;margin-top:0.75rem;">
+          <button class="btn-luxora-book" style="flex:1;" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">
+            Reserve Seats 🎟️
+          </button>
+          <button class="btn-luxora-book" style="background:rgba(239,68,68,0.18);color:#ff6b6b;border:1px solid rgba(239,68,68,0.4);padding:0 12px;font-size:0.95rem;" title="Delete Movie" onclick="event.stopPropagation();deleteHomeMovie(${m.id}, '${escapeQuotes(m.title)}')">
+            🗑️
+          </button>
         </div>
-        <button class="btn-luxora-book" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">
-          Reserve Seats 🎟️
-        </button>
       </div>
     </div>`;
   }).join('');
+}
+
+async function deleteHomeMovie(id, title) {
+  if (!confirm(`Are you sure you want to permanently delete "${title}" from the catalog?`)) return;
+  try {
+    await MoviesAPI.delete(id);
+    showToast(`"${title}" deleted successfully.`, 'success');
+    homeMovies = homeMovies.filter(m => Number(m.id) !== Number(id));
+    renderHomeGrid(homeMovies.slice(0, 8));
+    if (homeMovies.length > 0) initFilmReel(homeMovies);
+  } catch (err) {
+    showToast('Failed to delete movie: ' + err.message, 'error');
+  }
 }
 
 function filterHomeByLang(lang, btn) {
