@@ -409,7 +409,7 @@ function updateNav() {
   if (user) {
     const avatarEmoji = localStorage.getItem('th_user_avatar') || '🍿';
     const adminBadge = user.role === 'admin'
-      ? `<a href="/dashboard.html#manageMovies" class="nav-admin-pill" style="text-decoration:none;">🛡️ Admin</a>`
+      ? `<a href="/admin.html" class="nav-admin-pill" style="text-decoration:none;">🛡️ Admin</a>`
       : '';
     el.innerHTML = `
       ${adminBadge}
@@ -419,7 +419,6 @@ function updateNav() {
       </a>`;
   } else {
     el.innerHTML = `
-      <a href="/admin-login.html" class="btn-nav-admin" title="Admin Portal">🛡️ Admin</a>
       <a href="/login.html" class="btn-nav-login">Log In</a>
       <a href="/login.html#register" class="btn btn-primary btn-sm">Sign Up</a>`;
   }

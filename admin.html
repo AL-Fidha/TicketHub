@@ -664,11 +664,8 @@
     document.addEventListener('DOMContentLoaded', async () => {
       currentAdmin = Auth.getUser();
       if (!currentAdmin || currentAdmin.role !== 'admin') {
-        currentAdmin = { id: 1, name: 'Cinema Administrator', email: 'admin@tickethub.com', role: 'admin' };
-        Auth.setUser(currentAdmin);
-        if (!Auth.getToken()) {
-          Auth.setToken('admin_session_token_' + Date.now());
-        }
+        window.location.href = '/admin-login.html';
+        return;
       }
 
       document.getElementById('adminUserName').textContent = currentAdmin.name;

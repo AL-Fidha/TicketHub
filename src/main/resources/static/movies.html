@@ -162,7 +162,6 @@ function renderGrid(movies) {
         <div class="movie-actions">
           <button class="btn-wc-play" onclick="event.stopPropagation();window.location.href='/booking.html?movie=${m.id}'">▶ BOOK NOW</button>
           <button class="btn-wc-download" onclick="event.stopPropagation();openDetail(${m.id})">INFO</button>
-          <button class="btn-wc-download" style="background:rgba(239,68,68,0.18);color:#ff6b6b;border:1px solid rgba(239,68,68,0.4);" onclick="event.stopPropagation();deleteMovieFromCatalog(${m.id}, '${escapeQuotes(m.title)}')">🗑️ DELETE</button>
         </div>
       </div>
       <div class="movie-poster">
@@ -175,7 +174,6 @@ function renderGrid(movies) {
           <div class="poster-bottom-bar">
             <button class="btn-watch-trailer" onclick="event.stopPropagation();openDetail(${m.id})">▶ DETAILS</button>
             <div class="poster-actions-icons">
-              <div class="poster-icon-btn" title="Delete Movie" style="color:#ff6b6b;" onclick="event.stopPropagation();deleteMovieFromCatalog(${m.id}, '${escapeQuotes(m.title)}')">🗑️</div>
               <div class="poster-icon-btn" title="Save" onclick="event.stopPropagation();showToast('Saved to watchlist!','success')">🔖</div>
               <div class="poster-icon-btn" title="Share" onclick="event.stopPropagation();navigator.clipboard?.writeText(window.location.href);showToast('Link copied!','success')">🔗</div>
             </div>
@@ -184,19 +182,6 @@ function renderGrid(movies) {
       </div>
     </div>`;
   }).join('');
-}
-
-async function deleteMovieFromCatalog(id, title) {
-  if (!confirm(`Are you sure you want to permanently delete "${title}" from the catalog?`)) return;
-  try {
-    await MoviesAPI.delete(id);
-    showToast(`"${title}" deleted successfully.`, 'success');
-    document.getElementById('movieModal')?.classList.remove('show');
-    allMovies = allMovies.filter(m => Number(m.id) !== Number(id));
-    applyFilters();
-  } catch (err) {
-    showToast('Failed to delete movie: ' + err.message, 'error');
-  }
 }
 
 async function openDetail(id) {
@@ -223,9 +208,8 @@ async function openDetail(id) {
         ${m.producers ? `<div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;"><strong>🎬 Producers:</strong> ${m.producers}</div>` : ''}
       </div>
     </div>
-    <div style="display:flex;gap:10px;margin-top:1.25rem;">
-      <a href="/booking.html?movie=${m.id}" class="btn btn-primary" style="flex:1;">Book Tickets →</a>
-      <button class="btn" style="background:#dc2626;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;" onclick="deleteMovieFromCatalog(${m.id}, '${escapeQuotes(m.title)}')">🗑️ Delete Movie</button>
+    <div style="margin-top:1.25rem;">
+      <a href="/booking.html?movie=${m.id}" class="btn btn-primary" style="width:100%;justify-content:center;">Book Tickets →</a>
     </div>`;
   document.getElementById('movieModal').classList.add('show');
 }

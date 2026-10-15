@@ -37,13 +37,8 @@
         <div class="sidebar-link"        onclick="showSection('profile')"   id="navProfile"><span class="link-icon">👤</span>Profile</div>
         <div id="adminNavItems" style="display:none;">
           <div class="sidebar-divider"></div>
-          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.5rem 1rem .25rem;">Admin Panel</div>
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.5rem 1rem .25rem;">Administrator</div>
           <a href="/admin.html" class="sidebar-link" style="color:var(--accent-gold);font-weight:700;"><span class="link-icon">⚡</span>Admin Control Center ↗</a>
-          <div class="sidebar-link" onclick="showSection('manageMovies')"  id="navManageMovies"><span class="link-icon">🎬</span>Manage Movies</div>
-                    <div class="sidebar-link" onclick="showSection('manageShows')"   id="navManageShows"><span class="link-icon">🕒</span>Manage Shows</div>
-                    <div class="sidebar-link" onclick="showSection('manageTheatres')" id="navManageTheatres"><span class="link-icon">🏙️</span>Manage Theatres</div>
-          <div class="sidebar-link" onclick="showSection('allBookings')"   id="navAllBookings"><span class="link-icon">📋</span>All Bookings</div>
-          <div class="sidebar-link" onclick="showSection('allUsers')"      id="navAllUsers"><span class="link-icon">👥</span>All Users</div>
         </div>
         <div class="sidebar-divider"></div>
         <div class="sidebar-link" onclick="doLogout()" style="color:#ff6b6b;"><span class="link-icon">🚪</span>Log Out</div>
@@ -384,7 +379,7 @@ function initDash() {
   document.getElementById('sidebarEmail').textContent  = currentUser.email;
   document.getElementById('welcomeTitle').textContent  = 'Welcome back, ' + currentUser.name.split(' ')[0] + '!';
   document.getElementById('welcomeSub').textContent    = currentUser.role === 'admin'
-    ? 'Admin dashboard — manage movies, view all bookings.'
+    ? 'Administrator profile — use Admin Control Center to manage movies and theatres.'
     : 'Here\'s your activity on Ticket Hub.';
   document.getElementById('profileAvatar').textContent = savedAvatar;
   document.getElementById('profileName').textContent   = currentUser.name;
@@ -407,8 +402,9 @@ function initDash() {
     } catch(e){}
   }
 
-  // Always display Admin & Management panel so staff and administrators can manage and delete movies easily
-  document.getElementById('adminNavItems').style.display = 'block';
+  // Show Admin link strictly if the authenticated user is an administrator
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  document.getElementById('adminNavItems').style.display = isAdmin ? 'block' : 'none';
 
   loadOverview();
 }
