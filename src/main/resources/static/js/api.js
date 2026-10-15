@@ -79,14 +79,12 @@ const DEFAULT_SEED_THEATRES = [
 ];
 
 function getStoredMovies() {
-  let list = [...DEFAULT_SEED_MOVIES];
   const raw = localStorage.getItem('th_offline_movies');
   if (raw) {
-    try { list = JSON.parse(raw); } catch (e) {}
+    try { return JSON.parse(raw); } catch (e) {}
   }
-  list = list.filter(m => !(m.title || '').toLowerCase().includes('greatest of all time'));
-  localStorage.setItem('th_offline_movies', JSON.stringify(list));
-  return list;
+  localStorage.setItem('th_offline_movies', JSON.stringify(DEFAULT_SEED_MOVIES));
+  return [...DEFAULT_SEED_MOVIES];
 }
 
 function saveStoredMovies(movies) {
